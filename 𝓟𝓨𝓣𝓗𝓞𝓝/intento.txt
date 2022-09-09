@@ -1,0 +1,75 @@
+BEGINNING-OF-PROGRAM
+	DEFINE-NEW-INSTRUCTION turnright AS
+		BEGIN
+			turnleft;
+			turnleft;
+			turnleft
+		END;
+
+	DEFINE-NEW-INSTRUCTION saltar AS
+		BEGIN
+			turnleft;
+			WHILE right-is-blocked DO
+				BEGIN
+					IF left-is-clear THEN
+						BEGIN
+							move
+						END
+				END;
+			turnright;
+			move
+		END;
+	
+	DEFINE-NEW-INSTRUCTION bajar AS
+		BEGIN
+			WHILE front-is-clear DO
+				BEGIN
+					IF right-is-blocked THEN
+					move;
+					ELSE
+						BEGIN
+							turnright;
+							move
+						END
+				END
+			
+		END;	
+		
+	BEGINNING-OF-EXECUTION
+		move;
+		WHILE left-is-clear DO
+			BEGIN
+				IF front-is-blocked THEN
+					BEGIN
+					saltar
+					END;
+				ELSE bajar
+			END;
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1.QUE SE MUEVA POR UN MURO QUE SIEMPRE ESTA A LA DERECHA DE MANERA INDETERMINADA
+2.QUE SE DETENGA CUANDO ESTE RODEADA DE MUROS
+3. QUE DEJE 50 BEEPERS

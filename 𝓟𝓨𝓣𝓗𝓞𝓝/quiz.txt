@@ -1,0 +1,23 @@
+numx=input("digite su numero\n")
+
+def checkprime (num):
+    num=str(num)
+    cont=0
+    for i in num:
+        i=int(i)
+        if i==1:
+            continue
+        for j in range(2,i):
+            if i%j==0:
+                print(f"el digito {i} no es primo")
+                cont+=1
+                break
+            else:
+                continue
+ 
+    if cont==0:
+        print("todos los digitos son primos")
+  
+        
+
+checkprime(numx)
