@@ -4,6 +4,7 @@ para lógica proposicional
 '''
 
 from itertools import product
+import numpy as np
 
 class Formula :
 
@@ -81,3 +82,72 @@ def inorder_to_tree(cadena:str):
                 return Binario(cadena[i], inorder_to_tree(cadena[1:i]),inorder_to_tree(cadena[i + 1:-1]))
     else:
         raise Exception('¡Cadena inválida!')
+
+class Descriptor :
+
+    '''
+    Codifica un descriptor de N argumentos mediante un solo caracter
+    Input:  args_lista, lista con el total de opciones para cada
+                     argumento del descriptor
+            chrInit, entero que determina el comienzo de la codificación chr()
+    Output: str de longitud 1
+    '''
+
+    def __init__ (self,args_lista,chrInit=256) :
+        self.args_lista = args_lista
+        assert(len(args_lista) > 0), "Debe haber por lo menos un argumento"
+        self.chrInit = chrInit
+        self.rango = [chrInit, chrInit + np.prod(self.args_lista)]
+
+    def check_lista_valores(self,lista_valores) :
+        for i, v in enumerate(lista_valores) :
+            assert(v >= 0), "Valores deben ser no negativos"
+            assert(v < self.args_lista[i]), f"Valor debe ser menor o igual a {self.args_lista[i]}"
+
+    def codifica(self,lista_valores) :
+        self.check_lista_valores(lista_valores)
+        cod = lista_valores[0]
+        n_columnas = 1
+        for i in range(0, len(lista_valores) - 1) :
+            n_columnas = n_columnas * self.args_lista[i]
+            cod = n_columnas * lista_valores[i+1] + cod
+        return cod
+
+    def decodifica(self,n) :
+        decods = []
+        if len(self.args_lista) > 1:
+            for i in range(0, len(self.args_lista) - 1) :
+                n_columnas = np.prod(self.args_lista[:-(i+1)])
+                decods.insert(0, int(n / n_columnas))
+                n = n % n_columnas
+        decods.insert(0, n % self.args_lista[0])
+        return decods
+
+    def P(self,lista_valores) :
+        codigo = self.codifica(lista_valores)
+        return chr(self.chrInit+codigo)
+
+    def inv(self,codigo) :
+        n = ord(codigo)-self.chrInit
+        return self.decodifica(n)
+
+def visualizar_formula(A,D):
+    '''
+    Visualiza una fórmula A (como string en notación inorder) usando el descriptor D
+    '''
+    vis = []
+    for c in A:
+        if c == '-':
+            vis.append(' no ')
+        elif c in ['(', ')']:
+            vis.append(c)
+        elif c in ['>', 'Y', 'O']:
+            vis.append(' ' + c + ' ')
+        elif c == '=':
+            vis.append(' sii ')
+        else:
+            try:
+                vis.append(D.escribir(c))
+            except:
+                raise("¡Caracter inválido!")
+    return ''.join(vis)
