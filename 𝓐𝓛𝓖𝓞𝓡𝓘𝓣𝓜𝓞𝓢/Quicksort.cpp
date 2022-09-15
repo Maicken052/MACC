@@ -6,28 +6,29 @@ int particion(int* v, int ini, int fin){
     int pivote=v[fin];
     int i=ini-1;
     int j=ini;
-    for(ini; ini<fin+1; ini++){
+    for(j; j<fin+1; j++){
         if(v[j]<=pivote){
             i++;
             int aux=v[i];
             v[i]=v[j];
             v[j]=aux;
-            j++;
-        }else{
-            j++;
         }
     }
     return i;
 }
 
-int quicksort(int* v, int ini, int fin){
+void quicksort(int* v, int ini, int fin){
     if(ini==fin){
-        return 0;
+         cout<<""<<endl;
     }else{
         int i=particion(v, ini, fin);
-        quicksort(v, ini, i-1);
-        quicksort(v, i+1, fin);  
-    }
+        if(i-1>ini){
+            quicksort(v, ini, i-1);
+        }
+        if(i+1<fin){
+            quicksort(v, i+1, fin);  
+        }
+    }   
 }
 
 void print(int* v, int size){
@@ -39,16 +40,16 @@ void print(int* v, int size){
 
 int main(){
     int v[10];
-    v[0]= 8;
-    v[1]= 3;
-    v[2]= 5;
-    v[3]= 1;
-    v[4]= 4;
-    v[5]= 9;
-    v[6]= 10;
-    v[7]= 2;
-    v[8]= 6;
-    v[9]= 7;
+    v[0]= 23;
+    v[1]= 33;
+    v[2]= 584;
+    v[3]= 9300;
+    v[4]= 1;
+    v[5]= 2;
+    v[6]= 3;
+    v[7]= 454;
+    v[8]= -314;
+    v[9]= -314;
     
     print(v, 10);
     quicksort(v, 0, 9);
