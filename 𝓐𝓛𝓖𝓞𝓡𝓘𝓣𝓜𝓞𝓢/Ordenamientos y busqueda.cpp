@@ -1,4 +1,3 @@
--------------------------------------------------------------------------------ORDENAMIENTO-------------------------------------------------------------------------
 #include<iostream>
 
 using namespace std;
@@ -113,6 +112,78 @@ public:
         }
     }
     
+        int busqueda(int n, int x){
+        for(int i = 0; i<n; i++){
+            if(v[i] == x){
+                return i;
+            }
+        }
+        return -1;
+    }    
+    
+    int busqueda_indexada(int n, int* w, int m, int x){
+        int k = x/1000;
+        int i = w[k];
+        int j = w[k+1];
+        while(i<j and v[i] != x){
+            i++;
+        }
+        if(i<j){
+            return i;
+        }
+        else{
+            return -1;
+        }
+    }
+
+    int busqueda_binaria(int n, int x){
+        int ini = 0;
+        int fin = n-1;
+        while(ini <= fin){
+            int i = (fin+ini)/2;
+            if(v[i] == x){
+                return i;
+            }
+            else{
+                if(v[i]>x){
+                    fin = i-1;
+                }
+                else{
+                    ini = i+1;
+                }
+            }    
+        }
+        return -1;
+        
+    }
+    
+    int busqueda_terciaria(int n, int x){
+        int ini = 0;
+        int fin = n-1;
+        while(ini <= fin){
+            int i = (fin+(2*ini))/3;
+            int i2 = ((2*fin)+ini)/3;
+            if(v[i] == x){
+                return i;
+            }else if(v[i2] == x){
+                return i2;
+            }
+            else{
+                if(v[i]>x){
+                    fin = i-1;
+                }else if(v[i2]<x){
+                    ini = i2+1;
+                }
+                else{
+                    ini = i+1;
+                    fin = i2-1;
+                }
+            }    
+        }
+        return -1;
+        
+    }
+    //------------------------ORDENAMIENTO------------------------//
     void select_sort(){
         int minimo;
         int* v1  = new int(size);
