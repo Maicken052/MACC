@@ -181,18 +181,6 @@ public:
     } 
 };
 
-//------------------------------REVISION DE TRANSACCION--------------------------------//
-void t_random(Lista* t) {
-    int monto, a, b;
-    for(int i=0; i<num_trans; i++){
-        monto = rand()%monto_max;  
-        a = rand()%num_emp;
-        do{
-            b = rand()%num_emp;   
-        }while(a==b);  //Para que las empresas sean diferentes (una empresa no puede tener transacciones con si misma)
-        t->push_back(new Transaccion(a, b, monto));
-    }
-}
 
 int main()
 {
@@ -210,7 +198,15 @@ int main()
     t_apuntador=&(t);  //Apuntador a lista t, para poder usarlo en t_random
 	
     //Creación de transacciones. Valide que no haya transacciones con un mismo origen y destino, y que el monto no pase del máximo establecido: monto = rand()%100000;
-    t_random(t_apuntador);
+    int monto, a, b;
+    for(int i=0; i<num_trans; i++){
+        monto = rand()%monto_max;  
+        a = rand()%num_emp;
+        do{
+            b = rand()%num_emp;   
+        }while(a==b);  //Para que las empresas sean diferentes (una empresa no puede tener transacciones con si misma)
+        t.push_back(new Transaccion(a, b, monto));
+    }
 
     //Imprimir lista de transacciones originales
     cout<<"LISTA DE TRANSACCIONES ORIGINALES:"<<endl;
