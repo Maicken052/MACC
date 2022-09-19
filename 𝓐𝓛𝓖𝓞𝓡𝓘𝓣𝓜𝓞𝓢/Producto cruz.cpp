@@ -1,5 +1,4 @@
----------------------------------------------------------------------------------PRODUCTO CRUZ--------------------------------------------------------------------------
-    #include <iostream>
+#include <iostream>
 using namespace std;
 
 void producto_cruz(int* v1,int* v2, int* v3){
