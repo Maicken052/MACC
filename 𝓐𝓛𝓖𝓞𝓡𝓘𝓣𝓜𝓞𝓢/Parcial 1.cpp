@@ -41,10 +41,6 @@ public:
     int get_monto(){
         return monto;
     }
-    
-    string get_eq(){
-        return "("+std::to_string(emp_origen)+", "+std::to_string(emp_destino)+ ")";
-    }
 
     void set_emp_origen(int a){
         emp_origen = a;
@@ -159,7 +155,7 @@ public:
         }else{
             Nodo* t = ptr;
             do{
-                cout<<(*t)<<endl<<endl;
+                cout<<(*t)<<endl;
                 t = t->getNext();
                 
             }while(t != NULL);
@@ -175,7 +171,6 @@ public:
             }
             return n;
         }else{
-            //throw invalid_argument("La posicion no existe");
             if(size == 0){
                 cout<<"La lista está vacía";
             }else{
@@ -183,23 +178,18 @@ public:
             }
             return NULL;
         }
-        
-    }
-    
-    void atributos(){
-       cout <<"la cantidad de elementos es: " <<size<<endl;
     } 
 };
 
 //------------------------------REVISION DE TRANSACCION--------------------------------//
 void t_random(Lista* t) {
     int monto, a, b;
-    for(int i=0; i<100; i++){
-        monto = rand()%100000;
-        a = rand()%4;
+    for(int i=0; i<num_trans; i++){
+        monto = rand()%monto_max;  
+        a = rand()%num_emp;
         do{
-            b = rand()%4;   
-        }while(a==b);
+            b = rand()%num_emp;   
+        }while(a==b);  //Para que las empresas sean diferentes (una empresa no puede tener transacciones con si misma)
         t->push_back(new Transaccion(a, b, monto));
     }
 }
@@ -215,65 +205,63 @@ int main()
     int** mat_bank; //Declaración de la matriz con información reportada por el banco, calculada con las transacciones originales
     int** mat_alt; //Declaración de la matriz con información alterada, reportada por la empresa, calculada con las transacciones alteradas
     
-    Lista* t_r;
-    Lista t = Lista();   
-    t_r=&(t);
+    Lista* t_apuntador;
+    Lista t = Lista();  //Lista para guardar las transacciones
+    t_apuntador=&(t);  //Apuntador a lista t, para poder usarlo en t_random
+	
     //Creación de transacciones. Valide que no haya transacciones con un mismo origen y destino, y que el monto no pase del máximo establecido: monto = rand()%100000;
-
-    t_random(t_r);
+    t_random(t_apuntador);
 
     //Imprimir lista de transacciones originales
     cout<<"LISTA DE TRANSACCIONES ORIGINALES:"<<endl;
     t.print();
-    
     cout<<"-----------------------------------------------------------"<<endl;
+	
     //Calcular monto total de transacciones entre empresas en mat_bank
-    
-    mat_bank = new int*[4];        //Matriz dinamica
-    for(int i=0; i<4; i++){
-        mat_bank[i]=new int[4];
+    mat_bank = new int*[num_emp];        //Matriz dinamica
+    for(int i=0; i<num_emp; i++){
+        mat_bank[i]=new int[num_emp];
     }
     
-    for(int s=0; s<100; s++){
-        mat_bank[t.get(s)->getDato()->get_emp_origen()][t.get(s)->getDato()->get_emp_destino()]+=t.get(s)->getDato()->get_monto();
+    for(int s=0; s<num_trans; s++){
+        mat_bank[t.get(s)->getDato()->get_emp_origen()][t.get(s)->getDato()->get_emp_destino()]+=t.get(s)->getDato()->get_monto();  //Coloca en los indices de la matriz las empresas de origen y destino del indice s de la lista, y le suma el monto que tenga dicho dato
     }
-
-   
+	
     //Imprimir la matriz mat_bank
     cout<<"MATRIZ SIN MANIPULAR: "<<endl;
-     for(int i=0; i<4; i++){
-        for(int j=0; j<4; j++){
+     for(int i=0; i<num_emp; i++){
+        for(int j=0; j<num_emp; j++){
             cout<<mat_bank[i][j]<<"\t";
         }
         cout<<endl;
     }
-
     cout<<"-----------------------------------------------------------"<<endl;
 
     //Alterar las transacciones cuyo indice%error == 0, disminuyendo su valor en 25% (monto*0.75)   
-    Lista t_alt=Lista();
-
-    for(int s=0; s<100; s++){
+    Lista t_alt=Lista();  //Lista con los valores del monto alterados
+	
+    for(int s=0; s<num_trans; s++){
         t_alt.push_back(t.get(s)->getDato());
     }
 
-    for(int s=0; s<100; s++){
+    for(int s=0; s<num_trans; s++){
         if(s%error==0){
-            t_alt.get(s)->getDato()->set_monto(t_alt.get(s)->getDato()->get_monto()*0.75);
+            t_alt.get(s)->getDato()->set_monto(t.get(s)->getDato()->get_monto()*0.75);  //Si el indice de la lista coincide con error, disminuye el valor en 25%
         }
     }
 
     //Imprimir lista de transacciones alteradas
-    cout<<"LISTA DE TRANSACCIONES ORIGINALES:"<<endl;
+    cout<<"LISTA DE TRANSACCIONES ALTERADAS:"<<endl;
     t_alt.print();
     cout<<"-----------------------------------------------------------"<<endl;
+	
     //Calcular monto total de transacciones alteradas entre empresas en mat_alt
-    mat_alt = new int*[4];        //Matriz dinamica
-    for(int i=0; i<4; i++){
-        mat_alt[i]=new int[4];
+    mat_alt = new int*[num_emp];        //Matriz dinamica
+    for(int i=0; i<num_emp; i++){
+        mat_alt[i]=new int[num_emp];
     }
     
-    for(int s=0; s<100; s++){
+    for(int s=0; s<num_trans; s++){
         mat_alt[t_alt.get(s)->getDato()->get_emp_origen()][t_alt.get(s)->getDato()->get_emp_destino()]+=t_alt.get(s)->getDato()->get_monto();
     }
    
@@ -285,13 +273,13 @@ int main()
         }
         cout<<endl;
     }
-
     cout<<"-----------------------------------------------------------"<<endl;
+	
     //Imprimir las diferencias encontradas entre ls matrices
-    for(int i=0; i<4; i++){
-        for(int j=0; j<4; j++){
+    for(int i=0; i<num_emp; i++){
+        for(int j=0; j<num_emp; j++){
             if(mat_bank[i][j]!=mat_alt[i][j]){
-                cout<<"Error en total de transacciones entre empresas "<<i<<" y "<<j<<" por"<<mat_alt[i][j]-mat_bank[i][j]<<endl;
+                cout<<"Error en total de transacciones entre empresas "<<i<<" y "<<j<<" por "<<mat_alt[i][j]-mat_bank[i][j]<<endl;
             }
         }
     }
