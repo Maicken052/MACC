@@ -23,7 +23,7 @@ int indice_min(vector<int> & arr){
     return ind_min;
 }
 
-void two_smallest (vector<string> & arr){
+void two_smallest_cant (vector<string> & arr){
     vector<int> len;
     int first_ind, second_ind;
     string first_smallest, second_smallest;
@@ -44,14 +44,41 @@ void two_smallest (vector<string> & arr){
     cout<<"El primer elementos mas chico es: "<<first_smallest<<" y el segundo es: "<<second_smallest<<endl;
 }
 
+void two_smallest_lex (vector<string> & arr){
+    string min_01, min_02;
+    int ind_01, ind_02;
+    min_01 = arr[0];
+    ind_01 = 0;
+    for(int i = 1; i<arr.size();i++){
+        if(arr[i] < min_01){
+            min_01 = arr[i];
+            ind_01 = i;
+        }
+    }
+    
+    arr.erase(arr.begin() + ind_01);
+    
+    min_02 = arr[0];
+    ind_02 = 0;
+    
+    for(int i = 1; i<arr.size();i++){
+        if(arr[i] < min_02){
+            min_02 = arr[i];
+            ind_02 = i;
+        }
+    }
+    
+    cout<<"El primer elementos mas chico es: "<<min_01<<" y el segundo es: "<<min_02<<endl;
+}
+
 int main(){
     vector <string> v;
 
-    v.push_back("ti amo");
-    v.push_back("pq eres");
-    v.push_back("muy linda");
-    v.push_back("ola");
+    v.push_back("andes");
+    v.push_back("besos");
+    v.push_back("primal");
+    v.push_back("agalas");
 
-    two_smallest(v);
+    two_smallest_lex(v);
     return 0;
 }
