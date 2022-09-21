@@ -34,13 +34,7 @@ void quicksort(vector<string> &v, int ini, int fin){
     }   
 }
 
-//-----------------------------------FUNCIÓN SWAP----------------------------------//
-void swap(vector<string> v, int a, int b){  //cambia los valores de una posición a otra
-    string aux;
-    aux=v[a];
-    v[a]=v[b];
-    v[b]=aux;
-}
+
 
 //---------------------------------------------------------------------//
 int main(){
@@ -56,7 +50,7 @@ int main(){
     v.push_back("7");
     v.push_back("83");
     v.push_back("29");
-    v.push_back("AB");
+    v.push_back("ABCD");
     v.push_back("CB");
     v.push_back("DC");
     v.push_back("ABD");
@@ -69,17 +63,23 @@ int main(){
         cout<<v[i]<<"\t";
     }
     cout<<endl;
-    
-    for(int i = 0; i<=v.size(); i++){
-        if(v[i].length()==v[i+1].length()){
-            quicksort(v, 0, i+1);
-            }    
-        }
 
+    for(int j = 0; j<=v.size(); j++){
+        for(int i = 0; i<=v.size(); i++){
+            if(v[i].length()==v[i+1].length()){
+                if(v[i]>v[i+1]){
+                    string aux = v[i+1];
+                    v[i+1] = v[i];
+                    v[i] = aux;
+                } 
+            }
+        }
+    }
 
     for(int i = 0; i<v.size(); i++){
         cout<<v[i]<<"\t";
     }
     cout<<endl;
+
     return 0;
 }
