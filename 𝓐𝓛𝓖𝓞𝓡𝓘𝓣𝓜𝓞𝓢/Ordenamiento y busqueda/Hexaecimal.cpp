@@ -3,10 +3,6 @@
 #include <vector>
 using namespace std;
 
-#include <iostream>
-
-using namespace std;
-
 //-----------------------------------FUNCIÓN PARTICIÓN----------------------------------//
 int particion(vector<string> &v, int ini, int fin){
     string pivote=v[fin]; //Ultimo elemento del vector con el que se comparan los demás elementos
@@ -34,13 +30,10 @@ void quicksort(vector<string> &v, int ini, int fin){
     }   
 }
 
-
-
 //---------------------------------------------------------------------//
 int main(){
     vector <string> v;
-    int most;
-    
+
     v.push_back("1");
     v.push_back("22");
     v.push_back("334");
