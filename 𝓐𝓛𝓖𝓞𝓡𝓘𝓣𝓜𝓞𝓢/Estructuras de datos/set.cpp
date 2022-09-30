@@ -18,7 +18,7 @@ public:
 //------------------------------------------------METODOS-----------------------------------------//
     bool contains(int x){
         for(int i = 0; i<length; i++){
-            if (x = v[i]){
+            if (x == v[i]){
                 return true;
             }
         }
@@ -41,7 +41,7 @@ public:
         }
     }
     
-    set unionn(set &c){
+    set unionn(set c){
         set u = c;
         for(int i = 0; i<length; i++){
             u.push(v[i]);    
@@ -50,7 +50,6 @@ public:
     }
     
     void print() {
-        cout<<length<<endl;
         for (int i = 0; i <length; i++) {
             cout << v[i] << "\t";
         }
@@ -68,8 +67,13 @@ public:
 };
 int main(){
     set prueba = set(10);
+    set un = set(10);
     prueba.push(4);
     prueba.push(5);
     prueba.push(6);
-    prueba.print();
+    un.push(7);
+    un.push(8);
+    un.push(9);
+    prueba.unionn(un).print();
+    
 }
