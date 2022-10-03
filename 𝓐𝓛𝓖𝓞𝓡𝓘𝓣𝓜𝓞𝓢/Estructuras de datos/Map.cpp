@@ -45,21 +45,21 @@ public:
 template <typename T, typename T2>
 class Mapa{
     //---------------------------------------------ATRIBUTOS------------------------------------------//
-    int len;
+    int size;
     int capacity;
     Tupla<T, T2>* v;
 
 public:
  //-------------------------------------------CONSTRUCTOR-----------------------------------------//
     Mapa(){
-        len = 0;
+        size = 0;
         capacity = 10;
         v = new Tupla<T, T2>[capacity];
     }
     
 //------------------------------------------------METODOS-----------------------------------------//
-     bool contains(Tupla<T, T2> t){
-        for(int i = 0; i<len; i++){
+     bool Haskey(Tupla<T, T2> t){
+        for(int i = 0; i<size; i++){
             if (v[i].getKey() == t.getKey()){
                 return true;
             }
@@ -67,27 +67,51 @@ public:
         return false;
     }
     
+    void corrimiento_der(int i){
+        for(int j = size; j>i; j--){
+            v[j] = v[j-1];
+        }
+    }
+    
     void push(Tupla<T, T2> t){
-        if(contains(t) == false){
-            if (len >= capacity){  ////si esta lleno, crea un nuevo vector, pasa los valores e inserta 
+        if(Haskey(t) == false){
+            if (size >= capacity){  ////si esta lleno, crea un nuevo vector, pasa los valores e inserta 
                 capacity*=2;
                 Tupla<T, T2>* v1 = new Tupla<T, T2>[capacity];
-                for (int i = 0; i < len; i++) {
+                for (int i = 0; i < size; i++){
                     v1[i] = v[i];
                 }
                 delete[] v; //Borra el vector antiguo
                 v = v1;
             }
-            v[len] = t;
-            len++;
+            if(size==0){
+                v[size] = t;
+                size++;
+            }else{
+                int flag = 0;
+                for(int i = 0; i<size; i++){
+                    if(t.getKey()<v[i].getKey()){
+                        corrimiento_der(i);
+                        v[i] = t;
+                        flag = 1;
+                        break;
+                    }
+                }
+                if(flag == 0){
+                    v[size] = t;
+                }
+                size++;
+            }  
+        }else{
+            cout<<"Llave repetida"<<endl;
         }
     }
-    
-    T2 find(int key){
+
+    T2 find(T key){
         int left = 0;
-        int right = len-1;
+        int right = size-1;
         while(left <= right){
-            int mid = left+((key-v[left].getKey())*(right-left)/(v[right].getKey()-v[left].getKey()));
+            int mid = (right+left)/2;;
             if(v[mid].getKey() == key){
                 return v[mid].getDato();
             }
@@ -103,33 +127,8 @@ public:
         return NULL;
     }
     
-    int particion(int ini, int fin){
-        int pivote=v[fin].getKey(); //Ultimo elemento del vector con el que se comparan los demás elementos
-        int i=ini-1;  //Marcador qe aumenta cuando encuentra un elemento menor que el pivote
-        int j=ini;  //Marcador que recorre el vector
-        for(j; j<fin+1; j++){
-            if(v[j].getKey()<=pivote){  //Si encuentra un elemento menor que el pivote
-                i++;
-                Tupla<T, T2> aux = v[i];
-                v[i] = v[j];
-                v[j] = aux;  //hace el intercambio del elemento del indice i con el elemento que este en el indice j
-            }
-        }
-        return i;
-    }
-    
-    void quicksort(int ini, int fin){
-        if(ini>=fin){
-             cout<<"";
-        }else{
-            int i=particion(ini, fin); 
-            quicksort(ini, i-1);
-            quicksort(i+1, fin);  //Hace la partición y despues organiza lo que queda en ambos lados
-        }   
-    }
-    
     void print() {
-        for (int i = 0; i <len; i++) {
+        for (int i = 0; i <size; i++) {
             cout << "(" << v[i].getKey() << ", " << v[i].getDato() << ")" << "\t";
         }
         cout<<endl;
@@ -137,17 +136,15 @@ public:
 };
 
 int main(){
-    Mapa<int, string> p = Mapa<int, string>();
-    Tupla<int,string> p1 = Tupla<int, string>(0, "H");
-    Tupla<int,string> p2 = Tupla<int, string>(3, "A");
-    Tupla<int,string> p3 = Tupla<int, string>(2, "L");
-    Tupla<int,string> p4 = Tupla<int, string>(1, "O");
+    Tupla<string, int> p1 = Tupla<string, int>("A", 0);
+    Tupla<string, int> p2 = Tupla<string, int>("D", 3);
+    Tupla<string, int> p3 = Tupla<string, int>("C", 2);
+    Tupla<string, int> p4 = Tupla<string, int>("B", 1);
+    Mapa<string, int> p = Mapa<string, int>();
     p.push(p1);
     p.push(p2);
     p.push(p3);
     p.push(p4);
     p.print();
-    p.quicksort(0, 3);
-    p.print();
-    cout<<p.find(1)<<endl;
+    cout<<p.find("B")<<endl;
 }
