@@ -110,9 +110,9 @@ public:
         for(j; j<fin+1; j++){
             if(v[j].getKey()<=pivote){  //Si encuentra un elemento menor que el pivote
                 i++;
-                int aux = v[i].getKey();
-                v[i].setKey(v[j].getKey());
-                v[j].setKey(aux);  //hace el intercambio del elemento del indice i con el elemento que este en el indice j
+                Tupla<T, T2> aux = v[i];
+                v[i] = v[j];
+                v[j] = aux;  //hace el intercambio del elemento del indice i con el elemento que este en el indice j
             }
         }
         return i;
@@ -139,13 +139,15 @@ public:
 int main(){
     Mapa<int, string> p = Mapa<int, string>();
     Tupla<int,string> p1 = Tupla<int, string>(0, "H");
-    Tupla<int,string> p2 = Tupla<int, string>(1, "O");
+    Tupla<int,string> p2 = Tupla<int, string>(3, "A");
     Tupla<int,string> p3 = Tupla<int, string>(2, "L");
-    Tupla<int,string> p4 = Tupla<int, string>(3, "A");
+    Tupla<int,string> p4 = Tupla<int, string>(1, "O");
     p.push(p1);
     p.push(p2);
     p.push(p3);
     p.push(p4);
     p.print();
-    cout<<p.find(2)<<endl;
+    p.quicksort(0, 3);
+    p.print();
+    cout<<p.find(1)<<endl;
 }
