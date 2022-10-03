@@ -16,6 +16,9 @@ public:
     }
     
 //------------------------------------------------METODOS-----------------------------------------//
+    Tupla(){
+    }
+    
     void setKey(T k){
         key = k;
     }
@@ -136,9 +139,9 @@ public:
 int main(){
     Mapa<int, string> p = Mapa<int, string>();
     Tupla<int,string> p1 = Tupla<int, string>(0, "H");
-    Tupla<int,string> p2 = Tupla<int, string>(0, "O");
-    Tupla<int,string> p3 = Tupla<int, string>(0, "L");
-    Tupla<int,string> p4 = Tupla<int, string>(0, "A");
+    Tupla<int,string> p2 = Tupla<int, string>(1, "O");
+    Tupla<int,string> p3 = Tupla<int, string>(2, "L");
+    Tupla<int,string> p4 = Tupla<int, string>(3, "A");
     p.push(p1);
     p.push(p2);
     p.push(p3);
