@@ -79,18 +79,26 @@ public:
     }
     
     T hash(T2 s){
-        char c = 65;
+        char c = 0;
+        int result = 0;
         for(int i = 0; i<s.length(); i++){
-            c += s[i];
+            c = s[i];
+            result+=c;
         }
-        return c;
+        return result%18;
     }
     
     T reHash(T2 s){
         T code = hash(s);
         Tupla<T, T2> m = Tupla<T, T2>(code, s);
         while(Haskey(m) == true){
-            code += rand()%15;
+            if(code%2 != 0){
+                code = 3*(code) + 1;
+                m.setKey(code);
+            }else if(code%2 == 0){
+                code = code/2;
+                m.setKey(code);
+            }
         }
         return code;
     }
@@ -107,7 +115,6 @@ public:
     void push(T2 d){
         T k = hash(d);
         Tupla<T, T2> ph = Tupla<T, T2>(k, d);
-        
         if(Haskey(ph) == true){
             k = reHash(d);
             ph.setKey(k);
@@ -161,7 +168,7 @@ public:
     
     void print() {
         for (int i = 0; i <size; i++) {
-            cout << "(" << v[i].getKey() << ", " << v[i].getDato() << ")" << "\t";
+            cout << "(" << v[i].getKey() << ", " << v[i].getDato() << ")" << "\n";
         }
         cout<<endl;
     }
@@ -174,6 +181,7 @@ int main(){
     p.push("L");
     p.push("A");
     p.push("hola");
+    p.push("halo");
     p.print();
     return 0;
 }
