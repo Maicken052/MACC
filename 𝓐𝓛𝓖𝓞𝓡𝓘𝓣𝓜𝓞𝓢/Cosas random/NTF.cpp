@@ -2,67 +2,67 @@
 #include<string>
 using namespace std;
 
-//--------------------------------------------CLASE TUPLA------------------------------------------//
+//--------------------------------------------CLASE TOKENS------------------------------------------//
 template <typename T, typename T2>
-class Tupla{
-    T key;
-    T2 dato;
+class Tokens{
+    T Nft;
+    T2 Token;
 
 public:
-    Tupla(T k, T2 d) {
-        key = k;
-        dato = d;
+    Tokens(T n, T2 t) {
+        Nft = n;
+        Token = t;
     }
     
-    Tupla(){
+    Tokens(){
     }
     
-    void setKey(T k){
-        key = k;
+    void setNft(T n){
+        Nft = n;
     }
     
-    void setDato(T2 d){
-        dato = d;
+    void setToken(T2 t){
+        Token = t;
     }
     
-    T getKey(){
-        return key;
+    T getNft(){
+        return Nft;
     }
     
-    T2 getDato(){
-        return dato;
+    T2 getToken(){
+        return Token;
     }
     
-    Tupla& operator=(const Tupla& f) { 
-		setKey(f.key);
-		setDato(f.dato);
+    Tokens& operator=(const Tokens& f) { 
+		setNft(f.Nft);
+		setToken(f.Token);
 		return *this; 
 	}
 };
 
-//---------------------------------------------CLASE MAPA--------------------------------------------//
+//---------------------------------------------CLASE HASH--------------------------------------------//
 template <typename T, typename T2>
-class Mapa{
+class Hash{
     int size;
     int capacity;
-    Tupla<T, T2>* v;
+    Tokens<T, T2>* v;
 
 public:
-    Mapa(){
+    Hash(){
         size = 0;
         capacity = 10;
-        v = new Tupla<T, T2>[capacity];
+        v = new Tokens<T, T2>[capacity];
     }
     
-    Mapa(int cap){
+    Hash(int cap){
         size = 0;
         capacity = cap;
-        v = new Tupla<T, T2>[capacity];
+        v = new Tokens<T, T2>[capacity];
     }
 
-    bool Haskey(Tupla<T, T2> t){
+    bool HasToken(Tokens<T, T2> t){
         for(int i = 0; i<size; i++){
-            if (v[i].getKey() == t.getKey()){
+            if (v[i].getToken() == t.getToken()){
                 return true;
             }
         }
@@ -75,33 +75,33 @@ public:
         }
     }
     
-    T hash(T2 s){
+    T2 hash(T nft){
         char c = 0;
         int result = 0;
-        for(int i = 0; i<s.length(); i++){
-            c = s[i];
+        for(int i = 0; i<nft.length(); i++){
+            c = nft[i];
             result+=c;
         }
-        return result%18;
+        return result;
     }
     
-    T reHash(T2 s){
-        T code = hash(s);
-        Tupla<T, T2> m = Tupla<T, T2>(code, s);
-        while(Haskey(m) == true){
-            if(code%2 != 0){
-                code = 3*(code) + 1;
-                m.setKey(code);
-            }else if(code%2 == 0){
-                code = code/2;
-                m.setKey(code);
+    T2 reHash(T nft){
+        T2 Token = hash(nft);
+        Tokens<T, T2> m = Tokens<T, T2>(nft, Token);
+        while(HasToken(m) == true){
+            if(Token%2 != 0){
+                Token = 3*(Token) + 1;
+                m.setToken(Token);
+            }else if(Token%2 == 0){
+                Token = Token/2;
+                m.setToken(Token);
             }
         }
-        return code;
+        return Token;
     }
     
     void increase_capacity(){
-        Tupla<T, T2>* v1 = new Tupla<T, T2>[2*capacity];
+        Tokens<T, T2>* v1 = new Tokens<T, T2>[2*capacity];
         for (int i = 0; i < size; i++){
             v1[i] = v[i];
         }
@@ -109,13 +109,13 @@ public:
         v = v1;
     }
     
-    void push(T2 d){
-        T k = hash(d);
-        Tupla<T, T2> ph = Tupla<T, T2>(k, d);
+    void push(T nft){
+        T2 Token = hash(nft);
+        Tokens<T, T2> ph = Tokens<T, T2>(nft, Token);
         
-        if(Haskey(ph) == true){
-            k = reHash(d);
-            ph.setKey(k);
+        if(HasToken(ph) == true){
+            Token = reHash(nft);
+            ph.setToken(Token);
         }
         if (size >= capacity){ 
             increase_capacity();
@@ -127,7 +127,7 @@ public:
         }else{
             int flag = 0;
             for(int i = 0; i<size; i++){
-                if(ph.getKey()<v[i].getKey()){
+                if(ph.getNft()<v[i].getNft()){
                     corrimiento_der(i);
                     v[i] = ph;
                     flag = 1;
@@ -141,16 +141,16 @@ public:
         }  
     }
 
-    T2 find(T key){
+    T2 find(T nft){
         int left = 0;
         int right = size-1;
         while(left <= right){
             int mid = (right+left)/2;;
-            if(v[mid].getKey() == key){
-                return v[mid].getDato();
+            if(v[mid].getNft() == nft){
+                return v[mid].getToken();
             }
             else{
-                if(v[mid].getKey()>key){
+                if(v[mid].getNft()>nft){
                     right = mid-1;
                 }
                 else{
@@ -163,7 +163,7 @@ public:
     
     void print() {
         for (int i = 0; i <size; i++) {
-            cout << "(" << v[i].getKey() << ", " << v[i].getDato() << ")" << "\n";
+            cout << "(" << v[i].getNft() << ", " << v[i].getToken() << ")" << "\n";
         }
         cout<<endl;
     }
@@ -188,7 +188,8 @@ public:
         NFT3_precio = 2500;
     }    
 //------------------------------------------------METODOS-----------------------------------------//
-    void exhibicion(string i){
+    void exhibicion(){
+        cout<<
         if(i == "nft1"){
             for(int j = 0; j<nft1.length(); j++){
                 if(nft1[j] == 32){
@@ -218,10 +219,28 @@ public:
             cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT3_precio<<" 𝐁𝐓𝐂!"<<endl;
         }
     }
+    
+    void comprar(){
+        int c;
+        Hash<string, int> Tokens_ = Hash<string, int>();
+        Tokens_.push(nft1);
+        Tokens_.push(nft2);
+        Tokens_.push(nft3);
+        cout<<"¿𝐐𝐮𝐞 𝐧𝐟𝐭 𝐝𝐞𝐬𝐞𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫?"<<endl;
+        cin>>c;
+        
+        if(c == 1){
+            cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft1)<<endl;
+        }else if(c == 2){
+            cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft2)<<endl;
+        }else if(c == 3){
+            cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft3)<<endl;
+        }
+    }
 };
 
 int main(){
     NFT t = NFT();
-    t.exhibicion("nft2");
+    t.comprar();
     return 0;
 }
