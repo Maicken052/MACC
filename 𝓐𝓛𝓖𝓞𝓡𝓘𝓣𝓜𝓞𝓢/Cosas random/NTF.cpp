@@ -69,6 +69,15 @@ public:
         return false;
     }
     
+    string reedem(T2 t){
+        for(int i = 0; i<size; i++){
+            if (v[i].getToken() == t){
+                return v[i].getNft();
+            }
+        }
+        return "El-token-ingresado-no-coincide-con-ningun-nft-existente-😞";
+    }
+    
     void corrimiento_der(int i){
         for(int j = size; j>i; j--){
             v[j] = v[j-1];
@@ -188,59 +197,63 @@ public:
         NFT3_precio = 2500;
     }    
 //------------------------------------------------METODOS-----------------------------------------//
-    void exhibicion(){
-        cout<<
-        if(i == "nft1"){
-            for(int j = 0; j<nft1.length(); j++){
-                if(nft1[j] == 32){
-                    cout<<endl;
-                }else{
-                    cout<<nft1[j];
-                }
+    void print_nft(string n){
+        for(int j = 0; j<n.length(); j++){
+            if(n[j] == 32){
+                cout<<endl;
+            }else{
+                cout<<n[j];
             }
-            cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT1_precio<<" 𝐁𝐓𝐂!"<<endl;
-        }else if(i == "nft2"){
-            for(int j = 0; j<nft2.length(); j++){
-                if(nft2[j] == 32){
-                    cout<<endl;
-                }else{
-                    cout<<nft2[j];
-                }
-            }
-            cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT2_precio<<" 𝐁𝐓𝐂!"<<endl;
-        }else if(i == "nft3"){
-            for(int j = 0; j<nft3.length(); j++){
-                if(nft3[j] == 32){
-                    cout<<endl;
-                }else{
-                    cout<<nft3[j];
-                }
-            }
-            cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT3_precio<<" 𝐁𝐓𝐂!"<<endl;
         }
     }
     
-    void comprar(){
-        int c;
+    void exhibicion(){
+        print_nft(nft1);
+        cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT1_precio<<" 𝐁𝐓𝐂!"<<endl<<endl;
+        print_nft(nft2);
+        cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT2_precio<<" 𝐁𝐓𝐂!"<<endl<<endl;
+        print_nft(nft3);
+        cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT3_precio<<" 𝐁𝐓𝐂!"<<endl<<endl;
+    }
+    
+    void comprar_o_redimir(){
+        string a;
         Hash<string, int> Tokens_ = Hash<string, int>();
         Tokens_.push(nft1);
         Tokens_.push(nft2);
         Tokens_.push(nft3);
-        cout<<"¿𝐐𝐮𝐞 𝐧𝐟𝐭 𝐝𝐞𝐬𝐞𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫?"<<endl;
-        cin>>c;
         
-        if(c == 1){
-            cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft1)<<endl;
-        }else if(c == 2){
-            cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft2)<<endl;
-        }else if(c == 3){
-            cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft3)<<endl;
+        cout<<"¿𝐐𝐮𝐞 𝐝𝐞𝐬𝐞𝐚 𝐡𝐚𝐜𝐞𝐫?";
+        cin>>a;
+        
+        if(a == "Comprar" or a == "comprar"){
+            int c;
+            cout<<"¿𝐐𝐮𝐞 𝐧𝐟𝐭 𝐝𝐞𝐬𝐞𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫?";
+            cin>>c;
+            
+            if(c == 1){
+                cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft1)<<endl;
+            }else if(c == 2){
+                cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft2)<<endl;
+            }else if(c == 3){
+                cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft3)<<endl;
+            }
+        }else if(a == "Redimir" or a == "redimir"){
+            int t;
+            cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐬𝐮 𝐭𝐨𝐤𝐞𝐧:";
+            cin>>t;
+            
+            string n = Tokens_.reedem(t);
+            cout<< "𝐄𝐥 𝐧𝐟𝐭 𝐚𝐬𝐨𝐜𝐢𝐚𝐝𝐨 𝐚 𝐝𝐢𝐜𝐡𝐨 𝐭𝐨𝐤𝐞𝐧 𝐞𝐬:"<<endl;
+            print_nft(n);
         }
     }
 };
 
 int main(){
     NFT t = NFT();
-    t.comprar();
+    t.exhibicion();
+    t.comprar_o_redimir();
+
     return 0;
 }
