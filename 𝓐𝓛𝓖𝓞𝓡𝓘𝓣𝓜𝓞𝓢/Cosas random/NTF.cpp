@@ -91,6 +91,7 @@ public:
             c = nft[i];
             result+=c;
         }
+        
         return result;
     }
     
@@ -288,6 +289,12 @@ public:
             return "";
         }else if(a == "wallet" or a == "wallet"){
             cout<<"𝐁𝐓𝐂 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐥𝐞: "<<wallet<<endl;
+            return "";
+        }else if(a == "Recargar" or a == "recargar"){
+            int r;
+            cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐜𝐚𝐧𝐭𝐢𝐝𝐚𝐝 𝐚 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫: ";
+            cin>>r;
+            wallet+=r;
             return "";
         }else if(a == "Salir" or a == "salir"){
             return "Fin, Gracias por jugar";    
