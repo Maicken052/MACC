@@ -87,23 +87,31 @@ public:
     T2 hash(T nft){
         char c = 0;
         int result = 0;
+        string f;
         for(int i = 0; i<nft.length(); i++){
             c = nft[i];
             result+=c;
         }
-        
-        return result;
+        string result2 = to_string(result);
+        c = 17;
+        for(int i = 0; i<result2.length(); i++){
+            c += result2[i];
+            f += c;
+            f+= result2[i];
+            c=17;
+        }
+        return f;
     }
     
     T2 reHash(T nft){
         T2 Token = hash(nft);
         Tokens<T, T2> m = Tokens<T, T2>(nft, Token);
         while(HasToken(m) == true){
-            if(Token%2 != 0){
-                Token = 3*(Token) + 1;
+            if(Token.length()%2 != 0){
+                Token += to_string(3*(Token.length()) + 1);
                 m.setToken(Token);
-            }else if(Token%2 == 0){
-                Token = Token/2;
+            }else if(Token.length()%2 == 0){
+                Token += to_string(Token.length()/2);
                 m.setToken(Token);
             }
         }
@@ -225,7 +233,7 @@ public:
         cout<<"☆:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::☆"<<endl<<endl;
     }
     
-    void comprar(Hash<string, int> Tokens_){
+    void comprar(Hash<string, string> Tokens_){
         int c;
         cout<<"¿𝐐𝐮𝐞 𝐧𝐟𝐭 𝐝𝐞𝐬𝐞𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫?";
         cin>>c;
@@ -257,8 +265,8 @@ public:
         }
     }
     
-    void redimir(Hash<string, int> Tokens_){
-        int t;
+    void redimir(Hash<string, string> Tokens_){
+        string t;
             cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐬𝐮 𝐭𝐨𝐤𝐞𝐧:";
             cin>>t;
             
@@ -268,51 +276,56 @@ public:
             cout<<endl;
     }
     
-    string Jugar(){
-        string a;
-        Hash<string, int> Tokens_ = Hash<string, int>();
+    int Jugar(){
+        int a;
+        Hash<string, string> Tokens_ = Hash<string, string>();
         Tokens_.push(nft1);
         Tokens_.push(nft2);
         Tokens_.push(nft3);
-        
-        cout<<"¿𝐐𝐮𝐞 𝐝𝐞𝐬𝐞𝐚 𝐡𝐚𝐜𝐞𝐫?";
+        cout<<"𝐏𝐚𝐫𝐚 𝐯𝐞𝐫 𝐥𝐚 𝐠𝐚𝐥𝐞𝐫𝐢𝐚, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟏"<<endl<<"𝐏𝐚𝐫𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫 𝐮𝐧 𝐧𝐟𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟐"<<endl<<"𝐏𝐚𝐫𝐚 𝐫𝐞𝐝𝐢𝐦𝐢𝐫 𝐮𝐧 𝐧𝐟𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟑"<<endl<<"𝐏𝐚𝐫𝐚 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟒"<<endl<<"𝐏𝐚𝐫𝐚 𝐯𝐞𝐫 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟓"<<endl<<"𝐄𝐬𝐜𝐫𝐢𝐛𝐚 𝟎 𝐩𝐚𝐫𝐚 𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐫"<<endl<<endl<<"¿𝐐𝐮𝐞 𝐝𝐞𝐬𝐞𝐚 𝐡𝐚𝐜𝐞𝐫?:";
         cin>>a;
+        cout<<endl;
         
-        if(a == "Comprar" or a == "comprar"){
-            comprar(Tokens_);
-            return "";
-        }else if(a == "Redimir" or a == "redimir"){
-            redimir(Tokens_);
-            return "";
-        }else if(a == "galeria" or a == "galeria"){
+        if(a == 1){
             exhibicion();
-            return "";
-        }else if(a == "wallet" or a == "wallet"){
-            cout<<"𝐁𝐓𝐂 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐥𝐞: "<<wallet<<endl;
-            return "";
-        }else if(a == "Recargar" or a == "recargar"){
+            return 0;
+        }else if(a == 2){
+            comprar(Tokens_);
+            cout<<"-------------------------------------------------------------------"<<endl;
+            return 0;
+        }else if(a == 3){
+            redimir(Tokens_);
+            cout<<"-------------------------------------------------------------------"<<endl;
+            return 0;
+        }else if(a == 4){
             int r;
             cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐜𝐚𝐧𝐭𝐢𝐝𝐚𝐝 𝐚 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫: ";
             cin>>r;
             wallet+=r;
-            return "";
-        }else if(a == "Salir" or a == "salir"){
-            return "Fin, Gracias por jugar";    
+            cout<<"-------------------------------------------------------------------"<<endl;
+            return 0;
+        }else if(a == 5){
+            cout<<"𝐁𝐓𝐂 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐥𝐞: "<<wallet<<endl;
+            cout<<"-------------------------------------------------------------------"<<endl;
+            return 0;
+        }else if(a == 0){
+            return 1;    
         }else{
             cout<<"𝐀𝐜𝐜𝐢𝐨𝐧 𝐢𝐧𝐯𝐚𝐥𝐢𝐝𝐚😞"<<endl;
-            return "";
+            cout<<"-------------------------------------------------------------------"<<endl;
+            return 0;
         }
     }
 };
 
 int main(){
-    int BTC;
-    string a;
+    long BTC;
+    int a;
     cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐢𝐧𝐠𝐫𝐞𝐬𝐚𝐫?";
     cin>>BTC;
     NFT t = NFT(BTC);
     do{
     a = t.Jugar();
-    }while(a != "Fin, Gracias por jugar");
-    cout<<a;
+    }while(a == 0);
+    cout<<"Fin, Gracias por jugar";
 }
