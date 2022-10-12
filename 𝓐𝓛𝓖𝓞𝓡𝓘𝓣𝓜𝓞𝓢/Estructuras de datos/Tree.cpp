@@ -62,7 +62,7 @@ public:
     
     void add(int d){
         Nodo* n = new Nodo(d);
-        if(root = NULL){
+        if(root == NULL){
             root = n;
         }else{
             Nodo* t = root;
