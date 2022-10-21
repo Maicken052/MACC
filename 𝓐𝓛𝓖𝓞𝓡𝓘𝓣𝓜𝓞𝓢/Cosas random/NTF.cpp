@@ -234,11 +234,12 @@ public:
     }
     
     void comprar(Hash<string, string> Tokens_){
-        int c;
+        string c;
         cout<<"¿𝐐𝐮𝐞 𝐧𝐟𝐭 𝐝𝐞𝐬𝐞𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫?";
         cin>>c;
-            
-        if(c == 1){
+        cout<<endl;
+        
+        if(c == "1"){
             if(wallet>=NFT1_precio){
                 wallet -=NFT1_precio;
                 cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft1)<<endl;
@@ -246,7 +247,7 @@ public:
             }else{
                 cout<<"₿ 𝐅𝐨𝐧𝐝𝐨𝐬 𝐢𝐧𝐬𝐮𝐟𝐢𝐜𝐢𝐞𝐧𝐭𝐞𝐬 ₿"<<endl;
             }
-        }else if(c == 2){
+        }else if(c == "2"){
             if(wallet>=NFT2_precio){
                 wallet -=NFT2_precio;
                 cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft2)<<endl;
@@ -254,7 +255,7 @@ public:
             }else{
                 cout<<"₿ 𝐅𝐨𝐧𝐝𝐨𝐬 𝐢𝐧𝐬𝐮𝐟𝐢𝐜𝐢𝐞𝐧𝐭𝐞𝐬 ₿"<<endl;
             }
-        }else if(c == 3){
+        }else if(c == "3"){
             if(wallet>=NFT3_precio){
                 wallet -=NFT3_precio;
                 cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft3)<<endl;
@@ -262,6 +263,8 @@ public:
             }else{
                 cout<<"₿ 𝐅𝐨𝐧𝐝𝐨𝐬 𝐢𝐧𝐬𝐮𝐟𝐢𝐜𝐢𝐞𝐧𝐭𝐞𝐬 ₿"<<endl;
             }
+        }else{
+            cout<<"𝐍𝐓𝐅 𝐈𝐧𝐯𝐚𝐥𝐢𝐝𝐨😞"<<endl;
         }
     }
     
@@ -269,6 +272,7 @@ public:
         string t;
             cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐬𝐮 𝐭𝐨𝐤𝐞𝐧:";
             cin>>t;
+            cout<<endl;
             
             string n = Tokens_.reedem(t);
             cout<< "𝐄𝐥 𝐧𝐟𝐭 𝐚𝐬𝐨𝐜𝐢𝐚𝐝𝐨 𝐚 𝐝𝐢𝐜𝐡𝐨 𝐭𝐨𝐤𝐞𝐧 𝐞𝐬:"<<endl;
@@ -277,7 +281,7 @@ public:
     }
     
     int Jugar(){
-        int a;
+        string a;
         Hash<string, string> Tokens_ = Hash<string, string>();
         Tokens_.push(nft1);
         Tokens_.push(nft2);
@@ -286,29 +290,45 @@ public:
         cin>>a;
         cout<<endl;
         
-        if(a == 1){
+        if(a == "1"){
             exhibicion();
             return 0;
-        }else if(a == 2){
+        }else if(a == "2"){
             comprar(Tokens_);
             cout<<"-------------------------------------------------------------------"<<endl;
             return 0;
-        }else if(a == 3){
+        }else if(a == "3"){
             redimir(Tokens_);
             cout<<"-------------------------------------------------------------------"<<endl;
             return 0;
-        }else if(a == 4){
-            int r;
-            cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐜𝐚𝐧𝐭𝐢𝐝𝐚𝐝 𝐚 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫: ";
-            cin>>r;
-            wallet+=r;
+        }else if(a == "4"){
+            string r, r_str;
+            bool f = true;
+            int r_int;
+            
+            while(f){
+                try{
+                    f = false;
+                    cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫?"<<endl;
+                    cin>>r;
+                    r_int = stoi(r);
+                    string r_str = to_string(r_int);
+                    if(r != r_str){
+                        throw "error";
+                    }
+                }catch(...){
+                    cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐮𝐧 𝐧𝐮𝐦𝐞𝐫𝐨 𝐯𝐚𝐥𝐢𝐝𝐨"<<endl;
+                    f = true;
+                }
+            }
+            wallet+=r_int;
             cout<<"-------------------------------------------------------------------"<<endl;
             return 0;
-        }else if(a == 5){
+        }else if(a == "5"){
             cout<<"𝐁𝐓𝐂 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐥𝐞: "<<wallet<<endl;
             cout<<"-------------------------------------------------------------------"<<endl;
             return 0;
-        }else if(a == 0){
+        }else if(a == "0"){
             return 1;    
         }else{
             cout<<"𝐀𝐜𝐜𝐢𝐨𝐧 𝐢𝐧𝐯𝐚𝐥𝐢𝐝𝐚😞"<<endl;
@@ -319,11 +339,28 @@ public:
 };
 
 int main(){
-    long BTC;
+    string BTC;
     int a;
-    cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐢𝐧𝐠𝐫𝐞𝐬𝐚𝐫?";
-    cin>>BTC;
-    NFT t = NFT(BTC);
+    bool F = true;
+    long BTC_int;
+    
+    while(F){
+        try{
+            F = false;
+            cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐢𝐧𝐠𝐫𝐞𝐬𝐚𝐫?"<<endl;
+            cin>>BTC;
+            BTC_int = stoi(BTC);
+            string BTC_str = to_string(BTC_int);
+            if(BTC != BTC_str){
+                throw "error";
+            }
+        }catch(...){
+            cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐮𝐧 𝐧𝐮𝐦𝐞𝐫𝐨 𝐯𝐚𝐥𝐢𝐝𝐨"<<endl;
+            F = true;
+        }
+    }
+    cout<<"-------------------------------------------------------------------"<<endl;
+    NFT t = NFT(BTC_int);
     do{
     a = t.Jugar();
     }while(a == 0);
