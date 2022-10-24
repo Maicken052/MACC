@@ -191,16 +191,16 @@ public:
 
 
 int main(){
-   
     Stack l = Stack();
 
     cout<<"-----------------------------------------"<<endl;
-    cout<<"LISTA 1"<<endl;
-    for(int i = 3; i<10; i++){
+    cout<<"PILA ANTES:"<<endl;
+    for(int i = 1; i<10; i++){
         l.push(new Point(i,i));
     }
     l.print();
-    cout<<(*l.pop())<<endl;
+    cout<<"El elemento que sale de la pila es: "<<(*l.pop())<<endl;
+    cout<<"PILA DESPUES:"<<endl;
     l.print();
     cout<<"-----------------------------------------"<<endl;
 
