@@ -149,10 +149,12 @@ public:
         size++;
     }
    
-    void pop(){
+    Point* pop(){
+        Point* n2 = new Point(ptr->getDato()->getX(), ptr->getDato()->getY());
         Nodo* n = ptr;
         ptr = n->getNext();
         delete n;
+        return n2;
     }
        
     Nodo* get(int i){
@@ -198,7 +200,7 @@ int main(){
         l.push_back(new Point(i,i));
     }
     l.print();
-    l.pop();
+    cout<<(*l.pop())<<endl;
     l.print();
     cout<<"-----------------------------------------"<<endl;
 
