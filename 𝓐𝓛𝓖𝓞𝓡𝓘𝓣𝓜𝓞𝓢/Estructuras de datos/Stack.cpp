@@ -141,7 +141,7 @@ public:
         delete t;
     }
     
-    void push_back(Point* d){
+    void push(Point* d){
         Nodo* front = ptr;
         Nodo* top = new Nodo(d);
         ptr = top;
@@ -197,7 +197,7 @@ int main(){
     cout<<"-----------------------------------------"<<endl;
     cout<<"LISTA 1"<<endl;
     for(int i = 3; i<10; i++){
-        l.push_back(new Point(i,i));
+        l.push(new Point(i,i));
     }
     l.print();
     cout<<(*l.pop())<<endl;
