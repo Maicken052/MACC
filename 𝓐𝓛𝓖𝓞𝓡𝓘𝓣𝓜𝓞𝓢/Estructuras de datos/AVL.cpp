@@ -1,5 +1,6 @@
 #include<iostream>
 #include<cmath>
+#define SPACE 10
 using namespace std;
 
 class Nodo{
@@ -206,12 +207,17 @@ public:
                         }
                     //Rotación desbalance en la izquierda pero dato insertado en la derecha
                     }else{
+                        bool p = isHijo_Izq(t->getDato());
                         Nodo* ZD = z->getDer();
                         z->setDer(ZD->getIzq());
                         ZD->setIzq(z);
                         t->setIzq(ZD->getDer());
                         ZD->setDer(t);
-                        pt->setIzq(ZD);
+                        if(p){
+                            pt->setIzq(ZD);
+                        }else{
+                            pt->setDer(ZD);
+                        }
                     }
                     
                 //Rotacion todo derecha
@@ -228,12 +234,17 @@ public:
                         }
                     //Rotación desbalance en la derecha pero dato insertado en la izquierda
                     }else{
+                        bool p = isHijo_Izq(t->getDato());
                         Nodo* ZI = z->getIzq();
                         z->setIzq(ZI->getDer());
                         ZI->setDer(z);
                         t->setDer(ZI->getIzq());
                         ZI->setIzq(t);
-                        pt->setDer(ZI);
+                        if(p){
+                            pt->setIzq(ZI);
+                        }else{
+                            pt->setDer(ZI);
+                        }
                     }
                 }
             }
@@ -247,22 +258,33 @@ public:
         root =  new Nodo(d);
     }
     
-    void preorder(){
-        preorder(root);
+    void Inorder(){
+        Inorder(root);
     }
     
-    void preorder(Nodo* r){
+    void Inorder(Nodo* r){
         if( r!= NULL){
-            preorder(r->getIzq());
-            if(r == root){
-                cout<<"La raiz es: "<<r->getDato()<<"\t";    
-            }else{
-                cout<<r->getDato()<<"\t";    
-            }
-            preorder(r->getDer());
+            Inorder(r->getIzq());
+            cout<<r->getDato()<<"\t";    
+            Inorder(r->getDer());
         }                   
     }
     
+    void print2D(Nodo * r, int space) {
+    if (r == NULL) // Base case  1
+      return;
+    space += SPACE; // Increase distance between levels   2
+    print2D(r -> getDer(), space); // Process right child first 3 
+    cout << endl;
+    for (int i = SPACE; i < space; i++) // 5 
+      cout << " "; // 5.1  
+    cout << r -> getDato() << "\n"; // 6
+    print2D(r -> getIzq() , space); // Process left child  7
+    }
+    
+    void print2D(int space){
+        print2D(root, space);
+    }
 };
 
 int main(){
@@ -294,18 +316,10 @@ int main(){
     t.addAVL(-70);
     t.addAVL(-58);
     t.addAVL(-43);
-    t.preorder();
-    cout<<endl;
-    cout<<endl;
     t.addAVL(-23);
-    t.preorder();
-    cout<<endl;
-    cout<<endl;
     t.addAVL(-68);
     t.addAVL(-15);
+    t.print2D(5);
     t.addAVL(-20);
-    t.preorder();
-    cout<<endl;
-
     return 0;
 }
