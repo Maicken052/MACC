@@ -61,33 +61,6 @@ public:
         root = NULL;
     }
     
-    void add(int d){
-        Nodo* n = new Nodo(d);
-        if(root == NULL){
-            root = n;
-        }else{
-            Nodo* t = root;
-            bool found = true;
-            while(found == true){
-                if(t->getDato() < n->getDato()){
-                    if(t->hasDer() == true){
-                        t = t->getDer();
-                    }else{
-                        t->setDer(n);
-                        found = false;
-                    }
-                }else if(t->getDato() > n->getDato()){
-                    if(t->hasIzq()){
-                        t = t->getIzq();
-                    }else{
-                        t->setIzq(n);
-                        found = false;
-                    }
-                }
-            }
-        }
-    }
-    
     int getHeight(Nodo* t){
         if(t != NULL){
             if(t->isHoja()){
@@ -165,38 +138,95 @@ public:
         }
     }
     
-    bool isIzq_Heavy(){
-        return isIzq_Heavy(root);
-    }
-    
-    bool isHijo_Izq(Nodo* t){
-        Nodo* p = es_padre(t->getDato());
-        if(p->getIzq() == t){
+    bool isHijo_Izq(int d){
+        Nodo* p = es_padre(d);
+        if(p->getIzq()->getDato() == d){
             return true;
         }else{
             return false;
         }
     }
     
-    bool isBalanced(){
-        int i = getHeight(root->getIzq());
-        int d = getHeight(root->getDer());
+    bool isHijo_Der(int d){
+        Nodo* p = es_padre(d);
+        if(p->getDer()->getDato() == d){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    bool isBalanced(Nodo* t){
+        int i = getHeight(t->getIzq());
+        int d = getHeight(t->getDer());
         if(abs(i-d)>1){
-            return true;
-        }else{
             return false;
+        }else{
+            return true;
         }
     }
     
-    void insertAVL(int d){
-        if(isBalanced()){
-            
+    void addAVL(int d, Nodo* t, Nodo* pt){
+        //Add
+        if(t == NULL){
+            Nodo* n = new Nodo(d);
+            if(d < pt->getDato()){
+                pt->setIzq(n);
+            }else{
+                pt->setDer(n);
+            }
+        }else{
+            if(d < t->getDato()){
+                addAVL(d, t->getIzq(), t);
+            }else{
+                addAVL(d, t->getDer(), t);
+            }
+            //Balanceo
+            if(!isBalanced(t)){
+                
+                //Rotacion todo izquierda
+                if(isIzq_Heavy(t)){
+                    if(isHijo_Izq(d)){
+                        Nodo* z = t->getIzq();
+                        pt = es_padre(t->getDato());
+                        t->setIzq(z->getDer());
+                        z->setDer(t);
+                        if(pt == NULL){
+                            root = z;
+                        }else{
+                            pt->setIzq(z);
+                        }
+                    }
+                    
+                //Rotacion todo derecha
+                }else{
+                    if(isHijo_Der(d)){
+                        Nodo* z = t->getDer();
+                        pt = es_padre(t->getDato());
+                        t->setDer(z->getIzq());
+                        z->setIzq(t);
+                        if(pt == NULL){
+                            root = z;
+                        }else{
+                            pt->setDer(z);
+                        }
+                    }
+                }
+            }
         }
+    }
+    
+    void addAVL(int d){
+      if(root != NULL)
+        addAVL(d, root, root);
+      else
+        root =  new Nodo(d);
     }
     
     void preorder(){
         preorder(root);
     }
+    
     void preorder(Nodo* r){
         if( r!= NULL){
             cout<<r->getDato()<<"\t";
@@ -209,20 +239,14 @@ public:
 
 int main(){
     Tree t = Tree();
-    t.add(45);
-    t.add(23);
-    t.add(65);
-    t.add(2);
-    t.add(38);
-    t.add(52);
-    t.add(96);
-    t.add(7);
-    t.add(48);
-    t.add(47);
-    t.add(46);
+    t.addAVL(2);
+    t.addAVL(1);
+    t.addAVL(3);
+    t.addAVL(5);
+    t.addAVL(6);
     
     t.preorder();
     cout<<endl;
-    cout<<t.isIzq_Heavy()<<endl;
+
     return 0;
 }
