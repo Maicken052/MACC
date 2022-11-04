@@ -141,27 +141,34 @@ public:
     
     bool isHijo_Izq(int d){
         Nodo* p = es_padre(d);
-        if(p->getIzq() == NULL){
-            return false;
-        }else{
-            if(p->getIzq()->getDato() == d){
-                return true;
-            }else{
+        if(p != NULL){
+            if(p->getIzq() == NULL){
                 return false;
-            }    
+            }else{
+                if(p->getIzq()->getDato() == d){
+                    return true;
+                }else{
+                    return false;
+                }    
+            }
         }
+        return false;
     }
     
     bool isHijo_Der(int d){
         Nodo* p = es_padre(d);
-        if(p->getDer() == NULL){
-            return false;
-        }else{
-            if(p->getDer()->getDato() == d){
-                return true;
-            }else{
+        if(p != NULL){
+            if(p->getDer() == NULL){
                 return false;
-            }    
+            }else{
+                if(p->getDer()->getDato() == d){
+                    return true;
+                }else{
+                    return false;
+                }    
+            }
+        }else{
+            return false;
         }
     }
     
@@ -198,12 +205,17 @@ public:
                     Nodo* z = t->getIzq();
                     pt = es_padre(t->getDato());
                     if(isHijo_Izq(d)){
+                        bool p = isHijo_Izq(t->getDato());
                         t->setIzq(z->getDer());
                         z->setDer(t);
                         if(pt == NULL){
                             root = z;
                         }else{
-                            pt->setIzq(z);
+                            if(p){
+                                pt->setIzq(z);
+                            }else{
+                                pt->setDer(z);
+                            }
                         }
                     //Rotación desbalance en la izquierda pero dato insertado en la derecha
                     }else{
@@ -225,12 +237,17 @@ public:
                     Nodo* z = t->getDer();
                     pt = es_padre(t->getDato());
                     if(isHijo_Der(d)){
+                        bool p = isHijo_Der(t->getDato());
                         t->setDer(z->getIzq());
                         z->setIzq(t);
                         if(pt == NULL){
                             root = z;
                         }else{
-                            pt->setDer(z);
+                            if(p){
+                                pt->setDer(z);
+                            }else{
+                                pt->setIzq(z);
+                            }
                         }
                     //Rotación desbalance en la derecha pero dato insertado en la izquierda
                     }else{
@@ -319,7 +336,7 @@ int main(){
     t.addAVL(-23);
     t.addAVL(-68);
     t.addAVL(-15);
-    t.print2D(5);
     t.addAVL(-20);
+    t.Inorder();
     return 0;
 }
