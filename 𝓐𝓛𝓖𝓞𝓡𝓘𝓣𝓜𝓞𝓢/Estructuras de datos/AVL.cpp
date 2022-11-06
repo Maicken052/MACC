@@ -3,18 +3,28 @@
 #define SPACE 10
 using namespace std;
 
+//---------------------------CLASE NODO-------------------------//
 class Nodo{
+    //Atributos
     int dato;
     Nodo* izq;
     Nodo* der;
 
-public:   
+public:  
+    //Constructores
     Nodo(int i){
         dato = i;
         izq = NULL;
         der = NULL;
     }
     
+    Nodo(){
+        dato = 0;
+        izq = NULL;
+        der = NULL;
+    }
+    
+    //Getters
     int getDato(){
         return dato;
     }
@@ -27,6 +37,7 @@ public:
     return der;
     }
     
+    //Setters
     void setDato(int i){
         dato = i;
     }
@@ -39,10 +50,9 @@ public:
         der = i;
     }
     
+    //Métodos
     bool isHoja(){
-        if(izq == NULL && der == NULL)
-            return true;
-        return false;
+        return izq == NULL && der == NULL;
     }
     
     bool hasIzq(){
@@ -54,70 +64,84 @@ public:
     }
 };
 
+//---------------------------CLASE TREE-------------------------//
 class Tree{
+    //Atributos
     Nodo* root;
     
 public:
+    //Constructor
     Tree(){
         root = NULL;
     }
     
+    //Métodos
     int getHeight(Nodo* t){
-        if(t != NULL){
-            if(t->isHoja()){
+        if(t != NULL){ //El nodo tiene que existir
+            if(t->isHoja()){ //Si es una hoja, tiene altura 1
                 return 1;
             }else{
                 int i = getHeight(t->getIzq());
                 int d = getHeight(t->getDer());
                 int m = max(i, d);
-                return m+1;
+                return m+1; //De lo contrario, tiene la altura de su hijo más alto sumado a el.
             }
         }else{
             return 0;
         }
     }
     
-    int getHeight(){
-        return getHeight(root);
+    bool isIzq_Heavy(Nodo* t){
+        return getHeight(t->getIzq())>getHeight(t->getDer());  //Saber si el lado izquierdo es el desbalanceado
+    }
+    
+    bool isHijo_Izq(int d){
+        Nodo* p = es_padre(d);  //Obtenemos el padre de el dato
+        if(p != NULL){  //Si el papá es Null, es la raiz
+            if(p->getIzq() == NULL){  //Si el papá no tiene hijo izquierdo
+                return false;
+            }else{
+                return p->getIzq()->getDato() == d;  //Si el hijo izquierdo del papá es el dato ingresado
+            }
+        }
+        return false;
+    }
+
+    bool isBalanced(Nodo* t){
+        int i = getHeight(t->getIzq());  //Sacamos la altura del hijo izquierdo
+        int d = getHeight(t->getDer());  //Sacamos la altura del hijo derecho
+        return abs(i-d)<=1;  //Si el valor absoluto de la resta de ambas alturas es menor o igual a uno, esta balanceado
+    }
+    
+    void t_izqOder(bool p, Nodo* pt, Nodo* z){  //Saber si el nodo que va a ser el nuevo hijo de pt va a la izquierda o derecha.
+        if(p){
+            pt->setIzq(z);
+        }else{
+            pt->setDer(z);
+        }
     }
     
     Nodo* es_padre(int x, Nodo* t){
-        if(t->getDato() == x){
-            return NULL;
-        }
-        if(t->hasIzq()){
-            if(t->getIzq()->getDato() == x){
-                return t;
-            }else{
-                Nodo* ri = t->getIzq();
-                Nodo* m = es_padre(x, ri);
-                if(m != NULL){
-                    if(m->hasIzq()){
-                        if(m->getIzq()->getDato() == x){
-                            return m;;   
-                        }
-                    }if(m->hasDer()){
-                        if(m->getDer()->getDato() == x){
-                            return m;
-                        } 
+        if(t != NULL){  //Si el nodo existe
+            if(t->getDato() == x){  //Si el nodo es la raíz, no tiene padre
+                return NULL;
+            }
+            if(x<t->getDato()){  //Si el dato es menor al nodo, buscamos a la izquierda
+                if(t->hasIzq()){  //Revisamos que exista el nodo izquierdo
+                    if(t->getIzq()->getDato() == x){  //Si el nodo izquierdo es el dato, retornamos el nodo t 
+                        return t;
+                    }else{  //Si no, buscamos en el nodo izquierdo
+                        Nodo* ni = t->getIzq();
+                        return es_padre(x, ni);
                     }
                 }
-            }
-        }if(t->hasDer()){
-            if(t->getDer()->getDato() == x){
-                return t;
-            }else{
-                Nodo* rd = t->getDer();
-                Nodo* l = es_padre(x, rd);
-                if(l != NULL){
-                    if(l->hasIzq()){
-                        if(l->getIzq()->getDato() == x){
-                            return l;
-                        }
-                    }if(l->hasDer()){
-                        if(l->getDer()->getDato() == x){
-                            return l;
-                        } 
+            }else{  //Si el dato es mayor al nodo, buscamos a la derecha
+                if(t->hasDer()){  //Revisamos que exista el nodo derecho
+                    if(t->getDer()->getDato() == x){  //Si el nodo derecho es el dato, retornamos el nodo t
+                        return t;
+                    }else{  //Si no, buscamos en el nodo derecho
+                        Nodo* nd = t->getDer();
+                        return es_padre(x, nd);
                     }
                 }
             }
@@ -129,139 +153,67 @@ public:
         return es_padre(x, root);
     }
     
-    bool isIzq_Heavy(Nodo* t){
-        int i = getHeight(t->getIzq());
-        int d = getHeight(t->getDer());
-        if(i>d){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    
-    bool isHijo_Izq(int d){
-        Nodo* p = es_padre(d);
-        if(p != NULL){
-            if(p->getIzq() == NULL){
-                return false;
-            }else{
-                if(p->getIzq()->getDato() == d){
-                    return true;
-                }else{
-                    return false;
-                }    
-            }
-        }
-        return false;
-    }
-    
-    bool isHijo_Der(int d){
-        Nodo* p = es_padre(d);
-        if(p != NULL){
-            if(p->getDer() == NULL){
-                return false;
-            }else{
-                if(p->getDer()->getDato() == d){
-                    return true;
-                }else{
-                    return false;
-                }    
-            }
-        }else{
-            return false;
-        }
-    }
-    
-    bool isBalanced(Nodo* t){
-        int i = getHeight(t->getIzq());
-        int d = getHeight(t->getDer());
-        if(abs(i-d)>1){
-            return false;
-        }else{
-            return true;
-        }
-    }
-    
     void addAVL(int d, Nodo* t, Nodo* pt){
         //Add
-        if(t == NULL){
+        if(t == NULL){  //Caso base: Si el hijo de pt no existe, se coloca el dato nuevo dependiendo de si es mayor o menor que pt
             Nodo* n = new Nodo(d);
             if(d < pt->getDato()){
                 pt->setIzq(n);
             }else{
                 pt->setDer(n);
             }
-        }else{
+        }else{  //Si no, se evalua si revisamos al lado izquierdo o derecho de t 
             if(d < t->getDato()){
                 addAVL(d, t->getIzq(), t);
             }else{
                 addAVL(d, t->getDer(), t);
             }
+            
             //Balanceo
             if(!isBalanced(t)){
                 
-                //Rotacion todo izquierda
-                if(isIzq_Heavy(t)){
+                bool p = isHijo_Izq(t->getDato());  //Revisamos si t es hijo izquierdo o derecho
+                pt = es_padre(t->getDato());  //Obtenemos el padre de t
+                
+                if(isIzq_Heavy(t)){  //Si el lado izquierdo es el desbalanceado
                     Nodo* z = t->getIzq();
-                    pt = es_padre(t->getDato());
                     if(isHijo_Izq(d)){
-                        bool p = isHijo_Izq(t->getDato());
+                        //Rotación todo izquierda
                         t->setIzq(z->getDer());
                         z->setDer(t);
                         if(pt == NULL){
                             root = z;
                         }else{
-                            if(p){
-                                pt->setIzq(z);
-                            }else{
-                                pt->setDer(z);
-                            }
+                            t_izqOder(p, pt, z);
                         }
                     //Rotación desbalance en la izquierda pero dato insertado en la derecha
                     }else{
-                        bool p = isHijo_Izq(t->getDato());
                         Nodo* ZD = z->getDer();
                         z->setDer(ZD->getIzq());
                         ZD->setIzq(z);
                         t->setIzq(ZD->getDer());
                         ZD->setDer(t);
-                        if(p){
-                            pt->setIzq(ZD);
-                        }else{
-                            pt->setDer(ZD);
-                        }
+                        t_izqOder(p, pt, ZD);
                     }
-                    
-                //Rotacion todo derecha
-                }else{
+                }else{  //Si el lado derecho está desbalanceado
                     Nodo* z = t->getDer();
-                    pt = es_padre(t->getDato());
-                    if(isHijo_Der(d)){
-                        bool p = isHijo_Der(t->getDato());
+                    if(!isHijo_Izq(d)){
+                        //Rotación todo derecha
                         t->setDer(z->getIzq());
                         z->setIzq(t);
                         if(pt == NULL){
                             root = z;
                         }else{
-                            if(p){
-                                pt->setDer(z);
-                            }else{
-                                pt->setIzq(z);
-                            }
+                            t_izqOder(p, pt, z);
                         }
                     //Rotación desbalance en la derecha pero dato insertado en la izquierda
                     }else{
-                        bool p = isHijo_Izq(t->getDato());
                         Nodo* ZI = z->getIzq();
                         z->setIzq(ZI->getDer());
                         ZI->setDer(z);
                         t->setDer(ZI->getIzq());
                         ZI->setIzq(t);
-                        if(p){
-                            pt->setIzq(ZI);
-                        }else{
-                            pt->setDer(ZI);
-                        }
+                        t_izqOder(p, pt, ZI);
                     }
                 }
             }
@@ -269,34 +221,35 @@ public:
     }
     
     void addAVL(int d){
-      if(root != NULL)
-        addAVL(d, root, root);
-      else
-        root =  new Nodo(d);
+        if(root == NULL){  //Caso base: El dato agregado es la raiz
+            root =  new Nodo(d);
+        }else{
+            addAVL(d, root, root);  //Si no, se hace recursividad desde la raiz   
+        }
+    }
+    
+    void Inorder(Nodo* r){
+        if( r!= NULL){
+            Inorder(r->getIzq());  //Mostrar el nodo izquierdo
+            cout<<r->getDato()<<"\t";  //Mostrar al padre    
+            Inorder(r->getDer());  //Mostrar el nodo derecho
+        }                   
     }
     
     void Inorder(){
         Inorder(root);
     }
     
-    void Inorder(Nodo* r){
-        if( r!= NULL){
-            Inorder(r->getIzq());
-            cout<<r->getDato()<<"\t";    
-            Inorder(r->getDer());
-        }                   
-    }
-    
-    void print2D(Nodo * r, int space) {
-    if (r == NULL) // Base case  1
+    void print2D(Nodo * r, int space) {  //Mostrar el arbol por niveles
+    if (r == NULL) // Caso base
       return;
-    space += SPACE; // Increase distance between levels   2
-    print2D(r -> getDer(), space); // Process right child first 3 
+    space += SPACE; // Aumenta la distancia entre niveles
+    print2D(r -> getDer(), space); // Se procesa el hijo derecho
     cout << endl;
-    for (int i = SPACE; i < space; i++) // 5 
-      cout << " "; // 5.1  
-    cout << r -> getDato() << "\n"; // 6
-    print2D(r -> getIzq() , space); // Process left child  7
+    for (int i = SPACE; i < space; i++) 
+      cout << " "; 
+    cout << r -> getDato() << "\n"; 
+    print2D(r -> getIzq() , space); // Se procesa el hijo izquierdo
     }
     
     void print2D(int space){
@@ -305,6 +258,7 @@ public:
 };
 
 int main(){
+    cout<<"--------------------------------------------------ARBOL AVL DE PRUEBA----------------------------------------------------"<<endl;
     Tree t = Tree();
     t.addAVL(2);
     t.addAVL(3);
@@ -338,5 +292,7 @@ int main(){
     t.addAVL(-15);
     t.addAVL(-20);
     t.Inorder();
+    cout<<endl;
+    cout<<"-------------------------------------------------------------------------------------------------------------------------"<<endl;
     return 0;
 }
