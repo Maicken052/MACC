@@ -118,19 +118,19 @@ public:
     
 };
 
-class Stack{
+class Qeue{
     
     Nodo* ptr;
     int size;
 
 public:  
 
-    Stack(){
+    Qeue(){
         ptr = NULL;
         size = 0;
     }
     
-    ~Stack(){
+    ~Qeue(){
         Nodo* t = ptr;
         Nodo* n;
         while(t->getNext() != NULL){
@@ -142,12 +142,19 @@ public:
     }
     
     void push(Point* d){
-        Nodo* front = ptr;
-        Nodo* top = new Nodo(d);
-        ptr = top;
-        ptr->setNext(front);
-        size++;
+        if(size == 0){
+            ptr = new Nodo(d);
+            size++;
+        }else{
+            Nodo* t = ptr;
+            while(t->getNext() != NULL){
+                t = t->getNext();    
+            }
+            t->setNext(new Nodo(d));
+            size++;
+        }
     }
+    
    
     Point* pop(){
         Point* n2 = new Point(ptr->getDato()->getX(), ptr->getDato()->getY());
@@ -156,24 +163,7 @@ public:
         delete n;
         return n2;
     }
-       
-    Nodo* get(int i){
-        if(i < size && i>=0){
-            Nodo* n = ptr;
-            for(int x = 0; x<i;x++){
-                n = n->getNext();
-            }
-            return n;
-        }else{
-            if(size == 0){
-                cout<<"La lista está vacía";
-            }else{
-                cout<<"La posicion no existe";
-            }
-            return NULL;
-        }
-    }
-    
+
     void print(){
         if(size == 0){
             cout<<"La lista está vacía"<<endl;
@@ -188,19 +178,17 @@ public:
     }
 };
 
-
-
 int main(){
-    Stack l = Stack();
+    Qeue l = Qeue();
 
     cout<<"-----------------------------------------"<<endl;
-    cout<<"PILA ANTES:"<<endl;
+    cout<<"COLA ANTES:"<<endl;
     for(int i = 1; i<10; i++){
         l.push(new Point(i,i));
     }
     l.print();
-    cout<<"El elemento que sale de la pila es: "<<(*l.pop())<<endl;
-    cout<<"PILA DESPUES:"<<endl;
+    cout<<"El elemento que sale de la cola es: "<<(*l.pop())<<endl;
+    cout<<"COLA DESPUES:"<<endl;
     l.print();
     cout<<"-----------------------------------------"<<endl;
 

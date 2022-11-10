@@ -236,7 +236,7 @@ public:
     void comprar(Hash<string, string> Tokens_){
         string c;
         cout<<"¿𝐐𝐮𝐞 𝐧𝐟𝐭 𝐝𝐞𝐬𝐞𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫?";
-        cin>>c;
+        getline(cin, c);
         cout<<endl;
         
         if(c == "1"){
@@ -271,7 +271,7 @@ public:
     void redimir(Hash<string, string> Tokens_){
         string t;
             cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐬𝐮 𝐭𝐨𝐤𝐞𝐧:";
-            cin>>t;
+            getline(cin, t);
             cout<<endl;
             
             string n = Tokens_.reedem(t);
@@ -287,7 +287,7 @@ public:
         Tokens_.push(nft2);
         Tokens_.push(nft3);
         cout<<"𝐏𝐚𝐫𝐚 𝐯𝐞𝐫 𝐥𝐚 𝐠𝐚𝐥𝐞𝐫𝐢𝐚, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟏"<<endl<<"𝐏𝐚𝐫𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫 𝐮𝐧 𝐧𝐟𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟐"<<endl<<"𝐏𝐚𝐫𝐚 𝐫𝐞𝐝𝐢𝐦𝐢𝐫 𝐮𝐧 𝐧𝐟𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟑"<<endl<<"𝐏𝐚𝐫𝐚 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟒"<<endl<<"𝐏𝐚𝐫𝐚 𝐯𝐞𝐫 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟓"<<endl<<"𝐄𝐬𝐜𝐫𝐢𝐛𝐚 𝟎 𝐩𝐚𝐫𝐚 𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐫"<<endl<<endl<<"¿𝐐𝐮𝐞 𝐝𝐞𝐬𝐞𝐚 𝐡𝐚𝐜𝐞𝐫?:";
-        cin>>a;
+        getline(cin, a);
         cout<<endl;
         
         if(a == "1"){
@@ -310,7 +310,7 @@ public:
                 try{
                     f = false;
                     cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫?"<<endl;
-                    cin>>r;
+                    getline(cin, r);
                     r_int = stoi(r);
                     string r_str = to_string(r_int);
                     if(r != r_str){
@@ -348,7 +348,7 @@ int main(){
         try{
             F = false;
             cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐢𝐧𝐠𝐫𝐞𝐬𝐚𝐫?"<<endl;
-            cin>>BTC;
+            getline(cin, BTC);
             BTC_int = stoi(BTC);
             string BTC_str = to_string(BTC_int);
             if(BTC != BTC_str){
