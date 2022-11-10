@@ -1,0 +1,18 @@
+from random import choice, uniform
+
+def WalkSAT(S):
+    w =  WalkSatEstado(S)
+    max_flips = 5
+    max_tries = 5
+    p = random.uniform(0, 1)
+    for i in range max_tries:
+        I = w.I
+        for j in max_flips:
+            if(w.SAT):
+                return "Satisfacible", I 
+            C = w.clausulas_unsat[0]
+            for x in C:
+                if w.break_count(x) == 0:
+                    v = x
+                else:
+                    
