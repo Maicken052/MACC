@@ -36,30 +36,63 @@ public:
         }else
             cout<<"Ingrese una direccion valida";
     }
+    
+    void addNodo(){
+        int **n_matriz;
+        int old_nFilas = nFilas;
+        int old_nCol = nCol;
+        nFilas +=1;
+        nCol +=1;
+        n_matriz= new int*[nFilas];          
+            for(int i=0; i<nFilas; i++){
+                n_matriz[i]=new int[nCol];
+            }
+            
+        for(int i=0;i<nFilas;i++){
+            for(int j=0;j<nCol;j++){
+                if(i>=old_nFilas || j>=old_nCol){
+                    *(*(n_matriz+i)+j) = 0;
+                }else{
+                *(*(n_matriz+i)+j) = *(*(matriz+i)+j);
+                }
+            }
+        }
         
+        for(int i=0;i<old_nFilas;i++){  
+            delete[] matriz[i];
+        }
+        
+        matriz = n_matriz;
+    }
+    
     void print(){
-        cout<<"-------------------------------------------------------------- "<<endl;
         cout<<"La matriz que representa el grafo es: "<<endl<<endl;
         cout<<"        ";
         for(int m = 1; m < nFilas+1; m++){
-            cout<<m<<"    ";
+            if(m>9){
+                cout<<m<<" |  ";
+            }else{
+                cout<<m<<"  |  ";
+            }
         }
+        string stuff(nCol*6, '_');
         cout<<endl<<"       ";
-        cout<<"———————————————————————————————————————"<<endl;
+        cout<<stuff<<endl;
         cout<<"    1"<<"  |";
         for(int i=0; i<nFilas; i++){
             for(int j=0; j<nCol; j++){
-                cout<<matriz[i][j]<<" |  ";
+                cout<<matriz[i][j]<<"  |  ";
             }
-            cout<<endl<<"       "<<"———————————————————————————————————————"<<endl;
-            if(i+2==9){
+            cout<<endl<<"       "<<stuff<<endl;
+            if(i+2>nFilas){
                 break;
+            }else if(i+2>9){
+                cout<<"   "<<i+2<<"  |";
             }else{
                 cout<<"    "<<i+2<<"  |";
             }
         }
         cout<<endl;
-        cout<<"------------------------------------------------------------- "<<endl;
     }
 };
 
