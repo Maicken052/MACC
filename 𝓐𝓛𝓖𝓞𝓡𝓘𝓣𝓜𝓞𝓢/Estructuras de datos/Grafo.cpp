@@ -1,5 +1,6 @@
 #include<iostream>
 #include<string>
+#include<vector>
 using namespace std;
 
 class Grafo{
@@ -68,33 +69,42 @@ public:
                     return false;
                 }
             }
-        }
+        }    
         return true;
     }
     
-    int saltos(int a, int b){
-        int cont = 0;
-        int min = 1000000;
-        if(matriz[a-1][b-1]!=0){
-            return 1;
-        }else{
-            for(int i=0; i< nodos; i++){
-                if(matriz[a-1][i]!=0){
-                    cout<<a<< ", "<<i+1<<endl;
-                    cont+=1;
-                    cont += saltos(i+1,b);
-                    if(cont<min){
-                        min = cont;
-                    }
+    int get_min(vector<int> &arr){
+        int min = arr[0];
+        for(int i = 1; i<arr.size(); i++){
+            if(arr[i]<min)
+                min = arr[i];
+        }
+        return min;
+    }
+    bool found(int a, vector<int> arr){
+        for(int i = 0; i <arr.size(); i++){
+            if(arr[i] == a)
+                return true;
+        }
+        return false;
+    }
+    
+    int saltos(int a, int b, vector<int> rev){
+        vector<int> conexiones;
+        if(a == b)
+            return 0;
+        else{
+            rev.push_back(a);
+            for(int i = 0; i < nodos; i++){
+                if(matriz[a-1][i]!=0 && !found(i+1, rev)){
+                    conexiones.push_back(saltos(i+1, b, rev));
                 }
-                cont = 0;
             }
         }
-        if(min == 1000000){
-            return 0;
-        }else{
-            return min;
-        }
+        if(conexiones.size() == 0)
+            return 235233256;
+        else
+            return get_min(conexiones)+1;
     }
     
     void print(){
@@ -136,16 +146,17 @@ public:
 
 int main(){
     Grafo g = Grafo(6);
-    g.addEnlace(1, 3, 2, "unidireccional");
-    g.addEnlace(3, 4, 2, "unidireccional");
-    g.addEnlace(3, 6, 2, "unidireccional");
-    g.addEnlace(4, 6, 2, "unidireccional");
+    vector<int> v;
     g.addEnlace(1, 2, 3, "unidireccional");
+    g.addEnlace(1, 3, 2, "unidireccional");
     g.addEnlace(1, 5, 3, "unidireccional");
+    g.addEnlace(3, 4, 2, "unidireccional");
+    g.addEnlace(4, 6, 2, "unidireccional");
     g.addEnlace(5, 6, 5, "unidireccional");
-    g.addEnlace(2, 5, 5, "unidireccional");
+    g.addEnlace(2, 6, 5, "bidireccional");
+    g.addEnlace(2, 4, 5, "bidireccional");
     
     g.print();
-    cout<<"el num de saltos es: "<<g.saltos(3, 1)<<endl;
+    cout<<"el num de saltos es: "<<g.saltos(5, 1, v)<<endl;
     return 0;
 }
