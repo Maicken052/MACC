@@ -102,11 +102,17 @@ public:
             }
         }
         if(conexiones.size() == 0)
-            return 235233256;
+            return 2147483647;
         else
             return get_min(conexiones)+1;
     }
     
+    bool is_k_saltos(int a, int b, int k){
+        vector<int> v;
+        if(saltos(a, b, v) < k)
+            return true;
+        return false;
+    }
     void print(){
         cout<<"La matriz que representa el grafo es: "<<endl<<endl;
         cout<<"        ";
@@ -148,15 +154,22 @@ int main(){
     Grafo g = Grafo(6);
     vector<int> v;
     g.addEnlace(1, 2, 3, "unidireccional");
-    g.addEnlace(1, 3, 2, "unidireccional");
+    g.addEnlace(2, 4, 2, "bidireccional");
+    g.addEnlace(2, 3, 2, "bidireccional");
+    g.addEnlace(4, 3, 3, "bidireccional");
+    g.addEnlace(3, 5, 2, "bidireccional");
     g.addEnlace(1, 5, 3, "unidireccional");
-    g.addEnlace(3, 4, 2, "unidireccional");
-    g.addEnlace(4, 6, 2, "unidireccional");
-    g.addEnlace(5, 6, 5, "unidireccional");
-    g.addEnlace(2, 6, 5, "bidireccional");
-    g.addEnlace(2, 4, 5, "bidireccional");
     
     g.print();
-    cout<<"el num de saltos es: "<<g.saltos(5, 1, v)<<endl;
+    int k = 3;
+    int a = 1;
+    int b = 4;
+    string result;
+    if(g.is_k_saltos(a, b, k))
+        result = "Si";
+    else
+        result = "no";
+        
+    cout<<"Es posible llegar de "<<a<<" a "<<b<<" en menos de "<<k<<" saltos?: "<<result<<endl;
     return 0;
 }
