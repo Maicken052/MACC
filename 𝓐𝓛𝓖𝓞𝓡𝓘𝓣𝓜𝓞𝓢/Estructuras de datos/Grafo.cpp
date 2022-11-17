@@ -62,20 +62,39 @@ public:
     }
     
     bool es_bidireccional(){
-        bool flag = true;
         for(int i = 0;i < nodos;i++){
             for(int j = 0;j < nodos;j++){
                 if(matriz[i][j] != matriz[j][i]){
-                    flag = false;
-                    return flag;
+                    return false;
                 }
             }
         }
-        return flag;
+        return true;
     }
     
-    bool is_k_saltos(int a, int b, int k){
-        
+    int saltos(int a, int b){
+        int cont = 0;
+        int min = 1000000;
+        if(matriz[a-1][b-1]!=0){
+            return 1;
+        }else{
+            for(int i=0; i< nodos; i++){
+                if(matriz[a-1][i]!=0){
+                    cout<<a<< ", "<<i+1<<endl;
+                    cont+=1;
+                    cont += saltos(i+1,b);
+                    if(cont<min){
+                        min = cont;
+                    }
+                }
+                cont = 0;
+            }
+        }
+        if(min == 1000000){
+            return 0;
+        }else{
+            return min;
+        }
     }
     
     void print(){
@@ -123,10 +142,10 @@ int main(){
     g.addEnlace(4, 6, 2, "unidireccional");
     g.addEnlace(1, 2, 3, "unidireccional");
     g.addEnlace(1, 5, 3, "unidireccional");
-    g.addEnlace(6, 2, 3, "unidireccional");
     g.addEnlace(5, 6, 5, "unidireccional");
+    g.addEnlace(2, 5, 5, "unidireccional");
     
     g.print();
-
+    cout<<"el num de saltos es: "<<g.saltos(3, 1)<<endl;
     return 0;
 }
