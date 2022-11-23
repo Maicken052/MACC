@@ -29,7 +29,16 @@ byte Pins_filas[FIL] = {5, 4, 3, 2}; //Conectar a los pines de las filas del tec
 byte Pins_columnas[COL] = {9, 8, 7, 6}; //Conectar a los pines de las columnas del teclado
 
 Keypad Teclado = Keypad( makeKeymap(hexaKeys), Pins_filas, Pins_columnas, FIL, COL);  //Clase teclado
- 
+
+//----------------------Pantalla Inicial----------------------//
+void Pantalla_inicial(){
+  lcd.clear(); 
+  lcd.setCursor(0,0);
+  lcd.print("INGRESE SU CLAVE");
+  lcd.setCursor(6,1);
+  lcd.print("-***");
+}
+
 void setup(){
   myservo.attach(10); //ponemos el servo al pin D10
   pinMode(bocina,OUTPUT); 
@@ -37,10 +46,7 @@ void setup(){
   //Inicializar el LCD y escribir el texto de inicio
   lcd.init();
   lcd.backlight();
-  lcd.setCursor(1,0);
-  lcd.print("INGRESE CODIGO");
-  lcd.setCursor(6,1);
-  lcd.print("-***");
+  Pantalla_inicial();
   
   //Ponemos el servo en la posición de cerrado al inicio
   myservo.write(Ang_servoCerrado);  
@@ -62,8 +68,8 @@ void loop(){
     
     if(estado == 0){  
       lcd.clear(); 
-      lcd.setCursor(1,0);
-      lcd.print("INGRESE CODIGO");
+      lcd.setCursor(0,0);
+      lcd.print("INGRESE SU CLAVE");
       lcd.setCursor(6,1);
       lcd.print(clave);
       lcd.setCursor(7,1);
@@ -72,8 +78,8 @@ void loop(){
    
     if(estado == 1){  
       lcd.clear(); 
-      lcd.setCursor(1,0);
-      lcd.print("INGRESE CODIGO");
+      lcd.setCursor(0,0);
+      lcd.print("INGRESE SU CLAVE");
       lcd.setCursor(6,1);
       lcd.print(clave);
       lcd.setCursor(8,1);
@@ -82,8 +88,8 @@ void loop(){
    
     if(estado == 2){  
       lcd.clear(); 
-      lcd.setCursor(1,0);
-      lcd.print("INGRESE CODIGO");
+      lcd.setCursor(0,0);
+      lcd.print("INGRESE SU CLAVE");
       lcd.setCursor(6,1);
       lcd.print(clave);
       lcd.setCursor(9,1);
@@ -92,8 +98,8 @@ void loop(){
    
     if(estado == 3){  
       lcd.clear(); 
-      lcd.setCursor(1,0);
-      lcd.print("INGRESE CODIGO");
+      lcd.setCursor(0,0);
+      lcd.print("INGRESE SU CLAVE");
       lcd.setCursor(6,1);
       lcd.print(clave);
     }
@@ -101,19 +107,19 @@ void loop(){
     if(estado == 4){
       activar = 1;
     }
-    
     estado = estado+1;
   }
   
   if(activar == 1){
     //Si se quiere cambiar la clave, se deben cambiar los 4 números.
+    
     if(clave == "1207A"){  //Si la clave esta bien, muestra el mensaje de bienvenida, y queda el cofre abierto
       myservo.write(Ang_servoAbierto);
       activar = 2;
       
       lcd.clear();
-      lcd.setCursor(0,0);
-      lcd.print("CODIGO  CORRECTO");
+      lcd.setCursor(1,0);
+      lcd.print("Clave Correcta");
       
       analogWrite(bocina,240);
       delay(250);
@@ -124,35 +130,34 @@ void loop(){
       analogWrite(bocina,250);
       delay(250);
       analogWrite(bocina,LOW);
-      delay(1500);
+      delay(1000);
       
       lcd.clear();    
-      lcd.setCursor(3,0);
-      lcd.print("BIENVENIDO");
-      delay(1500); 
+      lcd.setCursor(0,0);
+      lcd.print("Acceso Permitido");
+      delay(2000); 
       
       lcd.clear();   
       lcd.setCursor(1,0);
-      lcd.print("COFRE  ABIERTO");
+      lcd.print("Cofre Abierto!");
+      lcd.setCursor(6,1);
+      lcd.print(":D");
+      
     }else{  //Si no, se deja el cofre cerrado, se indica que el código esta mal y se reinicia a la pantalla inicial
       lcd.clear();    
-      lcd.setCursor(1,0);
-      lcd.print("CODIGO ERRONEO");
-      lcd.setCursor(1,1);
-      lcd.print("COFRE  CERRADO");
-      analogWrite(bocina,150);
-      delay(2500);
-      analogWrite(bocina,LOW);
+      lcd.setCursor(0,0);
+      lcd.print("Clave Incorrecta");
       
+      for(int i = 100; i < 250; i++){
+        analogWrite(bocina,i);
+        delay(10);
+      }
+
+      analogWrite(bocina,LOW);
       estado = 0;
       activar = 0;
       clave = "";
-      
-      lcd.clear();    
-      lcd.setCursor(1,0);
-      lcd.print("INGRESE CODIGO");
-      lcd.setCursor(6,1);
-      lcd.print("-***");  
+      Pantalla_inicial();  
     }
   }
  
@@ -165,17 +170,13 @@ void loop(){
       clave = ""; 
         
       lcd.clear();    
-      lcd.setCursor(4,0);
+      lcd.setCursor(3,0);
       lcd.print("BLOQUEADO");
       analogWrite(bocina,150);
-      delay(1000);
+      delay(1500);
       analogWrite(bocina,LOW);
       
-      lcd.clear();
-      lcd.setCursor(1,0);
-      lcd.print("INGRESE CODIGO");
-      lcd.setCursor(6,1);
-      lcd.print("-***");
+      Pantalla_inicial();
     }
   } 
 }
