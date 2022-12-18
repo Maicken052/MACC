@@ -6,24 +6,22 @@ from dokusan import generators
 import numpy as np
 from copy import deepcopy
 
-#Clase numeros botones
-class Numbers(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, number:int):
+#=============================================================================================================#                                                 *Clase Botones de los números         
+#=============================================================================================================#
+class number_bottons(pygame.sprite.Sprite):
+    def __init__(self, image, location:tuple, number:int):
         super().__init__()
 
-        if(x < 0 or y < 0):
+        if(location[0] < 0 or location[1] < 0):
             raise ValueError ("No se reciben valores negativos")
         
         if(number not in range(1,10)):
             raise ValueError ("Solo se reciben valores del 1 al 9")
 
-        self.tam = WIDTH/13.66
+        self.tam = WIDTH/12
         self.image = pygame.transform.scale(image, (self.tam, self.tam))
-        self.pos_x = x
-        self.pos_y = y
         self.number = number
-        self.rect = self.image.get_rect()
-        self.rect.topleft = ((self.pos_x, self.pos_y))
+        self.rect = self.image.get_rect(center = (location[0], location[1]))
 
     def get_number(self):
         return self.number
@@ -39,7 +37,7 @@ class Numbers(pygame.sprite.Sprite):
 
 #Clase numeros casillas
 class Numbers_casillas(pygame.sprite.Sprite):
-    def __init__(self, x, y, number:int=0):
+    def __init__(self, x:int, y:int, number:int = 0):
         super().__init__()
         
         if(x < 0 or y < 0):
@@ -51,16 +49,16 @@ class Numbers_casillas(pygame.sprite.Sprite):
         self.tam = WIDTH/50
         self.number = number
         self.num_images = {
-            0:"Imagenes/WHITE.png",
-            1:"Imagenes/1.png",
-            2:"Imagenes/2.png",
-            3:"Imagenes/3.png",
-            4:"Imagenes/4.png",
-            5:"Imagenes/5.png",
-            6:"Imagenes/6.png",
-            7:"Imagenes/7.png",
-            8:"Imagenes/8.png",
-            9:"Imagenes/9.png",
+            0:"Images/WHITE.png",
+            1:"Images/1.png",
+            2:"Images/2.png",
+            3:"Images/3.png",
+            4:"Images/4.png",
+            5:"Images/5.png",
+            6:"Images/6.png",
+            7:"Images/7.png",
+            8:"Images/8.png",
+            9:"Images/9.png",
         }
         self.image = functions.load_image(self.num_images[self.number], self.tam, self.tam, True) # convertir la imagen en un formato aceptado por pygame para ser tratado
         self.rect = self.image.get_rect()
@@ -90,9 +88,9 @@ class Casilla(pygame.sprite.Sprite):
         if(dat not in range(0,10)):
             raise ValueError ("Solo se reciben valores del 0 al 9")
 
-        self.prev_data = 0
+        self.solved_data = 0
         self.tam = WIDTH/20.2
-        self.picture = 'Imagenes/Casilla.png' # localización de la imagen a ser usada para la clase
+        self.picture = 'Images/Box.png' # localización de la imagen a ser usada para la clase
         self.image = functions.load_image(self.picture, self.tam, self.tam, True) # convertir la imagen en un formato aceptado por pygame para ser tratado
         self.rect = self.image.get_rect()
 
@@ -109,28 +107,27 @@ class Casilla(pygame.sprite.Sprite):
         if pos[5] != None:
             self.rect.centery = pos[5]
         
-        self._dato = Numbers_casillas(self.rect.centerx, self.rect.centery, dat)
+        self.dato = Numbers_casillas(self.rect.centerx, self.rect.centery, dat)
 
     def get_dato(self):
-        return self._dato.get_number()
+        return self.dato.get_number()
 
     def set_dato(self, dato:int):
-        if self.prev_data == 0 and dato == 0 and self._dato.get_number() != 0:
-            self.prev_data = self._dato.get_number()
-        self._dato.set_number(dato)
-        self.update()
- 
+        if self.solved_data == 0:
+            self.solved_data = dato
+        else:
+            self.dato.set_number(dato)
+
     def printc(self):
-        print(self._dato, end= " ") #imprime el número y sigue en la misma linea
+        print(self.dato, end= " ") #imprime el número y sigue en la misma linea
 
     def update(self):
-        self._dato.update()
+        self.dato.update()
         
 
     def draw(self, surface): #Método para mostrar el sprint en pantalla
-                             # surface = pantalla
         surface.blit(self.image, self.rect)
-        self._dato.draw(surface)        
+        self.dato.draw(surface)        
 
 #class subcuadricula--------------------------------------------------
 class Subcuadricula(pygame.sprite.Sprite):
@@ -139,7 +136,7 @@ class Subcuadricula(pygame.sprite.Sprite):
 
         self.li = [2,1,0]
         self.tam = WIDTH/7.2
-        self.picture = 'Imagenes/Subcuadricula.png' # localización de la imagen a ser usada para la clase
+        self.picture = 'Images/Subgrid.png' # localización de la imagen a ser usada para la clase
         self.image = functions.load_image(self.picture, self.tam, self.tam, True) # convertir la imagen en un formato aceptado por pygame para ser tratado
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
@@ -175,7 +172,7 @@ class Subcuadricula(pygame.sprite.Sprite):
                     8: (None, self.rect.bottom, None, None, self.rect.centerx, None),
                     9: (None, self.rect.bottom, None, self.rect.left, None, None)
                     }
-  
+
         self.contador = 1
         for f in range(self.filas):
             lis=[] #crea la lista vacia donde guarda cada fila
@@ -185,9 +182,7 @@ class Subcuadricula(pygame.sprite.Sprite):
                 lis.append(cas) #lo agrega a la lista de fila
                 self.contador += 1
             self.matriz.append(lis)
-
-            
-           
+                    
     def prin(self):
         for i in range(self.filas):
             for j in range(self.columnas):
@@ -199,12 +194,12 @@ class Subcuadricula(pygame.sprite.Sprite):
 
     def set_dato(self, num:int, x:int, y:int):
         self.matriz[x][self.li[y]].set_dato(num)
-      
+
 
     def insert(self, fila, columna, num):
         c = self.matriz[fila][columna]
         c.setCasilla(num)
-       
+
     def revisar_sub(self, num):
         for i in range(self.filas):
             for j in range(self.columnas):
@@ -229,7 +224,6 @@ class Subcuadricula(pygame.sprite.Sprite):
         return self.casillas_group
 
     def draw(self, surface): #Método para mostrar el sprint en pantalla
-                             # surface = pantalla
         surface.blit(self.image, self.rect)
         for i in range(self.filas):
             for j in reversed(range(self.columnas)):
@@ -238,23 +232,23 @@ class Subcuadricula(pygame.sprite.Sprite):
         
 
 class Cuadricula(pygame.sprite.Sprite):
-    def __init__(self, filas= 3, columnas= 3, pos:tuple = (0, 0)):
+    def __init__(self, pos:tuple = (0, 0)):
         super().__init__()
 
         self.li = [2,1,0]
         self.tam = WIDTH/2.4
-        self.picture = 'Imagenes/Cuadricula.png' # localización de la imagen a ser usada para la clase
+        self.picture = 'Images/Grid.png' # localización de la imagen a ser usada para la clase
         self.image = functions.load_image(self.picture, self.tam, self.tam, True) # convertir la imagen en un formato aceptado por pygame para ser tratado
         self.rect = self.image.get_rect()
-        self.mat_rand = np.array(list(str(generators.random_sudoku(avg_rank=100)))).reshape(9,9).astype(int)
+        self.mat_rand = np.array(list(str(generators.random_sudoku(avg_rank=70)))).reshape(9,9).astype(int)
         self.mat_complete = []
 
         self.rect.centerx = pos[0]
         self.rect.centery = pos[1]
         self.rect.top = 0
 
-        self.filas = filas
-        self.columnas = columnas
+        self.filas = 3
+        self.columnas = 3
         self.matriz = []
         self.subcuadricula_group = pygame.sprite.Group()
 
@@ -295,8 +289,6 @@ class Cuadricula(pygame.sprite.Sprite):
         self.matriz[x][self.li[y]].set_dato(num, xs, ys)
 
     def draw(self, surface): #Método para mostrar el sprint en pantalla
-                             # surface = pantalla
-
         surface.blit(self.image, self.rect)
         for i in range(self.filas):
             for j in reversed(range(self.columnas)):
@@ -343,14 +335,11 @@ class Cuadricula(pygame.sprite.Sprite):
                     return None
         return mat
     
-    def erase(self):
-        desition = [True, False, False, False]
-
+    def resultado(self):
         xs = 0
         x = 0
         y = 0
         for f in range(9):
-            
             if f<=2:
                 x = 0
             elif 2<f<=5:
@@ -364,8 +353,7 @@ class Cuadricula(pygame.sprite.Sprite):
                     y = 1
                 elif c == 6 or c == 7 or c == 8:
                     y = 2
-                if random.choice(desition):
-                    self.set_dato(0, x, y, xs, c%3)
+                self.set_dato(self.mat_rand[f][c], x, y, xs, c%3)
             if xs == 2:
                 xs = 0
             else:
@@ -376,9 +364,7 @@ class Cuadricula(pygame.sprite.Sprite):
         xs = 0
         x = 0
         y = 0
-        print(self.mat_complete, end="\n")
-        for f in range(9):
-            
+        for f in range(9):     
             if f<=2:
                 x = 0
             elif 2<f<=5:
@@ -397,7 +383,7 @@ class Cuadricula(pygame.sprite.Sprite):
                 xs = 0
             else:
                 xs += 1
-        self.erase()
+        self.resultado()
 
 
     def get_casillas_group(self):
@@ -410,35 +396,15 @@ class Cuadricula(pygame.sprite.Sprite):
                     casillas_group.add(sprite)
 
         return casillas_group
-
-
-class AnimatedBackground(pygame.sprite.Sprite):
-    def __init__(self, position, images, delay):
-        super(AnimatedBackground, self).__init__()
-
-        self.images = itertools.cycle(images)
-        self.image = next(self.images)
-        self.rect = pygame.Rect(position,  self.image.get_rect().size)
-
-        self.animation_time = delay
-        self.current_time = 0
-
-    def update(self, dt):
-        self.current_time += dt
-        if self.current_time >= self.animation_time:
-            self.current_time = 0
-            self.image = next(self.images)
-
-
 class Words(pygame.sprite.Sprite, pygame.font.Font):
     def __init__(self, text: str, size: int, color, location, multicolor=False):
         super().__init__()
         
-        self.font = pygame.font.Font('Imagenes/04B_30__.TTF', size)
+        self.font = pygame.font.Font('Images/Lifes_font.TTF', size)
         self._text = text
         self._color = color
         self.multicolor = multicolor
-        self.image = self.font.render(text, True, self.color)
+        self.image = self.font.render(text, True, color)
         self.rect = self.image.get_rect()
         self.rect.centerx = location[0]
         self.rect.centery = location[1]
@@ -462,9 +428,8 @@ class Words(pygame.sprite.Sprite, pygame.font.Font):
 
 
     def update(self):
-        self.image = self.font.render(self.text, 1 , self.color)
+        self.image = self.font.render(self.text, True , self.color)
         return self.image
-
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
