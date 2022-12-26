@@ -1,10 +1,9 @@
+#=============================================================================================================#                                                           *libraries      
+#=============================================================================================================#
 import subprocess, pygame, platform, ctypes
 from pygame.locals import *
-import os
-
-
-RED = (213,57,48)  #Color rojo en RGB
-WHITE = (255, 255, 255)  #Color blanco en RGB
+#=============================================================================================================#                                                     *Config de la pantalla   
+#=============================================================================================================#
 sistema = platform.system() #Obtiene el sistema operativo del pc desde donde se esté ejecutando
 
 def screen_size(): # Obtine la resolución de la pantalla dependiendo del sistema operativo
@@ -24,28 +23,25 @@ def screen_size(): # Obtine la resolución de la pantalla dependiendo del sistem
         WIDTH, HEIGHT = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
         return WIDTH, HEIGHT
 
-
-#-------Tamaño de la pantalla------
-WIDTH = screen_size()[0]
-HEIGHT = screen_size()[1]
-
-def load_image(filename, width=None, height=None, transparent=False):  #covierte las imagenes a el formato aceptado por pygame y le da las dimensiones deseadas
+WIDTH = screen_size()[0]  #Ancho de la pantalla
+HEIGHT = screen_size()[1]- screen_size()[1]*0.08  #Largo de la pantalla
+#=============================================================================================================#                                                   *Función para cargar imagenes      
+#=============================================================================================================#
+def load_image(filename, width=None, height=None, transparent=False, alpha=False):  #covierte las imagenes a el formato aceptado por pygame y le da las dimensiones deseadas
     try: imagen = pygame.image.load(filename)
     except pygame.error:
-        raise SystemExit
+        raise SystemExit  #Si la imagen no es valida, muestra un error
 
-    if width != None and height != None:  #Si width o height son diferentes de "None", redefine el tamaño de la imagen con los parametros dados
+    if width != None and height != None:  #Si width y height existen, redefine el tamaño de la imagen con los parametros dados
         imagen = pygame.transform.scale(imagen, (width, height))
     
-    imagen = imagen.convert()
+    if alpha:
+        imagen = imagen.convert_alpha()  #  Conversión alpha
+    else:
+        imagen = imagen.convert()  #Conversión estandar
 
     if transparent:  #Si transparent es igual a True, entonces se le quita el fondo a la imagen
         color = pygame.PixelArray(imagen)
         imagen.set_colorkey(color[0, 0], RLEACCEL)
 
     return imagen
-
-def countdown(num_of_secs):
-    while num_of_secs:
-        m, s = divmod(num_of_secs, 60)
-        min_sec_format = '{:02d}:{:02d}'.format(m, s)

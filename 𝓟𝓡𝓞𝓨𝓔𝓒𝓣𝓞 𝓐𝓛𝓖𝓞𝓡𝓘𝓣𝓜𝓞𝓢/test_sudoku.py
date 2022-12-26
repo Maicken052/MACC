@@ -2,37 +2,37 @@ from functions import *
 from sprites import *
 import pytest
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT))  #Se crea una pantalla para que se usen los elementos y se puedan testear
 
-def test_load_images():
+def test_load_images():  #Test para la funcion load_image
     with pytest.raises(FileNotFoundError):
         load_image('one.png')
 
     with pytest.raises(TypeError):
-        load_image("Imagenes/Fondo.png", WIDTH)
+        load_image("Images/Background.png", WIDTH)
         load_image(3, WIDTH)
         load_image(True, WIDTH)
 
 
-def test_clases_numeros():
+def test_num_class():  #Test para las clases de números
     with pytest.raises(ValueError):
-        one = Numbers(pygame.image.load('Imagenes/one.png').convert_alpha(), 200, (HEIGHT/1.25), 1)
-        nine = Numbers(pygame.image.load('Imagenes/nine.png').convert_alpha(), 1080, -(HEIGHT/1.25), 9)
-        six = Numbers(pygame.image.load('Imagenes/six.png').convert_alpha(), -750, (HEIGHT/1.25), 6)
-        four = Numbers(pygame.image.load('Imagenes/four.png').convert_alpha(), 530, (HEIGHT/1.25), -4)
-        two = Numbers(pygame.image.load('Imagenes/two.png').convert_alpha(), 310, (HEIGHT/1.25), 10)
-        n = Numbers_casillas(-10, 10, 7)
+        nine = number_bottons('Images/nine.png', (1080, -(HEIGHT/1.25)), 9)
+        six = number_bottons('Images/six.png', (-750, (HEIGHT/1.25)), 6)
+        four = number_bottons('Images/four.png', (530, (HEIGHT/1.25)), -4)
+        two = number_bottons('Images/two.png', (310, (HEIGHT/1.25)), 10)
+        seven = box_numbers((-10, 10), 7)
+        one = box_numbers((10, 10), 11)
 
-def test_clases_casillas():
+def test_box_class():  #Test para las casillas
     with pytest.raises(ValueError):
-        casilla_p = Casilla(40, (0, 0, 0, 0 ,0, 0))
-        casilla_p2 = Casilla(-5, (0, 0, 0, 0 ,0, 0))
+        box_1 = box(40, (0, 0, 0, 0 ,0, 0))
+        box_2 = box(-5, (0, 0, 0, 0 ,0, 0))
 
-def test_logica_sudoku():
-    cuadricula = Cuadricula(3, 3, (WIDTH/2, HEIGHT/2))
+def test_sudoku_logic():  #Test para la lógica del sudoku
+    grid_ = grid((WIDTH/2, HEIGHT/2))
     with pytest.raises(TypeError):
-        cuadricula.sudoku_solver(4)
-        cuadricula.sudoku_solver("str")
-        cuadricula.sudoku_solver(True)
-        cuadricula.sudoku_solver({})
-        cuadricula.sudoku_solver(())
+        grid_.sudoku_solver(4)
+        grid_.sudoku_solver("str")
+        grid_.sudoku_solver(True)
+        grid_.sudoku_solver({})
+        grid_.sudoku_solver(())
