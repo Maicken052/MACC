@@ -1,5 +1,5 @@
 from functions import *
-from sprites import *
+from Grid_sprites import *
 import pytest
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  #Se crea una pantalla para que se usen los elementos y se puedan testear
