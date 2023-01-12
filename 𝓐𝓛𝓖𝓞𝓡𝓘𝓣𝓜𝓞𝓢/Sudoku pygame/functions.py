@@ -24,3 +24,20 @@ def load_image(filename, width = None, height = None, transparent = False, alpha
         image.set_colorkey(color[0, 0], RLEACCEL)
 
     return image
+#=============================================================================================================#
+#                                          *Revisar si un botón está oprimido     
+#=============================================================================================================#
+def check_if_pressed(button, size):  #Revisa si un botón númerico esta oprimido, y lo devuelve a su estado normal
+        if button != None:
+            button.click(size)
+            button = None
+#=============================================================================================================#
+#                                                   *Reiniciar juego    
+#=============================================================================================================#
+def restart(game_grid, dificult:int, pressed_button, button_size):  #Reinicia todos los elementos de la partida
+    game_grid.generator(dificult)  
+    lifes = 5
+    put_hint = False 
+    check_if_pressed(pressed_button, button_size)
+    number_obtained = 0 
+    return lifes, put_hint, number_obtained
