@@ -1,0 +1,28 @@
+import pygame, sys
+from functions import load_image
+from Loading_screen import loading_screen
+
+# General setup
+pygame.init()
+clock = pygame.time.Clock()
+
+# Game Screen
+screen_width = 1280
+screen_height = 720
+screen = pygame.display.set_mode((screen_width,screen_height))
+pygame.display.set_caption("Sprite Animation")
+
+# Creating the sprites and groups
+player = loading_screen()
+
+while True:
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			pygame.quit()
+			sys.exit()
+
+	# Drawing
+	screen.fill((0,0,0))
+	player.run(screen)
+	pygame.display.flip()
+	clock.tick(60)
