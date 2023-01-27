@@ -10,19 +10,17 @@ from functions import load_image
 #=============================================================================================================#
 #                                           *Clase números de las casillas      
 #=============================================================================================================#
-class box_numbers(): 
-    def __init__(self, img_size:tuple, pos:tuple, number:int = 0):
+class box_numbers: 
+    def __init__(self, img_size:tuple, pos:tuple, number:int=0):
 
         #Condiciones para que el programa cumpla su función adecuadamente
-        if(pos[0] < 0 or pos[1] < 0):
-            raise ValueError ("No se reciben valores negativos")
         if(number not in range(0,10)):
             raise ValueError ("Solo se reciben valores del 0 al 9")
 
-        #Parametros
+        #Atributos
         self.img_size = img_size 
         self.number = number 
-        self.possible_imgs = {  #Posible imagen que va a tener la casilla
+        self.possible_imgs = { 
             0:"Images/WHITE.png",
             1:"Images/1.png",
             2:"Images/2.png",
@@ -35,7 +33,7 @@ class box_numbers():
             9:"Images/9.png",
         }
         self.image = load_image(self.possible_imgs[self.number], self.img_size[0], self.img_size[1])  #Se ajusta al tamaño deseado y se escoge una imagen del diccionario según el número que corresponda
-        self.rect = self.image.get_rect(center = pos)  #Rectangulo con las coordenadas para posicionar la imagen
+        self.rect = self.image.get_rect(center=pos)  
 
     #Métodos
     def set_number(self, num:int):  #Setter para actualizar el número de la casilla
@@ -51,22 +49,23 @@ class box_numbers():
         self.rect.size = img_size  
         self.rect.center = pos  
 
-    def draw(self, surface):  #Dibuja la imagen del número que va en la casilla
+    def draw(self, surface):  
         surface.blit(self.image, self.rect)
 #=============================================================================================================# 
 #                                                 *Clase casilla   
 #=============================================================================================================#
 class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para usar los grupos sprite
-    def __init__(self, img_size:tuple, num_size:tuple, pos:tuple, num_in_box:int = 0, background_color:int = 0):
+    def __init__(self, img_size:tuple, num_size:tuple, pos:tuple, num_in_box:int=0, background_color:int=0):
         super().__init__()
 
         #Condiciones para que el programa cumpla su función adecuadamente
         if(num_in_box not in range(0,10)):
             raise ValueError ("Solo se reciben valores del 0 al 9")
 
-        #Parametros
-        self.image = load_image('Images/Box.png', img_size[0], img_size[1], True) #Se ajusta al tamaño deseado y se escoge la imagen que corresponda
-        self.rect = self.image.get_rect()  #Se crea un rectangulo para que se pueda interactuar con la casilla
+        #Atributos
+        self.image = load_image('Images/Box.png', img_size[0], img_size[1], True) 
+        self.rect = self.image.get_rect()  
+        self.background_color = background_color  #El color de fondo de la casilla 
 
         #Posición de la casilla (Arriba, Abajo, Derecha, Izquierda, Centro en x, Centro en y)
         if pos[0] != None:
@@ -82,21 +81,20 @@ class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para us
         if pos[5] != None:
             self.rect.centery = pos[5]
 
-        self.data = box_numbers(num_size, (self.rect.centerx, self.rect.centery), num_in_box)  #El dato dentro de la casilla es el número que corresponde
+        self.data = box_numbers(num_size, self.rect.center, num_in_box)  #El número dentro de la casilla 
         self.correct_number = 0  #El número que debe ir en la casilla
-        self.background_color = background_color  #El color de fondo de la casilla (Puede ser verde si esta bien, rojo si esta mal, y blanco si no se pone nada)
 
         #Imagen del color verde dentro de la casilla
-        self.correct_num_color = load_image("Images/LightGreen.png", self.rect.width/1.5, self.rect.height/1.5)  #Se carga la imagen verde con su tamaño (derivado del tamaño de la casilla)
-        self.correct_num_color_rect = self.correct_num_color.get_rect(center = self.rect.center)  #Se obtiene el rect
+        self.correct_num_color = load_image("Images/LightGreen.png", self.rect.width/1.5, self.rect.height/1.5)  
+        self.correct_num_color_rect = self.correct_num_color.get_rect(center=self.rect.center)  
 
         #Imagen del color rojo dentro de la casilla
-        self.wrong_num_color = load_image("Images/LightRed.png", self.rect.width/1.5, self.rect.height/1.5)  #Se carga la imagen roja con su tamaño (derivado del tamaño de la casilla)
-        self.wrong_num_color_rect = self.wrong_num_color.get_rect(center = self.rect.center)  #Se obtiene el rect
+        self.wrong_num_color = load_image("Images/LightRed.png", self.rect.width/1.5, self.rect.height/1.5)  
+        self.wrong_num_color_rect = self.wrong_num_color.get_rect(center=self.rect.center) 
 
     #Métodos
     def get_data(self):  #Getter que retorna el número en la casilla
-        if self.background_color == 2:  #Si el fondo está en rojo, es porque el número esta mal, por lo que se considera como si no tuviera nada y retorna 0
+        if self.background_color == 2:  #Si el fondo está en rojo, es porque el número esta mal, por lo que se retorna 0
             return 0
         else:
             return self.data.get_number()
@@ -104,7 +102,7 @@ class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para us
     def get_correct_number(self):  #Getter que retorna el número correcto
         return self.correct_number
 
-    def set_data(self, num:int, option:int, color:int = 0):  #setter con dos opciones
+    def set_data(self, num:int, option:int, color:int=0):  #setter con dos opciones
         if option == 1:  #Poner el número que se ve en la ventana y el color de fondo
             self.data.set_number(num)
             self.background_color = color
@@ -128,11 +126,12 @@ class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para us
         if pos[5] != None:
             self.rect.centery = pos[5]
 
-        self.data.update(num_size, (self.rect.centerx, self.rect.centery))  
+        self.data.update(num_size, self.rect.center) 
+        
         self.correct_num_color = load_image("Images/LightGreen.png", self.rect.width/1.5, self.rect.height/1.5)  
-        self.correct_num_color_rect = self.correct_num_color.get_rect(center = self.rect.center)  
+        self.correct_num_color_rect = self.correct_num_color.get_rect(center=self.rect.center)  
         self.wrong_num_color = load_image("Images/LightRed.png", self.rect.width/1.5, self.rect.height/1.5) 
-        self.wrong_num_color_rect = self.wrong_num_color.get_rect(center = self.rect.center)  
+        self.wrong_num_color_rect = self.wrong_num_color.get_rect(center=self.rect.center)  
 
 
     def draw(self, surface): #Dibuja la casilla, su color de fondo y número según corresponda
@@ -153,11 +152,12 @@ class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para us
 #                                             *Clase subcuadricula  
 #=============================================================================================================#
 class subgrid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame para usar los grupos sprite
-    def __init__(self, img_size:tuple, box_size:tuple, num_size:tuple, pos:tuple):
+    def __init__(self, rect_size:tuple, box_size:tuple, num_size:tuple, pos:tuple):
         super().__init__()
-
-        self.image = load_image('Images/WHITE.png', img_size[0], img_size[1]) #Se ajusta al tamaño deseado y se escoge la imagen correspondiente
-        self.rect = self.image.get_rect()  #Se crea un rectangulo para que se pueda interactuar con la subcuadricula
+        
+        #Atributos
+        self.complete = False  #Para saber si la subcuadricula está llena
+        self.rect = pygame.Rect((0, 0), rect_size)  #Se crea un rectángulo para que se pueda interactuar con la subcuadricula
 
         #Posición de la subcuadricula (Arriba, Abajo, Derecha, Izquierda, Centro en x, Centro en y)
         if pos[0] != None:
@@ -173,7 +173,7 @@ class subgrid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame pa
         if pos[5] != None:
             self.rect.centery = pos[5]
 
-        self.pos_of_boxes = {  #Posición que van a tener cada una de las 9 casillas, dependiendo de las coordenadas del rectangulo de la subcuadricula
+        self.pos_of_boxes = {  #Posición que van a tener cada una de las 9 casillas, dependiendo de las coordenadas del rectángulo de la subcuadricula
                     1: (self.rect.top, None, None, self.rect.left, None, None), #Superior izquierdo 
                     2: (self.rect.top, None, None, None, self.rect.centerx, None), #Superior centrado
                     3: (self.rect.top, None, self.rect.right, None, None, None), #Superior derecho
@@ -188,15 +188,13 @@ class subgrid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame pa
                     }
 
         #Creación de una matriz con todos los objetos casilla
-        self.rows = 3  
-        self.columns = 3  
         self.matrix_of_boxes = []
         self.box_group = pygame.sprite.Group()  
         count = 1
 
-        for i in range(self.rows):
+        for i in range(3):
             list_of_rows = []  #crea la lista donde guarda cada fila con casillas
-            for j in range(self.columns):
+            for j in range(3):
                 box_ = box(box_size, num_size, self.pos_of_boxes[count]) #crea un objeto casilla y le asigna una posición del diccionario
                 list_of_rows.append(box_) 
                 self.box_group.add(box_)  
@@ -216,9 +214,8 @@ class subgrid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame pa
         if option == 2:
             self.matrix_of_boxes[x][y].set_data(num, 2)
     
-    def update(self, img_size:tuple, box_size:tuple, num_size:tuple, pos:tuple):  #Se actualiza el tamaño y la posición
-        self.image = load_image('Images/WHITE.png', img_size[0], img_size[1])  
-        self.rect.size = img_size 
+    def update(self, rect_size:tuple, box_size:tuple, num_size:tuple, pos:tuple):  #Se actualiza el tamaño y la posición
+        self.rect.size = rect_size
 
         if pos[0] != None:
             self.rect.top = pos[0]
@@ -248,31 +245,37 @@ class subgrid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame pa
         })
 
         count = 1
-        for i in range(self.rows):
-            for j in range(self.columns):
+        for i in range(3):
+            for j in range(3):
                 self.matrix_of_boxes[i][j].update(box_size, num_size, self.pos_of_boxes[count])  #Se actualizan los parametros de cada casilla
                 count += 1     
 
     def draw(self, surface):  #Dibuja la subcuadricula, invocando el draw de cada casilla
-        surface.blit(self.image, self.rect)  #Primero se dibuja la subcuadricula
-        for i in range(self.rows):
-            for j in range(self.columns):
+        pygame.draw.rect(surface, (255, 255, 255), self.rect)
+        for i in range(3):
+            for j in range(3):
                 self.matrix_of_boxes[i][j].draw(surface)  #Y después cada casilla
+    
+    def check_complete(self):  #Revisa si la subcuadricula tiene todas sus casillas llenas
+        count = 0
+        for box in self.box_group.sprites():
+            if box.get_data() != 0:
+                count += 1
+            else:
+                break
+        if count == 9:
+            self.complete = True
 #=============================================================================================================#
 #                                                *Clase cuadricula
 #=============================================================================================================#
 class grid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame para usar los grupos sprite
-    def __init__(self,img_size:tuple, subgrid_size:tuple, box_size:tuple, num_size:tuple, pos:tuple):
+    def __init__(self, rect_size:tuple, subgrid_size:tuple, box_size:tuple, num_size:tuple, pos:tuple):
         super().__init__()
 
-        #Condiciones para que el programa cumpla su función adecuadamente
-        if(pos[0] < 0 or pos[1] < 0):
-            raise ValueError ("No se reciben valores negativos")
+        self.rect = pygame.Rect((0, 0), rect_size)
+        self.rect.center = pos
 
-        self.image = load_image('Images/WHITE.png', img_size[0], img_size[1])  #Se ajusta al tamaño deseado y se escoge la imagen correspondiente 
-        self.rect = self.image.get_rect(center = pos)  #Se crea el rectangulo centrado en la posición dada
-
-        self.pos_of_subgrids = {  #Posición que va a tener cada una de las 9 subcuadriculas, dependiendo de las coordenadas del rectangulo de la cuadricula
+        self.pos_of_subgrids = {  #Posición que va a tener cada una de las 9 subcuadriculas, dependiendo de las coordenadas del rectángulo de la cuadricula
                     1: (self.rect.top, None, None, self.rect.left, None, None), #Superior izquierdo 
                     2: (self.rect.top, None, None, None, self.rect.centerx, None), #Superior centrado
                     3: (self.rect.top, None, self.rect.right, None, None, None), #Superior derecho
@@ -285,20 +288,18 @@ class grid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame para 
                     8: (None, self.rect.bottom, None, None, self.rect.centerx, None), #Inferior centrado
                     9: (None, self.rect.bottom, self.rect.right, None, None, None), #Inferior derecha
                     }
-
+        
         self.sudoku = []  #En esta matriz se almacena el sudoku sin resolver
         self.solved_sudoku = []  #En esta matriz se almacena el sudoku resuelto
 
         #Creación de una matriz con las subcuadriculas
-        self.rows = 3  
-        self.columns = 3  
         self.matrix_of_subgrids = []
         self.subgrid_group = pygame.sprite.Group() 
         count = 1
 
-        for i in range(self.rows):
+        for i in range(3):
             list_of_rows = []  #Se crea una lista que guarda las rows
-            for j in range(self.columns):
+            for j in range(3):
                 sub = subgrid(subgrid_size, box_size, num_size, self.pos_of_subgrids[count])  #Se crea la subcuadricula con la posición correspondiente
                 list_of_rows.append(sub)  
                 self.subgrid_group.add(sub)  
@@ -318,9 +319,8 @@ class grid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame para 
         if option == 2:
             self.matrix_of_subgrids[x][y].set_data(num, xs, ys, 2)
 
-    def update(self, img_size:tuple, subgrid_size:tuple, box_size:tuple, num_size:tuple, pos:tuple):  #Se actualiza el tamaño y la posición
-        self.image = load_image('Images/WHITE.png', img_size[0], img_size[1]) 
-        self.rect.size = img_size  
+    def update(self, rect_size:tuple, subgrid_size:tuple, box_size:tuple, num_size:tuple, pos:tuple):  #Se actualiza el tamaño y la posición
+        self.rect.size = rect_size
         self.rect.center = pos  
 
         self.pos_of_subgrids.update({
@@ -338,16 +338,26 @@ class grid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame para 
         })
 
         count = 1
-        for i in range(self.rows):
-            for j in range(self.columns):
+        for i in range(3):
+            for j in range(3):
                 (self.matrix_of_subgrids[i][j]).update(subgrid_size, box_size, num_size, self.pos_of_subgrids[count])  #Se actualizan los parametros de cada subcuadricula
-                count+=1
+                count += 1
 
     def draw(self, surface): #Dibuja la cuadricula, invocando el draw de cada subcuadricula
-        surface.blit(self.image, self.rect)  #Primero se dibuja la cuadricula
-        for i in range(self.rows):
-            for j in range(self.columns):
+        pygame.draw.rect(surface, (255, 255, 255), self.rect)
+        for i in range(3):
+            for j in range(3):
                 (self.matrix_of_subgrids[i][j]).draw(surface)  #Y después cada subcuadricula
+
+    def check_complete(self):  #Revisa si el juego ha terminado
+        count = 0
+        for subgrid in self.subgrid_group.sprites():
+            if subgrid.complete == True:
+                count += 1
+            else:
+                break
+        if count == 9:
+            return True
 
     #*Logica Sudoku
     def possible_num(self, row, column, num, grid):  #Función que busca si un número ya está en la fila, columna o subcuadricula deseada
@@ -369,10 +379,6 @@ class grid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame para 
         return True
 
     def sudoku_solver(self, grid):
-        #Se revisa que el dato ingresado sea valido
-        if(type(grid) != np.ndarray):  
-            raise TypeError("Ingrese una matriz")
-
         for row in range(0,9):
             for column in range(0,9):
                 if grid[row][column] == 0:  #Si esa casilla esta sin resolver
@@ -384,19 +390,21 @@ class grid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame para 
                                 return posible_result
                             else:
                                 grid[row][column] = 0  #Sino, se vuelve a buscar
-                    return None
+                    return None  #Si ningún número es valido, es porque el resultado no sirve
         return grid
 
-    def generator(self, dificult: int):  #Función encargada de generar un sudoku y llenar las casillas con el dato del sudoku incompleto que se muestra en la ventana, además del dato correcto para su posterior verificación y reiniciar el color de las casillas.
-
-        self.sudoku = np.array(list(str(generators.random_sudoku(avg_rank = dificult)))).reshape(9,9).astype(int)  #Se crea el sudoku en base a un generador
+    def generator(self, dificult:int):
+        """
+        Función encargada de generar un sudoku y llenar las casillas con el dato del sudoku incompleto que se muestra en la ventana, además del dato correcto para su posterior verificación y reiniciar el color de las casillas.
+        """
+        self.sudoku = np.array(list(str(generators.random_sudoku(avg_rank=dificult)))).reshape(9,9).astype(int)  #Se crea el sudoku en base a un generador
         self.solved_sudoku = self.sudoku_solver(deepcopy(self.sudoku))  #Se hace una copia del sudoku para no modificar la variable original, despúes se usa la función para resolver ese sudoku y se guarda en una variable
-
+        """"
+        #Con las variables x, y recorremos la subcuadricula, mientras que con xs y el modulo 3 de c, recorremos las casillas, para que se llene la cuadricula de la misma manera que se recorre la matriz normalmente.
+        """
         xs = 0
         x = 0
         y = 0
-
-        #Con las variables x, y recorremos la subcuadricula, mientras que con xs y el modulo 3 de c, recorremos las casillas, para que se llene la cuadricula de la misma manera que se recorre la matriz normalmente.
         for f in range(9):      
             if f <= 2:
                 x = 0
@@ -417,3 +425,6 @@ class grid(pygame.sprite.Sprite):  #Se hereda de la clase sprite de pygame para 
                 xs = 0
             else:
                 xs += 1
+
+        for subgrid in self.subgrid_group.sprites():  #Como el juego se reinicia, se regresa a False esta variable
+            subgrid.complete = False

@@ -1,13 +1,11 @@
 #=============================================================================================================#     
 #                                                    *librerias      
 #=============================================================================================================#
-import sys
-import threading
-import pygame
+import pygame, sys, threading
 from pygame.locals import *
-from functions import load_image, check_if_pressed, restart
+from functions import load_image, resize, restart_game, redraw, fade_in, fade_out
 from Grid_sprites import grid
-from Buttons_sprites import number_buttons, actions_buttons, word
+from Buttons_sprites import number_buttons, actions_buttons, animated_button, word
 from Loading_screen import loading_screen
 #=============================================================================================================#     
 #                                                  *Colores usados 
@@ -17,14 +15,21 @@ GREEN = (18, 247, 51)
 ORANGE = (255, 129, 0) 
 RED_2 = (255, 17, 0) 
 WHITE = (255, 255, 255) 
+BLACK = (0, 0, 0)
 GREY = (169, 169, 169)  
-#=============================================================================================================#      
+DARK_GREY = (50, 50, 50)  
+BLUE = (0, 96, 255)
+DARK_BLUE = (0, 64, 255)
+FADE_BLUE = (8, 100, 204)
+SKY_BLUE = (135, 206, 235)
+#=============================================================================================================#     
 #                                                       *Main         
 #=============================================================================================================#
 def main():
     game = True  
     FPS = 60
-    
+    clicked = False
+
     #Config para el fullscreen
     screen_info = pygame.display.Info()  #Información de la pantalla en la que se esta corriendo el juego
     WIDTH = screen_info.current_w 
@@ -41,29 +46,27 @@ def main():
     pygame.display.set_caption('Sudoku')  
     pygame.display.set_icon(icon)
 
+    #Variables que se usan en el juego (se usa el global 2 veces dado que estan en una función anidada)
+    global lifes, lifes_text, dificult_size, easy, medium, hard, dificult, buttons_width, buttons_height, hint, put_hint, answer, new_game_width, new_game_height, new_game, button_numbers_group, buttons_size, one, two, three, four, five, six, seven, eight, nine, number_obtained, pressed_button, game_grid, subgrid_group, grid_lines, game_over_screen_fade, win_screen_fade, white_rect_box, go_text, mid_text, second_chance, restart, excelent_text, restart2, repeat, finish
+    
     #Pantalla de carga
-    global lifes, lifes_text, dificult_size, easy, easy_dificult, medium, medium_dificult, hard, hard_dificult, dificult, buttons_width, buttons_height, hint, put_hint, answer, new_game_width, new_game_height, new_game, button_numbers_group, buttons_size, one, two, three, four, five, six, seven, eight, nine, number_obtained, pressed_button, game_grid, subgrid_group, grid_lines, finish  #Variables que se usan en el juego (se usa el global 2 veces dado que estan en una función anidada)
     load_screen = loading_screen()
     finish = False  #Se usa para finalizar la pantalla de carga
-    
+
     #Cargar todo lo que se usa en el juego
     def load_items():
-        global lifes, lifes_text, dificult_size, easy, easy_dificult, medium, medium_dificult, hard, hard_dificult, dificult, buttons_width, buttons_height, hint, put_hint, answer, new_game_width, new_game_height, new_game, button_numbers_group, buttons_size, one, two, three, four, five, six, seven, eight, nine, number_obtained, pressed_button, game_grid, subgrid_group, grid_lines, finish
+        global lifes, lifes_text, dificult_size, easy, medium, hard, dificult, buttons_width, buttons_height, hint, put_hint, answer, new_game_width, new_game_height, new_game, button_numbers_group, buttons_size, one, two, three, four, five, six, seven, eight, nine, number_obtained, pressed_button, game_grid, subgrid_group, grid_lines, game_over_screen_fade, win_screen_fade, white_rect_box, go_text, mid_text, second_chance, restart, excelent_text, restart2, repeat, finish
 
         #Texto de las vidas
         lifes = 5  
-        lifes_size = 45  
-        lifes_text = word(f"Lifes: {lifes}", lifes_size, RED_1, (775, 18))  
+        lifes_text = word(f"Lifes: {lifes}", 45, RED_1, (775, 18))  
 
         #Dificultades
+        dificult = 50
         dificult_size = 28 
         easy = word(f"easy", dificult_size, GREEN, (930, 673))  
         medium = word(f"medium", dificult_size, GREY, (1035, 673))  
-        hard = word(f"hard", dificult_size, GREY, (1180, 673))  
-        easy_dificult = 50  
-        medium_dificult = 100  
-        hard_dificult = 150  
-        dificult = easy_dificult  
+        hard = word(f"hard", dificult_size, GREY, (1180, 673))   
 
         #Botones de acciones (Pista, Solución y juego nuevo)
         buttons_width = 200  
@@ -115,6 +118,26 @@ def main():
         game_grid.generator(dificult)  
         subgrid_group = game_grid.get_subgrid_group() 
 
+        #Pantalla de derrota
+        game_over_screen_fade = pygame.Surface((design_width, design_height))
+        game_over_screen_fade.fill(BLACK)
+        white_rect_box = pygame.Rect(0, 0, 500, 360)
+        white_rect_box.center = (640, 360)
+        go_text = word("game over", 40, DARK_GREY, ((0, 0)))
+        mid_text = word(f"you lost all your lives", 20, GREY, ((0, 0)))
+        go_text.rect.center = (640, 230)
+        mid_text.rect.center = (640, 290)
+        second_chance = animated_button("second chance", 30, (350, 60), (640, 370), 6, BLUE, DARK_BLUE, WHITE)
+        restart = animated_button("restart", 30, (350, 60), (640, 450), 6, BLUE, DARK_BLUE, WHITE)
+
+        #Pantalla de victoria
+        win_screen_fade = pygame.Surface((design_width, design_height))
+        win_screen_fade.fill(SKY_BLUE)
+        excelent_text = word("excelent!",100, WHITE, ((0, 0)))
+        excelent_text.rect.center = (640, 230)
+        restart2 = animated_button("restart", 30, (350, 60), (640, 450), 6, WHITE, DARK_GREY, DARK_GREY)
+        repeat = False
+
         #Finaliza la carga del juego
         finish = True
 
@@ -155,225 +178,178 @@ def main():
                     if event.key == K_f:  #Si se presiona la tecla f, se pone o se quita pantalla completa
                         fullscreen = not fullscreen
                         if fullscreen:  
-                            screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)  
-                            background_image = load_image("Images/Background.png", WIDTH, HEIGHT)  
-                            grid_lines = load_image("Images/Sudoku_lines.png", WIDTH/1.7, HEIGHT, False, True) 
-
-                            #*Actualizar todos los sprites (Se usa la regla de 3 con los tamaños para mantener la proporción)
-                            #Actualizar textos
-                            if HEIGHT < WIDTH:  #Condiciones para que los textos no den problemas al cambiar el tamaño de la pantalla
-                                if WIDTH - HEIGHT <= 270:
-                                    lifes_size = round((WIDTH*45)/design_width)
-                                    dificult_size = round((WIDTH*28)/design_width)
-                                else:
-                                    lifes_size = round((HEIGHT*45)/design_height)
-                                    dificult_size = round((HEIGHT*28)/design_height)          
-                            else:
-                                lifes_size = round((WIDTH*45)/design_width)
-                                dificult_size = round((WIDTH*28)/design_width)
-
-                            lifes_text.update(lifes_size, (WIDTH/1.65, HEIGHT/40)) 
-                            easy.update(dificult_size, (WIDTH/1.376, HEIGHT/1.0698)) 
-                            medium.update(dificult_size,(WIDTH/1.236, HEIGHT/1.0698)) 
-                            hard.update(dificult_size, (WIDTH/1.0847, HEIGHT/1.0698)) 
-
-                            #Actualizar botones
-                            buttons_width = (WIDTH*200)/design_width  
-                            buttons_height = (HEIGHT*79)/design_height
-                            buttons_height = (HEIGHT*79)/design_height 
-                            new_game_width = (WIDTH*160)/design_width
-                            new_game_height = (HEIGHT*46)/design_height  
-                            hint.update((buttons_width, buttons_height), (WIDTH/1.6, HEIGHT/8))  
-                            answer.update((buttons_width, buttons_height), (WIDTH/1.2367, HEIGHT/8))  
-                            new_game.update((new_game_width, new_game_height), (WIDTH/1.69, HEIGHT/1.0827)) 
-
-                            #Actualizar botones numericos
-                            buttons_size = ((WIDTH*140)/design_width, (HEIGHT*140)/design_height)  
-                            first_xpos =  WIDTH/1.590062111801243
-                            first_ypos = HEIGHT/3.42857142857143 
-                            second_xpos = WIDTH/1.354497354497355 
-                            second_ypos = HEIGHT/2.057142857142855  
-                            third_xpos = WIDTH/1.17972350230415 
-                            third_ypos = HEIGHT/1.46938775510204 
-                            one.update(buttons_size, (first_xpos, first_ypos))
-                            two.update(buttons_size, (second_xpos, first_ypos))
-                            three.update(buttons_size, (third_xpos, first_ypos))
-                            four.update(buttons_size, (first_xpos, second_ypos))
-                            five.update(buttons_size, (second_xpos, second_ypos))
-                            six.update(buttons_size, (third_xpos, second_ypos))
-                            seven.update(buttons_size, (first_xpos, third_ypos))
-                            eight.update(buttons_size, (second_xpos, third_ypos))
-                            nine.update(buttons_size, (third_xpos, third_ypos))
-
-                            #Actualizar la cuadricula
-                            grid_size = ((WIDTH*693)/design_width, (HEIGHT*664)/design_height)
-                            subgrid_size = ((WIDTH*211)/design_width, (HEIGHT*203)/design_height)
-                            box_size = ((WIDTH*69)/design_width, (HEIGHT*66)/design_height)
-                            num_size = ((WIDTH*25)/design_width, (HEIGHT*25)/design_height)
-                            pos = ((WIDTH/1.7)/2, HEIGHT/2)
-                            game_grid.update(grid_size, subgrid_size, box_size, num_size, pos)
+                            screen, background_image, grid_lines, buttons_size, buttons_width, buttons_height, new_game_width, new_game_height, dificult_size, win_screen_fade, game_over_screen_fade = resize(WIDTH, HEIGHT, design_width, design_height, lifes_text, easy, medium, hard, hint, answer, new_game, game_grid, one, two, three, four, five, six, seven, eight, nine, white_rect_box, go_text, mid_text, excelent_text, second_chance, restart, restart2, pygame.FULLSCREEN)
                         else:
                             screen = pygame.display.set_mode((design_width, design_height), pygame.RESIZABLE)  #Si se quita la pantalla completa, se deja todo como estaba antes
 
-                #Acomodar el tamaño de la ventana (event.w y event.h son las dimensiones actuales de la pantalla)
-                if event.type == VIDEORESIZE:
+                if event.type == VIDEORESIZE:  #Acomodar el tamaño de la ventana (event.w y event.h son las dimensiones actuales de la pantalla)
                     if not fullscreen:
-                        screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE) 
-                        background_image = load_image("Images/Background.png", event.w, event.h)  
-                        grid_lines = load_image("Images/Sudoku_lines.png", event.w/1.7, event.h, False, True) 
+                        screen, background_image, grid_lines, buttons_size, buttons_width, buttons_height, new_game_width, new_game_height, dificult_size, win_screen_fade, game_over_screen_fade = resize(event.w, event.h, design_width, design_height, lifes_text, easy, medium, hard, hint, answer, new_game, game_grid, one, two, three, four, five, six, seven, eight, nine, white_rect_box, go_text, mid_text, excelent_text, second_chance, restart, restart2, pygame.RESIZABLE)
 
-                        #*Actualizar todos los sprites (Se usa la regla de 3 con los tamaños para mantener la proporción)
-                        #Actualizar textos
-                        if event.h < event.w:  #Condiciones para que los textos no den problemas al cambiar el tamaño de la pantalla
-                            if event.w - event.h <= 270:
-                                lifes_size = round((event.w*45)/design_width)
-                                dificult_size = round((event.w*28)/design_width)
-                            else:
-                                lifes_size = round((event.h*45)/design_height)
-                                dificult_size = round((event.h*28)/design_height)          
-                        else:
-                            lifes_size = round((event.w*45)/design_width)
-                            dificult_size = round((event.w*28)/design_width)
-
-                        lifes_text.update(lifes_size, (event.w/1.65, event.h/40)) 
-                        easy.update(dificult_size, (event.w/1.376, event.h/1.0698)) 
-                        medium.update(dificult_size,(event.w/1.236, event.h/1.0698)) 
-                        hard.update(dificult_size, (event.w/1.0847, event.h/1.0698)) 
-
-                        #Actualizar botones
-                        buttons_width = (event.w*200)/design_width  
-                        buttons_height = (event.h*79)/design_height
-                        buttons_height = (event.h*79)/design_height 
-                        new_game_width = (event.w*160)/design_width
-                        new_game_height = (event.h*46)/design_height  
-                        hint.update((buttons_width, buttons_height), (event.w/1.6, event.h/8))  
-                        answer.update((buttons_width, buttons_height), (event.w/1.2367, event.h/8))  
-                        new_game.update((new_game_width, new_game_height), (event.w/1.69, event.h/1.0827)) 
-
-                        #Actualizar botones numericos
-                        buttons_size = ((event.w*140)/design_width, (event.h*140)/design_height)  
-                        first_xpos =  event.w/1.590062111801243
-                        first_ypos = event.h/3.42857142857143 
-                        second_xpos = event.w/1.354497354497355 
-                        second_ypos = event.h/2.057142857142855  
-                        third_xpos = event.w/1.17972350230415 
-                        third_ypos = event.h/1.46938775510204 
-                        one.update(buttons_size, (first_xpos, first_ypos))
-                        two.update(buttons_size, (second_xpos, first_ypos))
-                        three.update(buttons_size, (third_xpos, first_ypos))
-                        four.update(buttons_size, (first_xpos, second_ypos))
-                        five.update(buttons_size, (second_xpos, second_ypos))
-                        six.update(buttons_size, (third_xpos, second_ypos))
-                        seven.update(buttons_size, (first_xpos, third_ypos))
-                        eight.update(buttons_size, (second_xpos, third_ypos))
-                        nine.update(buttons_size, (third_xpos, third_ypos))
-
-                        #Actualizar la cuadricula
-                        grid_size = ((event.w*693)/design_width, (event.h*664)/design_height)
-                        subgrid_size = ((event.w*211)/design_width, (event.h*203)/design_height)
-                        box_size = ((event.w*69)/design_width, (event.h*66)/design_height)
-                        num_size = ((event.w*25)/design_width, (event.h*25)/design_height)
-                        pos = ((event.w/1.7)/2, event.h/2)
-                        game_grid.update(grid_size, subgrid_size, box_size, num_size, pos)
-
-                #Fluidez de los botones
-                for pulsed_button in button_numbers_group.sprites(): 
-                    if  pulsed_button != pressed_button:
-                            pulsed_button.smoothness(buttons_size)
-
-                hint.smoothness((buttons_width, buttons_height))
-                answer.smoothness((buttons_width, buttons_height))
-                new_game.smoothness((new_game_width, new_game_height))
-                easy.smoothness(dificult_size)
-                medium.smoothness(dificult_size)
-                hard.smoothness(dificult_size)
-                
                 if event.type == MOUSEBUTTONDOWN and event.button == 1:  #Si se oprime el click izquierdo
-                    
-                    #Se revisan los botones numericos en caso de que se haya oprimido el click izquierdo sobre uno de ellos
+                    clicked = True
+            
+            #Pantalla de derrota
+            if lifes <= 0:  
+                if not repeat: 
+                    #Se hace el efecto fade
+                    fade_in(game_over_screen_fade, 160, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
+                    repeat = True
+                else:  
+                    game_over_screen_fade.set_alpha(160)
+                    screen.blit(game_over_screen_fade, (0, 0))
+                    pygame.draw.rect(screen, WHITE, white_rect_box, border_radius=12)
+                    go_text.draw(screen)
+                    mid_text.draw(screen)
+                    second_chance.draw(screen)
+                    restart.draw(screen)
+
+                    #Salir de la pantalla final
+                    if second_chance.check_click(BLUE, FADE_BLUE):
+                        fade_out(game_over_screen_fade, 160, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
+                        lifes = 1
+                        repeat = False
+                        second_chance.action = False
+                        clicked = False
+
+                    if restart.check_click(BLUE, FADE_BLUE):
+                        fade_out(game_over_screen_fade, 160, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
+                        lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
+                        number_buttons.check_if_pressed(pressed_button, buttons_size)
+                        pressed_button = None
+                        repeat = False
+                        restart.action = False
+                        clicked = False
+            else:
+                #Pantalla de victoria
+                if game_grid.check_complete(): 
+                    if not repeat:  #Se hace el efecto fade
+                        fade_in(win_screen_fade, 255, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
+                        repeat = True
+                    else:  
+                        win_screen_fade.set_alpha(255)
+                        screen.blit(win_screen_fade, (0, 0))
+                        excelent_text.draw(screen)
+                        restart2.draw(screen)
+
+                        #Salir de la pantalla final
+                        if restart2.check_click(WHITE, GREY):
+                            fade_out(win_screen_fade, 255, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
+                            lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
+                            number_buttons.check_if_pressed(pressed_button, buttons_size)
+                            pressed_button = None
+                            repeat = False
+                            restart2.action = False
+                            clicked = False  
+                else:
+                    #Fluidez de los botones
                     for pulsed_button in button_numbers_group.sprites(): 
-                        if pulsed_button.rect.collidepoint(pygame.mouse.get_pos()):  
-                            check_if_pressed(pressed_button, buttons_size)  #Revisa si hay alguno oprimido para volverlo a su estado normal
-                            pulsed_button.click((buttons_size[0]*0.90, buttons_size[1]*0.90))  #Oprime el botón sobre el que se hizo click izquierdo
-                            pressed_button = pulsed_button
-                            number_obtained = pulsed_button.get_number()  #Se guarda en una variable el valor obtenido del botón
-                            break
-                            
-                    #Se revisa la cuadricula en caso de que se haya oprimido el click izquierdo en una casilla
-                    for subgrid in subgrid_group.sprites():  #Se revisan las subcuadriculas
-                        if subgrid.rect.collidepoint(pygame.mouse.get_pos()): 
-                            box_group = subgrid.get_box_group()  
-                            for box in box_group.sprites():  #Después cada casilla de la subcuadricula
-                                if box.rect.collidepoint(pygame.mouse.get_pos()):  
+                        if  pulsed_button != pressed_button:
+                                pulsed_button.smoothness(buttons_size)
 
-                                    if put_hint:  #Si el botón de pista esta activo
-                                        if box.get_data() == 0:
-                                            box.set_data(box.get_correct_number(), 1, 1)  #Se pone el número correcto y se pone el fondo verde
-                                            put_hint = False 
-                                            break
-
-                                    if number_obtained != 0 and box.get_data() == 0:  #si se obtuvo un número del botón y la casilla no tiene número
-                                        if box.get_correct_number() == number_obtained:  #Si el número que se va a colocar en la casilla es correcto
-                                            box.set_data(number_obtained, 1, 1)  
-                                        else:
-                                            box.set_data(number_obtained, 1, 2)  #Si no, se coloca fondo rojo
-                                            lifes -= 1  
-
-                                        check_if_pressed(pressed_button, buttons_size)
-                                        number_obtained = 0  #Se reinicia el número que estaba oprimido
+                    hint.smoothness((buttons_width, buttons_height))
+                    answer.smoothness((buttons_width, buttons_height))
+                    new_game.smoothness((new_game_width, new_game_height))
+                    easy.smoothness(dificult_size)
+                    medium.smoothness(dificult_size)
+                    hard.smoothness(dificult_size)
                     
-                    #Si se oprime el botón de pista
-                    if hint.rect.collidepoint(pygame.mouse.get_pos()):  
-                        hint.click((buttons_width*0.85, buttons_height*0.85))
-                        put_hint = True  
-                    
-                    #Si se oprime el botón de resolver
-                    if answer.rect.collidepoint(pygame.mouse.get_pos()):  
-                        answer.click((buttons_width*0.85, buttons_height*0.85))
+                    if clicked:    
+                        clicked = False
 
+                        #Se revisan los botones numericos en caso de que se haya hecho click sobre uno de ellos
+                        for pulsed_button in button_numbers_group.sprites(): 
+                            if pulsed_button.rect.collidepoint(pygame.mouse.get_pos()):  
+                                number_buttons.check_if_pressed(pressed_button, buttons_size)  #Revisa si hay alguno oprimido para volverlo a su estado normal
+                                pulsed_button.click((buttons_size[0]*0.90, buttons_size[1]*0.90))  #Oprime el botón sobre el que se hizo click izquierdo
+                                pressed_button = pulsed_button  #Se guarda el botón pulsado
+                                number_obtained = pulsed_button.get_number()  #Se guarda el valor obtenido del botón
+                                break
+                                
+                        #Se revisa la cuadricula en caso de que se haya hecho click en una casilla
                         for subgrid in subgrid_group.sprites():  
-                            box_group = subgrid.get_box_group() 
-                            for box in box_group.sprites():  
-                                if box.get_data() == 0:  #Si aún no tiene dato la casilla
-                                    box.set_data(box.get_correct_number(), 1, 1)  #Se coloca el dato resuelto y el fondo verde
+                            if subgrid.rect.collidepoint(pygame.mouse.get_pos()):  #Se revisan las subcuadriculas
+                                box_group = subgrid.get_box_group()  
+                                for box in box_group.sprites():  
+                                    if box.rect.collidepoint(pygame.mouse.get_pos()):  #Después cada casilla de la subcuadricula  
+                                        if put_hint:  #Si el botón de pista esta activo
+                                            if box.get_data() == 0:  #Si la casilla está sin resolver
+                                                box.set_data(box.get_correct_number(), 1, 1)  #Se pone el número correcto y se pone el fondo verde
+                                                put_hint = False 
+                                                subgrid.check_complete()  #Revisa si la subcuadricula está llena
+                                                break
 
-                    #Si se oprime el boton de juego nuevo
-                    if new_game.rect.collidepoint(pygame.mouse.get_pos()):  
-                        new_game.click((new_game_width*0.85, new_game_height*0.85))
-                        lifes, put_hint, number_obtained = restart(game_grid, dificult, pressed_button, buttons_size)
+                                        if number_obtained != 0 and box.get_data() == 0:  #si se obtuvo un número del botón y la casilla no tiene número
+                                            if box.get_correct_number() == number_obtained:  #Si el número que se va a colocar en la casilla es correcto
+                                                box.set_data(number_obtained, 1, 1)  
+                                                subgrid.check_complete()  #Revisa si la subcuadriculo está llena
+                                            else:
+                                                box.set_data(number_obtained, 1, 2) 
+                                                lifes -= 1  
 
-                    #Si se cambia a la dificultad facil
-                    if easy.rect.collidepoint(pygame.mouse.get_pos()):  
-                        easy.click(round(dificult_size*0.80))
-                        easy.color_ = GREEN  #Se pone en color solo el botón de easy
-                        medium.color_ = GREY
-                        hard.color_ = GREY
-                        dificult = easy_dificult  
-                        lifes, put_hint, number_obtained = restart(game_grid, dificult, pressed_button, buttons_size)
+                                            number_buttons.check_if_pressed(pressed_button, buttons_size)
+                                            pressed_button = None
+                                            number_obtained = 0  #Se reinicia el número que estaba oprimido
+                        
+                        #Si se oprime el botón de pista
+                        if hint.rect.collidepoint(pygame.mouse.get_pos()):  
+                            hint.click((buttons_width*0.80, buttons_height*0.80))
+                            put_hint = True  
+                            number_buttons.check_if_pressed(pressed_button, buttons_size)
+                            pressed_button = None
+                            number_obtained = 0  
+                        
+                        #Si se oprime el botón de resolver
+                        if answer.rect.collidepoint(pygame.mouse.get_pos()):  
+                            answer.click((buttons_width*0.85, buttons_height*0.85))
+                            for subgrid in subgrid_group.sprites():  
+                                box_group = subgrid.get_box_group() 
+                                for box in box_group.sprites():  
+                                    if box.get_data() == 0:  #Si aún no tiene dato la casilla
+                                        box.set_data(box.get_correct_number(), 1, 1)  #Se coloca el dato resuelto y el fondo verde
 
-                    #Si se cambia a la dificultad medio
-                    if medium.rect.collidepoint(pygame.mouse.get_pos()):  
-                        medium.click(round(dificult_size*0.80))
-                        easy.color_ = GREY
-                        medium.color_ = ORANGE  #Se pone en color solo el botón de medium
-                        hard.color_ = GREY
-                        dificult = medium_dificult  
-                        lifes, put_hint, number_obtained = restart(game_grid, dificult, pressed_button, buttons_size)
-                    
-                    #Si se cambia a la dificultad dificil
-                    if hard.rect.collidepoint(pygame.mouse.get_pos()):  
-                        hard.click(round(dificult_size*0.80))
-                        easy.color_ = GREY
-                        medium.color_ = GREY
-                        hard.color_ = RED_2  #Se pone en color solo el botón de hard
-                        dificult = hard_dificult  
-                        lifes, put_hint, number_obtained = restart(game_grid, dificult, pressed_button, buttons_size)
+                        #Si se oprime el boton de juego nuevo
+                        if new_game.rect.collidepoint(pygame.mouse.get_pos()):  
+                            new_game.click((new_game_width*0.85, new_game_height*0.85))
+                            lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
+                            number_buttons.check_if_pressed(pressed_button, buttons_size)
+                            pressed_button = None
+
+                        #Si se cambia a la dificultad facil
+                        if easy.rect.collidepoint(pygame.mouse.get_pos()):  
+                            easy.click(round(dificult_size*0.80))
+                            easy.color_ = GREEN  #Se pone en color solo el botón de easy
+                            medium.color_ = GREY
+                            hard.color_ = GREY
+                            dificult = 50
+                            lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
+                            number_buttons.check_if_pressed(pressed_button, buttons_size)
+                            pressed_button = None
+
+                        #Si se cambia a la dificultad medio
+                        if medium.rect.collidepoint(pygame.mouse.get_pos()):  
+                            medium.click(round(dificult_size*0.80))
+                            easy.color_ = GREY
+                            medium.color_ = ORANGE  #Se pone en color solo el botón de medium
+                            hard.color_ = GREY
+                            dificult = 100 
+                            lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
+                            number_buttons.check_if_pressed(pressed_button, buttons_size)
+                            pressed_button = None
+                        
+                        #Si se cambia a la dificultad dificil
+                        if hard.rect.collidepoint(pygame.mouse.get_pos()):  
+                            hard.click(round(dificult_size*0.80))
+                            easy.color_ = GREY
+                            medium.color_ = GREY
+                            hard.color_ = RED_2  #Se pone en color solo el botón de hard
+                            dificult = 150 
+                            lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
+                            number_buttons.check_if_pressed(pressed_button, buttons_size)
+                            pressed_button = None
                         
             lifes_text.text_ = f"lifes: {lifes}"  #Se actualizan las vidas
-
-            if lifes <= 0:  #Si se acaban las vidas, se pierde el juego
-                game = False  #TODO: Actualizar el fin del juego
-
+                        
         pygame.display.update() #Actualizar contenido en pantalla
 
 if __name__ == '__main__':
