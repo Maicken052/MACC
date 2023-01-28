@@ -147,9 +147,10 @@ def main():
         dificult_sound = pygame.mixer.Sound("Sfx/dificult_click.wav")
         win_sound = pygame.mixer.Sound("Sfx/win.wav")
         go_sound = pygame.mixer.Sound("Sfx/game_over.wav")
+
         #Finaliza la carga del juego
         finish = True
-        pygame.mixer.fadeout(500)
+        pygame.mixer.fadeout(1000)
 
     #Empezamos a cargar el juego, mientras se corre la pantalla de carga
     threading.Thread(target = load_items).start()
@@ -256,7 +257,6 @@ def main():
                             restart2.action = False
                             clicked = False  
                 else:
-
                     #Fluidez de los botones
                     if not answered:
                         if not put_hint:
@@ -354,11 +354,11 @@ def main():
                         #Si se cambia a la dificultad facil
                         if easy.rect.collidepoint(pygame.mouse.get_pos()):  
                             easy.click(round(dificult_size*0.80))
+                            dificult_sound.play()
                             easy.color_ = GREEN  #Se pone en color solo el botón de easy
                             medium.color_ = GREY
                             hard.color_ = GREY
                             dificult = 50
-                            dificult_sound.play()
                             lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
                             number_buttons.check_if_pressed(pressed_button, buttons_size)
                             pressed_button = None
@@ -367,11 +367,11 @@ def main():
                         #Si se cambia a la dificultad medio
                         if medium.rect.collidepoint(pygame.mouse.get_pos()):  
                             medium.click(round(dificult_size*0.80))
+                            dificult_sound.play()
                             easy.color_ = GREY
                             medium.color_ = ORANGE  #Se pone en color solo el botón de medium
                             hard.color_ = GREY
                             dificult = 100 
-                            dificult_sound.play()
                             lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
                             number_buttons.check_if_pressed(pressed_button, buttons_size)
                             pressed_button = None
@@ -380,11 +380,11 @@ def main():
                         #Si se cambia a la dificultad dificil
                         if hard.rect.collidepoint(pygame.mouse.get_pos()):  
                             hard.click(round(dificult_size*0.80))
+                            dificult_sound.play()
                             easy.color_ = GREY
                             medium.color_ = GREY
                             hard.color_ = RED_2  #Se pone en color solo el botón de hard
                             dificult = 150 
-                            dificult_sound.play()
                             lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
                             number_buttons.check_if_pressed(pressed_button, buttons_size)
                             pressed_button = None
