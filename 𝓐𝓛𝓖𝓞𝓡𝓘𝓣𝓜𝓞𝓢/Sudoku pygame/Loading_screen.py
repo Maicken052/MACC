@@ -14,12 +14,12 @@ class loading_screen:
         self.gif = []  #Lista donde se guarda cada una de las imagenes del gif
 
         for i in range(30):  #Se añaden las imagenes a la lista
-            self.gif.append(load_image(f"Loading screen/{i}.png", 1280, 720))
+            self.gif.append(load_image(f"Assets/Loading screen/{i}.png", 1280, 720))
 
         self.current_img = 0  
         self.image = self.gif[self.current_img]
         self.rect = self.image.get_rect(center=(640, 360))
-        self.sound = pygame.mixer.Sound("Sfx/Nyan.wav")
+        self.sound = pygame.mixer.Sound("Assets/Sfx/Nyan.wav")
         self.sound.play(-1)
         
     def update(self, speed):  #Hacer que las imagenes parezcan un gif

@@ -29,8 +29,8 @@ def load_image(filename, width=None, height=None, transparent=False, alpha=False
 #=============================================================================================================#
 def resize(width, height, design_width, design_height, lifes_text, easy, medium, hard, hint, answer, new_game, game_grid, one, two, three, four, five, six, seven, eight, nine, white_rect_box, go_text, mid_text, excelent_text, second_chance, restart, restart2, flag):
     screen = pygame.display.set_mode((width, height), flag)  
-    background_image = load_image("Images/Background.png", width, height)  
-    grid_lines = load_image("Images/Sudoku_lines.png", width/1.7, height, False, True) 
+    background_image = load_image("Assets/Images/Background.png", width, height)  
+    grid_lines = load_image("Assets/Images/Sudoku_lines.png", width/1.7, height, False, True) 
     win_screen_fade = pygame.Surface((width, height))
     win_screen_fade.fill((135, 206, 235))
     game_over_screen_fade = pygame.Surface((width, height))

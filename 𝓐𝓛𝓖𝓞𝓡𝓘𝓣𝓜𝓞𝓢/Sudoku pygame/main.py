@@ -40,8 +40,8 @@ def main():
     design_height = 720  #Alto base para el que fue diseñado el juego
     screen = pygame.display.set_mode((design_width, design_height), pygame.RESIZABLE)  
     clock = pygame.time.Clock()  
-    background_image = load_image("Images/Background.png", design_width, design_height)   
-    icon = load_image("Images/Icon.png")  
+    background_image = load_image("Assets/Images/Background.png", design_width, design_height)   
+    icon = load_image("Assets/Images/Icon.png")  
     pygame.display.set_caption('Sudoku')  
     pygame.display.set_icon(icon)
 
@@ -72,9 +72,9 @@ def main():
         buttons_height = 79 
         new_game_width = 160  
         new_game_height = 46  
-        hint = actions_buttons('Images/HintButton.png', (buttons_width, buttons_height), (800, 90))  
-        answer = actions_buttons('Images/AnswerButton.png', (buttons_width, buttons_height), (1035, 90))  
-        new_game = actions_buttons('Images/NewGameButton.png', (new_game_width, new_game_height), (757, 665))  
+        hint = actions_buttons('Assets/Images/HintButton.png', (buttons_width, buttons_height), (800, 90))  
+        answer = actions_buttons('Assets/Images/AnswerButton.png', (buttons_width, buttons_height), (1035, 90))  
+        new_game = actions_buttons('Assets/Images/NewGameButton.png', (new_game_width, new_game_height), (757, 665))  
         put_hint = False 
         answered = False
         
@@ -86,15 +86,15 @@ def main():
         second_ypos = 350  
         third_xpos = 1085
         third_ypos = 490 
-        one = number_buttons('Images/One.png', buttons_size, (first_xpos, first_ypos), 1)  
-        two = number_buttons('Images/Two.png', buttons_size, (second_xpos, first_ypos), 2)  
-        three = number_buttons('Images/Three.png', buttons_size, (third_xpos, first_ypos), 3)  
-        four = number_buttons('Images/Four.png', buttons_size, (first_xpos, second_ypos), 4)  
-        five = number_buttons('Images/Five.png', buttons_size, (second_xpos, second_ypos), 5)  
-        six = number_buttons('Images/Six.png', buttons_size, (third_xpos, second_ypos), 6)  
-        seven = number_buttons('Images/Seven.png', buttons_size, (first_xpos, third_ypos), 7)  
-        eight = number_buttons('Images/Eight.png', buttons_size, (second_xpos, third_ypos), 8)  
-        nine = number_buttons('Images/Nine.png', buttons_size, (third_xpos, third_ypos), 9) 
+        one = number_buttons('Assets/Images/One.png', buttons_size, (first_xpos, first_ypos), 1)  
+        two = number_buttons('Assets/Images/Two.png', buttons_size, (second_xpos, first_ypos), 2)  
+        three = number_buttons('Assets/Images/Three.png', buttons_size, (third_xpos, first_ypos), 3)  
+        four = number_buttons('Assets/Images/Four.png', buttons_size, (first_xpos, second_ypos), 4)  
+        five = number_buttons('Assets/Images/Five.png', buttons_size, (second_xpos, second_ypos), 5)  
+        six = number_buttons('Assets/Images/Six.png', buttons_size, (third_xpos, second_ypos), 6)  
+        seven = number_buttons('Assets/Images/Seven.png', buttons_size, (first_xpos, third_ypos), 7)  
+        eight = number_buttons('Assets/Images/Eight.png', buttons_size, (second_xpos, third_ypos), 8)  
+        nine = number_buttons('Assets/Images/Nine.png', buttons_size, (third_xpos, third_ypos), 9) 
         button_numbers_group = pygame.sprite.Group()  
         button_numbers_group.add(one)
         button_numbers_group.add(two)
@@ -114,7 +114,7 @@ def main():
         box_size = (69, 66)  
         num_size = (25, 25)  
         game_grid = grid(grid_size, subgrid_size, box_size, num_size, (377, 360))  
-        grid_lines = load_image("Images/Sudoku_lines.png",753, 720, False, True) 
+        grid_lines = load_image("Assets/Images/Sudoku_lines.png",753, 720, False, True) 
         game_grid.generator(dificult)  
         subgrid_group = game_grid.get_subgrid_group() 
 
@@ -139,14 +139,14 @@ def main():
         repeat = False
 
         #Efectos de sonido
-        correct_num_sound = pygame.mixer.Sound("Sfx/correct_num.wav")
-        wrong_num_sound = pygame.mixer.Sound("Sfx/wrong_num.wav")
-        number_sound = pygame.mixer.Sound("Sfx/number_click.wav")
-        hint_sound = pygame.mixer.Sound("Sfx/hint_click.wav")
-        answer_sound = pygame.mixer.Sound("Sfx/answer_click.wav")
-        dificult_sound = pygame.mixer.Sound("Sfx/dificult_click.wav")
-        win_sound = pygame.mixer.Sound("Sfx/win.wav")
-        go_sound = pygame.mixer.Sound("Sfx/game_over.wav")
+        correct_num_sound = pygame.mixer.Sound("Assets/Sfx/correct_num.wav")
+        wrong_num_sound = pygame.mixer.Sound("Assets/Sfx/wrong_num.wav")
+        number_sound = pygame.mixer.Sound("Assets/Sfx/number_click.wav")
+        hint_sound = pygame.mixer.Sound("Assets/Sfx/hint_click.wav")
+        answer_sound = pygame.mixer.Sound("Assets/Sfx/answer_click.wav")
+        dificult_sound = pygame.mixer.Sound("Assets/Sfx/dificult_click.wav")
+        win_sound = pygame.mixer.Sound("Assets/Sfx/win.wav")
+        go_sound = pygame.mixer.Sound("Assets/Sfx/game_over.wav")
 
         #Finaliza la carga del juego
         finish = True

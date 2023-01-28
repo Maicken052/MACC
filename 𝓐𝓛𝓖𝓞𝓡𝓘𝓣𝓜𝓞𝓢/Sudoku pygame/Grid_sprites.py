@@ -21,16 +21,16 @@ class box_numbers:
         self.img_size = img_size 
         self.number = number 
         self.possible_imgs = { 
-            0:"Images/WHITE.png",
-            1:"Images/1.png",
-            2:"Images/2.png",
-            3:"Images/3.png",
-            4:"Images/4.png",
-            5:"Images/5.png",
-            6:"Images/6.png",
-            7:"Images/7.png",
-            8:"Images/8.png",
-            9:"Images/9.png",
+            0:"Assets/Images/WHITE.png",
+            1:"Assets/Images/1.png",
+            2:"Assets/Images/2.png",
+            3:"Assets/Images/3.png",
+            4:"Assets/Images/4.png",
+            5:"Assets/Images/5.png",
+            6:"Assets/Images/6.png",
+            7:"Assets/Images/7.png",
+            8:"Assets/Images/8.png",
+            9:"Assets/Images/9.png",
         }
         self.image = load_image(self.possible_imgs[self.number], self.img_size[0], self.img_size[1])  #Se ajusta al tamaño deseado y se escoge una imagen del diccionario según el número que corresponda
         self.rect = self.image.get_rect(center=pos)  
@@ -63,7 +63,7 @@ class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para us
             raise ValueError ("Solo se reciben valores del 0 al 9")
 
         #Atributos
-        self.image = load_image('Images/Box.png', img_size[0], img_size[1], True) 
+        self.image = load_image('Assets/Images/Box.png', img_size[0], img_size[1], True) 
         self.rect = self.image.get_rect()  
         self.background_color = background_color  #El color de fondo de la casilla 
 
@@ -85,11 +85,11 @@ class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para us
         self.correct_number = 0  #El número que debe ir en la casilla
 
         #Imagen del color verde dentro de la casilla
-        self.correct_num_color = load_image("Images/LightGreen.png", self.rect.width/1.5, self.rect.height/1.5)  
+        self.correct_num_color = load_image("Assets/Images/LightGreen.png", self.rect.width/1.5, self.rect.height/1.5)  
         self.correct_num_color_rect = self.correct_num_color.get_rect(center=self.rect.center)  
 
         #Imagen del color rojo dentro de la casilla
-        self.wrong_num_color = load_image("Images/LightRed.png", self.rect.width/1.5, self.rect.height/1.5)  
+        self.wrong_num_color = load_image("Assets/Images/LightRed.png", self.rect.width/1.5, self.rect.height/1.5)  
         self.wrong_num_color_rect = self.wrong_num_color.get_rect(center=self.rect.center) 
 
     #Métodos
@@ -110,7 +110,7 @@ class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para us
             self.correct_number = num
 
     def update(self, img_size:tuple, num_size:tuple, pos:tuple):  #Se actualiza el tamaño y la posición
-        self.image = load_image('Images/Box.png', img_size[0], img_size[1], True)  
+        self.image = load_image('Assets/Images/Box.png', img_size[0], img_size[1], True)  
         self.rect.size = img_size  
 
         if pos[0] != None:
@@ -128,9 +128,9 @@ class box(pygame.sprite.Sprite): #Se hereda de la clase sprite de pygame para us
 
         self.data.update(num_size, self.rect.center) 
         
-        self.correct_num_color = load_image("Images/LightGreen.png", self.rect.width/1.5, self.rect.height/1.5)  
+        self.correct_num_color = load_image("Assets/Images/LightGreen.png", self.rect.width/1.5, self.rect.height/1.5)  
         self.correct_num_color_rect = self.correct_num_color.get_rect(center=self.rect.center)  
-        self.wrong_num_color = load_image("Images/LightRed.png", self.rect.width/1.5, self.rect.height/1.5) 
+        self.wrong_num_color = load_image("Assets/Images/LightRed.png", self.rect.width/1.5, self.rect.height/1.5) 
         self.wrong_num_color_rect = self.wrong_num_color.get_rect(center=self.rect.center)  
 
 

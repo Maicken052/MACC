@@ -85,7 +85,7 @@ class word:
     def __init__(self, text:str, size:int, color:tuple, pos:tuple):
         
         #Atributos
-        self.font = pygame.font.Font('Images/Font.TTF', size)  #Se elige la fuente para el texto
+        self.font = pygame.font.Font('Assets/Images/Font.TTF', size)  #Se elige la fuente para el texto
         self.text = text  
         self.color = color  
         self.image = self.font.render(self.text, True, self.color)  #Se pone el texto y el color en una imagen renderizada
@@ -112,7 +112,7 @@ class word:
 
     #Métodos
     def update(self, size:int, pos:tuple):  #Se actualiza el tamaño y la posición
-        self.font = pygame.font.Font('Images/Font.TTF', size) 
+        self.font = pygame.font.Font('Assets/Images/Font.TTF', size) 
         self.image = self.font.render(self.text, True, self.color)  
         self.rect = self.image.get_rect(topleft=pos) 
 
@@ -121,7 +121,7 @@ class word:
     
     def click(self, size:int):  #Cambia el tamaño del botón para mostrar un click
         center_ = self.rect.center
-        self.font = pygame.font.Font('Images/Font.TTF', size)  
+        self.font = pygame.font.Font('Assets/Images/Font.TTF', size)  
         self.image = self.font.render(self.text, True, self.color) 
         self.rect = self.image.get_rect(center=center_)
     
@@ -142,8 +142,8 @@ class animated_button:
         self.elevation = elevation
         self.dynamic_elevation = elevation
         self.original_y_pos = pos[1]
-        self.click_sound = pygame.mixer.Sound("Sfx/button_click.wav")
-        self.hover_sound = pygame.mixer.Sound("Sfx/hover.wav")
+        self.click_sound = pygame.mixer.Sound("Assets/Sfx/button_click.wav")
+        self.hover_sound = pygame.mixer.Sound("Assets/Sfx/hover.wav")
         self.actived = False
 
         #rectángulo superior 
@@ -159,7 +159,7 @@ class animated_button:
         #texto
         self.text = text
         self.text_color = text_color
-        self.font = pygame.font.Font('Images/Font.TTF', text_size)
+        self.font = pygame.font.Font('Assets/Images/Font.TTF', text_size)
         self.text_surf = self.font.render(self.text, True, text_color)
         self.text_rect = self.text_surf.get_rect(center=self.top_rect.center)
 
@@ -207,6 +207,6 @@ class animated_button:
         self.bottom_rect.size = button_size
         self.bottom_rect.center = pos
 
-        self.font = pygame.font.Font('Images/Font.TTF', text_size)
+        self.font = pygame.font.Font('Assets/Images/Font.TTF', text_size)
         self.text_surf = self.font.render(self.text, True, self.text_color)
         self.text_rect = self.text_surf.get_rect(center=self.top_rect.center)
