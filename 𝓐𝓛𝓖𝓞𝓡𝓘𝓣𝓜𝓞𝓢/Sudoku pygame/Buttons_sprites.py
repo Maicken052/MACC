@@ -72,7 +72,6 @@ class actions_buttons:
         self.image = load_image(self.image_pic, size[0], size[1], False, True)
         self.rect.size = size
         self.rect.center = center
-        pygame.time.delay(5)
 
     def smoothness(self, size:tuple):  #Cambia el tamaño cuando se le pasa por encima el mouse
         if self.rect.collidepoint(pygame.mouse.get_pos()):
@@ -143,6 +142,9 @@ class animated_button:
         self.elevation = elevation
         self.dynamic_elevation = elevation
         self.original_y_pos = pos[1]
+        self.click_sound = pygame.mixer.Sound("Sfx/button_click.wav")
+        self.hover_sound = pygame.mixer.Sound("Sfx/hover.wav")
+        self.actived = False
 
         #rectángulo superior 
         self.top_rect = pygame.Rect((0, 0), button_size)
@@ -175,6 +177,9 @@ class animated_button:
     def check_click(self, color:tuple, hover_color:tuple):
         if self.top_rect.collidepoint(pygame.mouse.get_pos()):
             self.top_color = hover_color  #Si el mouse está encima del botón, se cambia el color
+            if not self.actived:
+                self.hover_sound.play()
+                self.actived = True
             if pygame.mouse.get_pressed()[0]:
                 self.dynamic_elevation = 0  #Cuando se oprime el click, se hace el efecto de hundirse
                 self.pressed = True  #Y se guarda en este atributo que se oprimió
@@ -182,11 +187,13 @@ class animated_button:
                 self.dynamic_elevation = self.elevation  #Si no esta oprimido, el botón vuelve a la normalidad
                 if self.pressed == True:  
                     self.action = True  #Y si se habia oprimido el click anteriormente, se activa la acción correspondiente
+                    self.click_sound.play()
                     self.pressed = False
         else:
             self.pressed = False  #Si se sale el mouse del botón, se desactiva el click en caso de haber sido oprimido
             self.dynamic_elevation = self.elevation  #El botón vuelve a la normalidad
-            self.top_color = color  #Y el color vuelve a su color base
+            self.top_color = color  #Y el color vuelve a su color base}
+            self.actived = False
 
         return self.action
     

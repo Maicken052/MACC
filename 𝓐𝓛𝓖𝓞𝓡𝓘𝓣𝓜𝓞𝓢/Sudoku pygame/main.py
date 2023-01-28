@@ -35,7 +35,6 @@ def main():
     WIDTH = screen_info.current_w 
     HEIGHT = screen_info.current_h 
     fullscreen = False  
-
     #Config de la ventana
     design_width = 1280  #Ancho base para el que fue diseñado el juego
     design_height = 720  #Alto base para el que fue diseñado el juego
@@ -47,7 +46,7 @@ def main():
     pygame.display.set_icon(icon)
 
     #Variables que se usan en el juego (se usa el global 2 veces dado que estan en una función anidada)
-    global lifes, lifes_text, dificult_size, easy, medium, hard, dificult, buttons_width, buttons_height, hint, put_hint, answer, new_game_width, new_game_height, new_game, button_numbers_group, buttons_size, one, two, three, four, five, six, seven, eight, nine, number_obtained, pressed_button, game_grid, subgrid_group, grid_lines, game_over_screen_fade, win_screen_fade, white_rect_box, go_text, mid_text, second_chance, restart, excelent_text, restart2, repeat, finish
+    global lifes, lifes_text, dificult_size, easy, medium, hard, dificult, buttons_width, buttons_height, hint, put_hint, answered, answer, new_game_width, new_game_height, new_game, button_numbers_group, buttons_size, one, two, three, four, five, six, seven, eight, nine, number_obtained, pressed_button, game_grid, subgrid_group, grid_lines, game_over_screen_fade, win_screen_fade, white_rect_box, go_text, mid_text, second_chance, restart, excelent_text, restart2, repeat, correct_num_sound, wrong_num_sound, number_sound, hint_sound, answer_sound, dificult_sound, win_sound, go_sound, finish
     
     #Pantalla de carga
     load_screen = loading_screen()
@@ -55,7 +54,7 @@ def main():
 
     #Cargar todo lo que se usa en el juego
     def load_items():
-        global lifes, lifes_text, dificult_size, easy, medium, hard, dificult, buttons_width, buttons_height, hint, put_hint, answer, new_game_width, new_game_height, new_game, button_numbers_group, buttons_size, one, two, three, four, five, six, seven, eight, nine, number_obtained, pressed_button, game_grid, subgrid_group, grid_lines, game_over_screen_fade, win_screen_fade, white_rect_box, go_text, mid_text, second_chance, restart, excelent_text, restart2, repeat, finish
+        global lifes, lifes_text, dificult_size, easy, medium, hard, dificult, buttons_width, buttons_height, hint, put_hint, answered, answer, new_game_width, new_game_height, new_game, button_numbers_group, buttons_size, one, two, three, four, five, six, seven, eight, nine, number_obtained, pressed_button, game_grid, subgrid_group, grid_lines, game_over_screen_fade, win_screen_fade, white_rect_box, go_text, mid_text, second_chance, restart, excelent_text, restart2, repeat, correct_num_sound, wrong_num_sound, number_sound, hint_sound, answer_sound, dificult_sound, win_sound, go_sound, finish
 
         #Texto de las vidas
         lifes = 5  
@@ -77,6 +76,7 @@ def main():
         answer = actions_buttons('Images/AnswerButton.png', (buttons_width, buttons_height), (1035, 90))  
         new_game = actions_buttons('Images/NewGameButton.png', (new_game_width, new_game_height), (757, 665))  
         put_hint = False 
+        answered = False
         
         #Config de los botones númericos
         buttons_size = (140, 140)  
@@ -138,8 +138,18 @@ def main():
         restart2 = animated_button("restart", 30, (350, 60), (640, 450), 6, WHITE, DARK_GREY, DARK_GREY)
         repeat = False
 
+        #Efectos de sonido
+        correct_num_sound = pygame.mixer.Sound("Sfx/correct_num.wav")
+        wrong_num_sound = pygame.mixer.Sound("Sfx/wrong_num.wav")
+        number_sound = pygame.mixer.Sound("Sfx/number_click.wav")
+        hint_sound = pygame.mixer.Sound("Sfx/hint_click.wav")
+        answer_sound = pygame.mixer.Sound("Sfx/answer_click.wav")
+        dificult_sound = pygame.mixer.Sound("Sfx/dificult_click.wav")
+        win_sound = pygame.mixer.Sound("Sfx/win.wav")
+        go_sound = pygame.mixer.Sound("Sfx/game_over.wav")
         #Finaliza la carga del juego
         finish = True
+        pygame.mixer.fadeout(500)
 
     #Empezamos a cargar el juego, mientras se corre la pantalla de carga
     threading.Thread(target = load_items).start()
@@ -193,6 +203,7 @@ def main():
             if lifes <= 0:  
                 if not repeat: 
                     #Se hace el efecto fade
+                    go_sound.play()
                     fade_in(game_over_screen_fade, 160, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
                     repeat = True
                 else:  
@@ -213,8 +224,8 @@ def main():
                         clicked = False
 
                     if restart.check_click(BLUE, FADE_BLUE):
-                        fade_out(game_over_screen_fade, 160, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
                         lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
+                        fade_out(game_over_screen_fade, 160, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
                         number_buttons.check_if_pressed(pressed_button, buttons_size)
                         pressed_button = None
                         repeat = False
@@ -223,7 +234,10 @@ def main():
             else:
                 #Pantalla de victoria
                 if game_grid.check_complete(): 
-                    if not repeat:  #Se hace el efecto fade
+                    if not repeat: 
+                        #Se hace el efecto fade
+                        pygame.time.delay(400)
+                        win_sound.play()
                         fade_in(win_screen_fade, 255, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
                         repeat = True
                     else:  
@@ -234,37 +248,47 @@ def main():
 
                         #Salir de la pantalla final
                         if restart2.check_click(WHITE, GREY):
-                            fade_out(win_screen_fade, 255, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
                             lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
+                            fade_out(win_screen_fade, 255, screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
                             number_buttons.check_if_pressed(pressed_button, buttons_size)
                             pressed_button = None
                             repeat = False
                             restart2.action = False
                             clicked = False  
                 else:
-                    #Fluidez de los botones
-                    for pulsed_button in button_numbers_group.sprites(): 
-                        if  pulsed_button != pressed_button:
-                                pulsed_button.smoothness(buttons_size)
 
-                    hint.smoothness((buttons_width, buttons_height))
-                    answer.smoothness((buttons_width, buttons_height))
+                    #Fluidez de los botones
+                    if not answered:
+                        if not put_hint:
+                            for pulsed_button in button_numbers_group.sprites(): 
+                                if  pulsed_button != pressed_button:
+                                        pulsed_button.smoothness(buttons_size)
+                            hint.smoothness((buttons_width, buttons_height))
+                            answer.smoothness((buttons_width, buttons_height))
+
                     new_game.smoothness((new_game_width, new_game_height))
                     easy.smoothness(dificult_size)
                     medium.smoothness(dificult_size)
                     hard.smoothness(dificult_size)
                     
+                    if answered:  #Delay para que se vea la animación del click
+                        pygame.time.delay(100)
+                        answer.click((buttons_width, buttons_height))
+
                     if clicked:    
                         clicked = False
 
                         #Se revisan los botones numericos en caso de que se haya hecho click sobre uno de ellos
-                        for pulsed_button in button_numbers_group.sprites(): 
-                            if pulsed_button.rect.collidepoint(pygame.mouse.get_pos()):  
-                                number_buttons.check_if_pressed(pressed_button, buttons_size)  #Revisa si hay alguno oprimido para volverlo a su estado normal
-                                pulsed_button.click((buttons_size[0]*0.90, buttons_size[1]*0.90))  #Oprime el botón sobre el que se hizo click izquierdo
-                                pressed_button = pulsed_button  #Se guarda el botón pulsado
-                                number_obtained = pulsed_button.get_number()  #Se guarda el valor obtenido del botón
-                                break
+                        if not answered:
+                            if not put_hint:
+                                for pulsed_button in button_numbers_group.sprites(): 
+                                    if pulsed_button.rect.collidepoint(pygame.mouse.get_pos()):  
+                                        number_buttons.check_if_pressed(pressed_button, buttons_size)  #Revisa si hay alguno oprimido para volverlo a su estado normal
+                                        pulsed_button.click((buttons_size[0]*0.90, buttons_size[1]*0.90))  #Oprime el botón sobre el que se hizo click izquierdo
+                                        number_sound.play()
+                                        pressed_button = pulsed_button  #Se guarda el botón pulsado
+                                        number_obtained = pulsed_button.get_number()  #Se guarda el valor obtenido del botón
+                                        break
                                 
                         #Se revisa la cuadricula en caso de que se haya hecho click en una casilla
                         for subgrid in subgrid_group.sprites():  
@@ -275,6 +299,7 @@ def main():
                                         if put_hint:  #Si el botón de pista esta activo
                                             if box.get_data() == 0:  #Si la casilla está sin resolver
                                                 box.set_data(box.get_correct_number(), 1, 1)  #Se pone el número correcto y se pone el fondo verde
+                                                correct_num_sound.play()
                                                 put_hint = False 
                                                 subgrid.check_complete()  #Revisa si la subcuadricula está llena
                                                 break
@@ -282,9 +307,11 @@ def main():
                                         if number_obtained != 0 and box.get_data() == 0:  #si se obtuvo un número del botón y la casilla no tiene número
                                             if box.get_correct_number() == number_obtained:  #Si el número que se va a colocar en la casilla es correcto
                                                 box.set_data(number_obtained, 1, 1)  
+                                                correct_num_sound.play()
                                                 subgrid.check_complete()  #Revisa si la subcuadriculo está llena
                                             else:
                                                 box.set_data(number_obtained, 1, 2) 
+                                                wrong_num_sound.play()
                                                 lifes -= 1  
 
                                             number_buttons.check_if_pressed(pressed_button, buttons_size)
@@ -293,27 +320,36 @@ def main():
                         
                         #Si se oprime el botón de pista
                         if hint.rect.collidepoint(pygame.mouse.get_pos()):  
-                            hint.click((buttons_width*0.80, buttons_height*0.80))
-                            put_hint = True  
-                            number_buttons.check_if_pressed(pressed_button, buttons_size)
-                            pressed_button = None
-                            number_obtained = 0  
+                            if not put_hint:
+                                if not answered:
+                                    hint.click((buttons_width*0.90, buttons_height*0.90))
+                                    hint_sound.play()
+                                    put_hint = True  
+                                    number_buttons.check_if_pressed(pressed_button, buttons_size)
+                                    pressed_button = None
+                                    number_obtained = 0  
                         
                         #Si se oprime el botón de resolver
                         if answer.rect.collidepoint(pygame.mouse.get_pos()):  
-                            answer.click((buttons_width*0.85, buttons_height*0.85))
-                            for subgrid in subgrid_group.sprites():  
-                                box_group = subgrid.get_box_group() 
-                                for box in box_group.sprites():  
-                                    if box.get_data() == 0:  #Si aún no tiene dato la casilla
-                                        box.set_data(box.get_correct_number(), 1, 1)  #Se coloca el dato resuelto y el fondo verde
-
+                            if not put_hint:
+                                if not answered:
+                                    answer.click((buttons_width*0.85, buttons_height*0.85))
+                                    answer_sound.play()
+                                    answered = True
+                                    for subgrid in subgrid_group.sprites():  
+                                        box_group = subgrid.get_box_group() 
+                                        for box in box_group.sprites():  
+                                            if box.get_data() == 0:  #Si aún no tiene dato la casilla
+                                                box.set_data(box.get_correct_number(), 1, 1)  #Se coloca el dato resuelto y el fondo verde
+                            
                         #Si se oprime el boton de juego nuevo
                         if new_game.rect.collidepoint(pygame.mouse.get_pos()):  
                             new_game.click((new_game_width*0.85, new_game_height*0.85))
+                            dificult_sound.play()
                             lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
                             number_buttons.check_if_pressed(pressed_button, buttons_size)
                             pressed_button = None
+                            answered = False
 
                         #Si se cambia a la dificultad facil
                         if easy.rect.collidepoint(pygame.mouse.get_pos()):  
@@ -322,9 +358,11 @@ def main():
                             medium.color_ = GREY
                             hard.color_ = GREY
                             dificult = 50
+                            dificult_sound.play()
                             lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
                             number_buttons.check_if_pressed(pressed_button, buttons_size)
                             pressed_button = None
+                            answered = False
 
                         #Si se cambia a la dificultad medio
                         if medium.rect.collidepoint(pygame.mouse.get_pos()):  
@@ -333,9 +371,11 @@ def main():
                             medium.color_ = ORANGE  #Se pone en color solo el botón de medium
                             hard.color_ = GREY
                             dificult = 100 
+                            dificult_sound.play()
                             lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
                             number_buttons.check_if_pressed(pressed_button, buttons_size)
                             pressed_button = None
+                            answered = False
                         
                         #Si se cambia a la dificultad dificil
                         if hard.rect.collidepoint(pygame.mouse.get_pos()):  
@@ -344,9 +384,11 @@ def main():
                             medium.color_ = GREY
                             hard.color_ = RED_2  #Se pone en color solo el botón de hard
                             dificult = 150 
+                            dificult_sound.play()
                             lifes, put_hint, number_obtained = restart_game(game_grid, dificult)
                             number_buttons.check_if_pressed(pressed_button, buttons_size)
                             pressed_button = None
+                            answered = False
                         
             lifes_text.text_ = f"lifes: {lifes}"  #Se actualizan las vidas
                         

@@ -153,6 +153,7 @@ def fade_in(screen_fade, range_, screen, background_image, grid_lines, game_grid
         redraw(screen, background_image, grid_lines, game_grid, lifes_text, hint, answer, button_numbers_group, new_game, easy, medium, hard)
         screen.blit(screen_fade, (0, 0))
         pygame.display.update()
+        pygame.time.delay(5)
 #=============================================================================================================#
 #                                                   *Fade out 
 #=============================================================================================================#
