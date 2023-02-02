@@ -1,0 +1,46 @@
+-- Selección (Ver tuplas de una relación que cumplan con una condición)
+-- σ salary > 90000 (instructor)
+
+-- Selección con operador lógico
+-- σ dept_name = 'Physics' ∧ salary > 90000 (instructor)
+
+-- Proyección (Ver los atributos solicitados)
+-- π ID, name, salary (instructor)
+-- π course_id, semester, building, room_number (section)
+
+-- Uso de dos herramientas (Selección y proyección)
+-- π name (σ dept_name = 'Physics' (instructor))
+
+-- Dos consultas con operador "y"
+-- π course_id (σ semester = 'Fall' ∧ year = 2009 (section))
+-- π course_id (σ semester = 'Spring' ∧ year = 2010 (section))
+
+-- Unión (Los que estan en ambas tablas (sin repetir tuplas))
+-- π course_id (σ semester = 'Fall' ∧ year = 2009 (section)) ∪
+-- π course_id (σ semester = 'Spring' ∧ year = 2010 (section))
+
+-- Intersección (Los que estan en las dos tablas)
+-- π course_id (σ semester = 'Fall' ∧ year = 2009 (section)) ∩
+-- π course_id (σ semester = 'Spring' ∧ year = 2010 (section))
+
+-- Diferecia (Que estan en la primera tabla pero en la segunda no)
+-- π course_id (σ semester = 'Fall' ∧ year = 2009 (section)) -
+-- π course_id (σ semester = 'Spring' ∧ year = 2010 (section))
+
+-- Producto cartesiano (Combinar dos relaciones)
+-- instructor ⨯ teaches
+
+-- Producto cartesiano con selección
+-- σ dept_name = 'Physics' (instructor ⨯ teaches)
+
+-- Join (Une dos relaciones, pero las tuplas tienen atributos en común)
+-- π name, course_id (instructor ⨝ teaches)
+
+-- Join izquierdo
+-- π name, course_id (instructor ⟕ teaches)
+
+-- Join derecho
+-- π name, course_id (teaches ⟖ instructor)
+
+-- Join completo
+-- π name, course_id (instructor ⟗ teaches)
