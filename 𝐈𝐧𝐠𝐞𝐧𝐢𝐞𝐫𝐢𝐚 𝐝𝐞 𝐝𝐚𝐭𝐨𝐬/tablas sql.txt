@@ -139,4 +139,48 @@ delete from department where (dept_name, building, budget) = ('Elec. Eng.', 'Tay
 delete from course
 
 '''select'''
+select name 
+from instructor
 
+select distinct dept_name
+from instructor
+
+select ID, name, dept_name, salary*1.5  '''Cambia el valor del atributo per solo visualmente'''
+from instructor
+
+select name
+from instructor
+where dept_name = 'Comp. Sci.' and salary > 70000
+
+select i.name, d.dept_name, d.budget
+from instructor as i, department as d
+
+select name, instructor.dept_name, building
+from instructor, department
+where instructor.dept_name = department.dept_name
+
+select name, course_id
+from instructor, teaches
+where instructor.ID = teaches.ID
+
+select dept_name, budget
+from department
+where building like 'W%'
+
+'''consultar el nombre del instructor, el nombre del curso, el nombre del semestre y el año cuando se oriento el curso'''
+select i.name, i.dept_name, c.title, t.semester, t.year
+from instructor as i, course as c, teaches as t
+where i.ID = t.ID and c.course_id = t.course_id
+
+'''update'''
+update instructor
+set salary = salary*1.05
+select *
+from instructor
+
+'''Actualizar el presupuesto incrementando en un 10% los valores del dept de musica y de biologia'''
+update department
+set budget = budget*1.1
+where dept_name = 'Biology' or dept_name = 'Music'
+select *
+from department
