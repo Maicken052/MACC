@@ -193,3 +193,74 @@ where name = 'Einstein'
 select *
 from instructor
 alter table instructor drop prueba   '''Borramos la columna'''
+
+'''1) Crear una nueva columna llamada fecha_contratacion en la tabla instructor.'''
+alter table instructor add fecha_contratacion date
+select * 
+from instructor
+
+'''2) Crear una nueva columna llamada hora_ingreso en la tabla instructor. '''
+alter table instructor add hora_ingreso time
+select * 
+from instructor
+
+'''3) Llenar en las nuevas columnas datos para los instructores: Gold, Mozart y Kim.'''
+update instructor
+	set fecha_contratacion = '11/5/2022', hora_ingreso = '12:00'
+ 	where instructor.name = 'Gold' or instructor.name = 'Mozart' or instructor.name = 'Kim';
+select * 
+from instructor
+
+'''4) Tomando como referencia las tablas curso y departamento, consultar las columnas: codigo del curso, titulo, creditos y edificio donde se orientan los cursos.'''
+select c.course_id, c.title, c.credits, d.building
+from course as c, department as d
+where d.dept_name = c.dept_name 
+
+'''Ordenar info'''
+select name
+	from instructor
+	where dept_name = 'Physics'
+	order by name;
+	
+select name, salary
+	from instructor
+	order by salary desc, name asc; '''Le da priorida al salario'''
+
+'''Operaciones entre conjuntos'''
+'''si se coloca la palabra all muestra las tuplas repetidas''' 
+
+'''Union'''
+(select course_id
+	from section
+	where semester = 'Fall' and year = 2009)
+union 
+(select course_id
+	from section
+	where semester = 'Spring' and year = 2010);
+
+'''Interseccion'''
+(select course_id
+	from section
+	where semester = 'Fall' and year = 2009)
+intersect
+(select course_id
+	from section
+	where semester = 'Spring' and year = 2010);
+
+'''Except'''
+(select course_id
+	from section
+	where semester = 'Fall' and year = 2009)
+except
+(select course_id
+	from section
+	where semester = 'Spring' and year = 2010);
+	
+select name
+from instructor
+where salary is null;
+
+'''Consultar nombre del instructor y nombre del departamento de los instructores que no tienen hora de ingreso'''
+select i.name, i.dept_name 
+from instructor as i
+where hora_ingreso is null
