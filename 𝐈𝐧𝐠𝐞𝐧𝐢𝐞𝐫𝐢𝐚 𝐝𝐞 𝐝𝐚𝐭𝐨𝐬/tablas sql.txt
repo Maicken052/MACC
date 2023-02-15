@@ -185,7 +185,7 @@ where dept_name = 'Biology' or dept_name = 'Music'
 select *
 from department
 
-'''crear una columna nueva llamada prueba con el tipo de dato parchar de 20 caracteres en la tabla de instructores. Llenar el valor Hola a la tupla del instructor'''
+'''crear una columna nueva llamada prueba con el tipo de dato varchar de 20 caracteres en la tabla de instructores. Llenar el valor Hola a la tupla del instructor'''
 alter table instructor add prueba varchar(20)
 update instructor
 set prueba = 'Hola'
