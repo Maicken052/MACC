@@ -1,0 +1,10 @@
+create database Hollywood;
+
+create table actor(
+id integer,
+nombre varchar(30) not null,
+genero varchar(10),
+fecha_nacimiento date,
+actor_pk constraint,
+primary key(id, actor_pk)
+);
