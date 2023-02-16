@@ -332,3 +332,37 @@ select dept_name, avg(credits) as avg_credits
 from course
 group by dept_name
 having avg(credits) > 3.0;
+
+--Subconsultas
+select name, salary
+from instructor
+where salary<(select salary from instructor where name = 'Califieri');
+
+-- Clausula in
+select distinct course_id
+from section
+where semester = 'Fall' and year = 2009 and
+course_id in (select course_id from section where semester = 'Spring' and year = 2010);
+
+-- Clausula some
+select name, salary, dept_name
+from instructor 
+where salary > some
+				(select salary from instructor  where dept_name = 'Biology');
+
+-- Clausula all
+select d.dept_name, d.budget
+from department as d
+where d.budget > all(select d.budget from department as d where d.building = 'Taylor');
+
+-- Clausula exist
+select course_id
+from section as S
+where semester = 'Fall' and year = 2009 and exists(select * 
+												   from section as T
+												   where semester = 'Spring' and year = 2010 and S.course_id = T.course_id);
+												   
+--Los instructores que no han dictado clases
+select *
+from instructor as i
+where not exists(select i.ID from teaches as t where i.ID = t.ID)
