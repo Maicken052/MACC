@@ -453,3 +453,14 @@ from student
 group by dept_name
 having sum(tot_cred) > 200
 
+--
+select dept_name, sum_cred 
+from (select dept_name, sum(tot_cred) from student group by dept_name)
+as sum_cred(dept_name, sum_cred)
+where sum_cred > 100;
+
+select distinct s.ID, s.name
+from student as s
+where not exists((select course_id from course where dept_name = 'Biology')
+				 except
+				 (select t.course_id from takes as t where s.ID = t.ID))
