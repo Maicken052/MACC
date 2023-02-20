@@ -46,6 +46,27 @@ foreign key(course_id, sec_id, semester, year) references section(course_id, sec
 primary key(ID, course_id, sec_id, semester, year)
 );
 
+create table student(
+ID varchar(5),
+name varchar(20) not null,
+dept_name varchar(20),
+tot_cred numeric(3,0),
+primary key (ID),
+foreign key (dept_name) references department
+);
+
+create table takes(
+ID varchar(5),
+course_id varchar(8),
+sec_id varchar(8),
+semester varchar(6),
+year numeric(4,0),
+grade varchar(2),
+primary key (ID, course_id, sec_id, semester, year),
+foreign key (course_id, sec_id, semester, year) references section,
+foreign key (ID) references student
+);
+
 #Se prueba el select#
 select *
 from department;
@@ -134,6 +155,45 @@ insert into teaches (ID, course_id, sec_id, semester, year)
 		('83821', 'CS-319', '2', 'Spring', 2010),
 		('98345', 'EE-181', '1', 'Spring', 2009);
 
+insert into student (ID, name, dept_name, tot_cred)
+	values('00128', 'Zhang', 'Comp. Sci.', 102),
+		('12345', 'Shankar', 'Comp. Sci.', 32),
+		('19991', 'Brandt', 'History', 80),
+		('23121', 'Chavez', 'Finance', 110),
+		('44553', 'Peltier', 'Physics', 56),
+		('45678', 'Levy', 'Physics', 46),
+		('54321', 'Williams', 'Comp. Sci.', 54),
+		('55739', 'Sanchez', 'Music', 38),
+		('70557', 'Snow', 'Physics', 0),
+		('76543', 'Brown', 'Comp. Sci.', 58),
+		('76653', 'Aoi', 'Elec. Eng.', 60),
+		('98765', 'Bourikas', 'Elec. Eng.', 98),
+		('98988', 'Tanaka', 'Biology', 120);
+
+insert into takes (ID, course_id, sec_id, semester, year, grade) values
+			('00128', 'CS-101', '1', 'Fall', 2009, 'A'),
+			('00128', 'CS-347', '1', 'Fall', 2009 ,'A'),
+			('12345', 'CS-101', '1', 'Fall', 2009, 'C'),
+			('12345', 'CS-190', '2', 'Spring', 2009, 'A'),
+			('12345', 'CS-315', '1', 'Spring', 2010, 'A'),
+			('12345', 'CS-347', '1', 'Fall', 2009, 'A'),
+			('19991', 'HIS-351', '1', 'Spring', 2010, 'B'),
+			('23121', 'FIN-201', '1', 'Spring', 2010, 'C+'),
+			('44553', 'PHY-101', '1', 'Fall', 2009, 'B'), 
+			('45678', 'CS-101', '1', 'Fall', 2009, 'F'), 
+			('45678', 'CS-101', '1', 'Spring', 2010, 'B+'),
+			('45678', 'CS-319', '1', 'Spring', 2010, 'B'),
+			('54321', 'CS-101', '1', 'Fall', 2009, 'A'),
+			('54321', 'CS-190', '2', 'Spring', 2009 ,'B+'),
+			('55739', 'MU-199', '1', 'Spring', 2010, 'A'),
+			('76543', 'CS-101', '1', 'Fall', 2009, 'A'), 
+			('76543', 'CS-319', '2', 'Spring', 2010, 'A'), 
+			('76653', 'EE-181', '1', 'Spring', 2009, 'C'),
+			('98765', 'CS-101', '1', 'Fall', 2009, 'C'),
+			('98765', 'CS-315', '1', 'Spring', 2010, 'B'),
+			('98988', 'BIO-101', '1', 'Summer', 2009 ,'A'), 
+			('98988', 'BIO-301', '1', 'Summer', 2010, null);
+			
 #Borrar items#
 delete from department where (dept_name, building, budget) = ('Elec. Eng.', 'Taylor', 85000);
 delete from course;
@@ -366,3 +426,17 @@ where semester = 'Fall' and year = 2009 and exists(select *
 select *
 from instructor as i
 where not exists(select i.ID from teaches as t where i.ID = t.ID)
+
+--Consultar todos los cursos dictados en los que haya un instructor del departamento de fisica.
+
+
+--Consultar el nombre de los instructores que dictaron cursos.
+
+
+--Consultar id, nombre y departamento de los estudiantes que tomaron cursos en otoño.
+
+
+--Consultar la suma de los creditos por departamento.
+
+
+--Consultar el departamento y la suma de creditos por departamento donde la suma de creditos es mayor a 200
