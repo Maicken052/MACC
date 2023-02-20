@@ -428,15 +428,28 @@ from instructor as i
 where not exists(select i.ID from teaches as t where i.ID = t.ID)
 
 --Consultar todos los cursos dictados en los que haya un instructor del departamento de fisica.
-
+select *
+from teaches as t
+where t.ID in (select i.ID from instructor as i where i.dept_name = 'Physics');
 
 --Consultar el nombre de los instructores que dictaron cursos.
-
+select i.name
+from instructor as i
+where exists(select i.ID from teaches as t where i.ID = t.ID)
 
 --Consultar id, nombre y departamento de los estudiantes que tomaron cursos en otoño.
-
+select s.ID, s.name, s.dept_name
+from student as s
+where s.ID in (select t.ID from takes as t where t.semester = 'Fall')
 
 --Consultar la suma de los creditos por departamento.
+select dept_name, sum(tot_cred) as cred_por_dept
+from student
+group by dept_name
 
+--Consultar el departamento y el total de creditos matriculados por los estudiantes donde la suma de creditos es mayor a 200
+select dept_name, sum(tot_cred)
+from student
+group by dept_name
+having sum(tot_cred) > 200
 
---Consultar el departamento y la suma de creditos por departamento donde la suma de creditos es mayor a 200
