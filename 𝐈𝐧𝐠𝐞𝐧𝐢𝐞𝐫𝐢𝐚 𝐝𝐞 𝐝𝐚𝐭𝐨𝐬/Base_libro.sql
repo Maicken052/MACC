@@ -464,3 +464,48 @@ from student as s
 where not exists((select course_id from course where dept_name = 'Biology')
 				 except
 				 (select t.course_id from takes as t where s.ID = t.ID))
+			
+-- Subconsulta en from
+select dept_name, avg_salary
+from(select dept_name, avg(salary) from instructor group by dept_name) as dept_avg(dept_name, avg_salary) 
+where avg_salary > 42000
+
+select building, sum_budget
+from (select building, sum(budget) from department group by building) as dep_sum(building, sum_budget)
+where sum_budget >150000
+
+select semester, cant
+from (select semester, count(course_id) from section group by semester) as cant_courses(semester, cant)
+where cant > 8
+
+select min(sum_bud) as min_budget
+from (select dept_name, sum(budget) from department group by dept_name) as sum_budget(dept_name, sum_bud)
+
+
+-- Borrar datos con condiciones
+delete from teaches
+where course_id in (select course_id from course
+				   where course_id = 'CS-101')
+
+-- Pasar datos a otra tabla
+create table department_copy(
+dept_name varchar(20),
+building varchar(15),
+budget numeric(12,2),
+primary key(dept_name));
+
+insert into department_copy select* from department_copy
+
+-- Actualizar informaciòn con subconsulta
+update instructor
+set salary = salary * 1.05
+where salary < (select avg(salary) from instructor)
+
+-- Eliminar las tuplas de los cursos orientados en el año 2009 y en primavera
+delete from teaches
+where course_id in (select course_id from teaches where year = 2009 and semester = 'Spring')
+
+-- Actualizar los presupuestos de los departamentos cuyo edificio es Taylor
+update department
+set budget = budget * 2
+where building in (select building from department where building = 'Taylor')
