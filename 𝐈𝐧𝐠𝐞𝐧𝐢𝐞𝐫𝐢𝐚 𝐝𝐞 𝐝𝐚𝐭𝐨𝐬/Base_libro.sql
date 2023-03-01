@@ -509,3 +509,72 @@ where course_id in (select course_id from teaches where year = 2009 and semester
 update department
 set budget = budget * 2
 where building in (select building from department where building = 'Taylor')
+
+-- Join
+select * 
+from student
+join takes 
+on student.ID = takes.ID;
+
+select * 
+from student as s, takes as t
+where s.ID = t.ID;
+
+select student.ID as ID, name, dept_name, tot_cred, course_id, sec_id, semester, year, grade
+from student join takes on student.ID = takes.ID;
+
+-- Consultar los estudiantes que no tomaron cursos
+select *
+from student left join takes
+on student.ID  = takes.ID
+where takes.ID is null;
+
+-- Consultar los intructores que no enseñaron cursos
+select *
+from instructor left join teaches
+on instructor.ID = teaches.ID
+where teaches.ID is null;
+
+-- Consultar todas las clases tomadas y no tomadas por los estudiantes
+select *
+from takes
+natural right outer join student;
+
+-- Consultar todos los cursos dictados y no dictados
+select *
+from teaches
+natural right outer join instructor
+where teaches is not null;
+
+select *
+from teaches
+natural right outer join instructor
+where teaches is null;
+
+-- Todos los profesores que dieron cursos
+select *
+from instructor
+natural right outer join teaches;
+
+
+-- Consultar los estudiantes que tomaron cursos
+select *
+from student
+natural join takes
+
+-- Consultar todos los datos de la tabla curso registrados o tomados por los estudiantes en primavera
+select *
+from student
+natural join takes
+where semester = 'Spring';
+
+select *
+from student
+natural join takes
+where semester != 'Spring';
+
+-- Cursos dictados en primaver
+select *
+from course
+natural join takes
+where semester = 'Spring';
