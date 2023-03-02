@@ -170,3 +170,19 @@ where pr.codigo = pir.codigo_productor and pir.codigo_pelicula = p.codigo
 group by pr.nombre
 order by pr.nombre;
 
+--TALLER 2
+-- El nombre y fecha de nacimiento de los actores mayores de edad, que hayan protagonizado películas después del año 2020 y con edad superior que alguno de los actores mujeres. 
+select distinct nombre, fecha_nacimiento
+from actor as a
+where a.id in (select a.id from pelicula as p, actor as a, protagonizar as pro
+			   where a.id = pro.id_actor 
+			   and pro.codigo_pelicula = p.codigo
+			   and año > 2020
+			   and (((CURRENT_DATE - fecha_nacimiento)/365)>18)
+			   and ((CURRENT_DATE - fecha_nacimiento)/365)> some (select ((CURRENT_DATE - fecha_nacimiento)/365) 
+																  from actor
+																  where genero = 'F'));
+																  
+-- Los datos de los productores que nunca han producido películas.	
+select *
+from productor 
