@@ -680,3 +680,17 @@ update course set area = 'Natural Science'
 where dept_name = 'Biology'
 select *
 from course
+
+-- Añadir a instructores una columna llamada 'Fecha de nacimniento', ponerle a 3 instructores fechas: Enero, Febrero y Marzo, todos del año 80
+alter table instructor 
+add fecha_nacimiento date;
+
+update instructor set fecha_nacimiento = '1980-01-20'
+where name = 'Wu';
+update instructor set fecha_nacimiento = '1980-02-12'
+where name = 'El Said';
+update instructor set fecha_nacimiento = '1980-03-08'
+where name = 'Crick';
+
+select * from instructor
+where fecha_nacimiento between '1980-01-01' and '1980-02-28'
