@@ -184,5 +184,8 @@ where a.id in (select a.id from pelicula as p, actor as a, protagonizar as pro
 																  where genero = 'F'));
 																  
 -- Los datos de los productores que nunca han producido películas.	
+insert into productor values(61, 'Pepe Grillo');
+
 select *
 from productor 
+where codigo not in (select p.codigo from productor as p, producir as pro where p.codigo = pro.codigo_productor)
