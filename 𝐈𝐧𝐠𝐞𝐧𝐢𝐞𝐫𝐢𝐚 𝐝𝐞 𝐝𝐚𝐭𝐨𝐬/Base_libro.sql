@@ -578,3 +578,105 @@ select *
 from course
 natural join takes
 where semester = 'Spring';
+
+-- view
+
+create view faculty as
+select ID, name, dept_name
+from instructor;
+
+select * from faculty
+
+-- elaborar una view llamada instructores_CS-190
+create view instructores_CS_190 as
+select distinct instructor.* from instructor natural join teaches
+where instructor.id = teaches.id and course_id = 'CS-190';
+
+-- elaborar una view llamada estudientes_A
+create view estudientes_A as
+select student.*, course_id from student natural join takes
+where takes.grade = 'A';
+
+-- crear view de cursos de fisica de otoño del 2009
+create view physics_fall_2009 as
+select course.course_id, sec_id, building, room_number
+from course natural join section
+where course.dept_name = 'Physics' and section.semester = 'Fall' and year = '2009'
+
+-- insertar en facultad
+insert into faculty values ('30765', 'Green', 'Music');
+
+-- Transacciones
+-- Begin: Iniciacilizar la transacción
+begin
+insert into instructor(id, name, dept_name, salary) values(3333, 'Jorge Ramirez', 'Music', 100000);
+-- Rollback: Dentro de una transacciòn, rechazar el efecto
+rollback
+-- Commit: Dentro de una transacciòn, aceptar el efecto
+commit
+
+update instructor set salary = salary*1.10
+
+delete from instructor 
+where name = 'Jorge Ramirez';
+
+-- Ejercicio 1
+begin
+update department set budget = budget *1.20
+where dept_name = 'Comp. Sci';
+
+commit
+
+select *
+from department
+
+-- Ejercicio  2
+begin
+update department set building = 'Beethoven'
+where dept_name ='Music'
+
+select *
+from department
+
+rollback
+
+'constraint unica'
+alter table instructor
+add mail  varchar(20) unique;
+
+update instructor set mail = 'einstein@gmail.com'
+where name = 'Einstein'
+
+update instructor set mail = 'einstein@gmail.com'
+where name = 'Wu'
+
+select *
+from instructor
+
+'Clausula check'
+alter table instructor
+add constraint min_salary
+check(
+	salary > 0
+);
+
+update instructor set salary = -1
+where dept_name = 'History'
+
+-- Modificar la tabla de cursos para que el numero de creditos sea mayor a cero
+alter table course
+add constraint min_cred
+check(
+	credits > 0
+)
+-- añadir una nueva columna en la tabla cursos llamada area que sea unica
+alter table course
+add area varchar(20) unique;
+
+update course set area = 'Math'
+where dept_name = 'Comp. Sci.'
+
+update course set area = 'Natural Science'
+where dept_name = 'Biology'
+select *
+from course
