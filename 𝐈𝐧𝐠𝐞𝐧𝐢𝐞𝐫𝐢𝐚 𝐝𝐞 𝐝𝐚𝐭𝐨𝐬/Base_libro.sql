@@ -573,7 +573,7 @@ from student
 natural join takes
 where semester != 'Spring';
 
--- Cursos dictados en primaver
+-- Cursos dictados en primavera
 select *
 from course
 natural join takes
