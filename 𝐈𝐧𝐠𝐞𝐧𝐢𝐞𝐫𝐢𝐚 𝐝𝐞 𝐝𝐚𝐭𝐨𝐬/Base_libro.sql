@@ -691,6 +691,42 @@ update instructor set fecha_nacimiento = '1980-02-12'
 where name = 'El Said';
 update instructor set fecha_nacimiento = '1980-03-08'
 where name = 'Crick';
+update instructor set fecha_nacimiento = '1819-01-06'
+where name = 'Srinivasan';
+update instructor set fecha_nacimiento = '1846-01-16'
+where name = 'Einstein';
+update instructor set fecha_nacimiento = '1860-12-07'
+where name = 'Gold';
+update instructor set fecha_nacimiento = '1861-03-08'
+where name = 'Katz';
+update instructor set fecha_nacimiento = '1871-08-02'
+where name = 'Califieri';
+update instructor set fecha_nacimiento = '1882-02-02'
+where name = 'Singh';
+update instructor set fecha_nacimiento = '1920-01-02'
+where name = 'Brandt';
+update instructor set fecha_nacimiento = '1935-01-10'
+where name = 'Kim';
+update instructor set fecha_nacimiento = '1958-04-30'
+where name = 'Mozart';
 
 select * from instructor
 where fecha_nacimiento between '1980-01-01' and '1980-02-28'
+
+-- consultar nombre del instructor, departamento, dia, mes, año 
+select name, dept_name,
+extract(year from fecha_nacimiento) as año_nacimiento, extract(month from fecha_nacimiento) as mes_nacimiento, extract(day from fecha_nacimiento) as dia_nacimiento
+from instructor
+
+-- modificar la tabla de instructores para que tenga por defecto en el salario el valor de 10000
+alter table instructor
+alter column salary set default 10000;
+
+insert into instructor values(10205, 'Juan', 'Comp.Sci.')
+insert into instructor values(10300, 'Maria', 'Finance')
+
+select *
+from instructor
+
+delete from instructor where name = 'Juan'
+delete from instructor where name = 'Maria'
