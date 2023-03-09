@@ -730,3 +730,53 @@ from instructor
 
 delete from instructor where name = 'Juan'
 delete from instructor where name = 'Maria'
+
+-- Insertar imagenes a una tupla
+alter table student
+add foto bytea;
+
+update student
+set foto = bytea('C:/Users/Laboratorios EICT/Desktop/Daniel Fonseca/gato.jpg')
+where id = '12345'
+
+insert into student
+values('14528', 'Luis Romero', 'Physics', 23, bytea('C:/Users/Laboratorios EICT/Desktop/Daniel Fonseca/perro.jpg'))
+
+
+select *
+from student
+
+-- Crear el tipo de dato salario_anual de tipo numerico(12, 2) que sea mayor que 19000. Modificar la tabla instructor con el nuevo tipo de dato
+create domain salario_anual numeric(12, 2)
+constraint prueba_salario check(value >= 19000.00);
+
+alter table instructor
+alter column salary set data type salario_anual;
+
+select * from instructor
+
+insert into instructor values(12121, 'Wuu', 'Finance', 10000);  --Prueba del contraint
+
+-- Cambiar el dato a presupuesto en tabla departamento
+create domain nuevo_presupuesto numeric(15, 2)
+constraint prueba_presupuesto check(value >= 50000.00);
+
+alter table department
+alter column budget set data type nuevo_presupuesto;
+
+select * from department
+
+-- Crea rel tipo de dato nombre_persona de tipo varchar(40) no nulo y usar el tipo de dato en la columna name de la tabla instructor
+create domain nombre_persona varchar(40) not null
+
+alter table instructor
+alter column name set data type nombre_persona;
+
+select * from instructor
+
+create type cities_list as enum('Ney York', 'Miami', 'Houston') /* --> esto permite que para este tipo de dato solo se puedan agregar los elementos de la lista,
+															           es decir, para la columna "city" solo se pueden agregar las ciudades New Yor, Miami y  Houston*/			
+-- Agregar una columna a una tabla.
+
+alter table instructor
+add column city cities_list;
