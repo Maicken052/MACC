@@ -780,3 +780,22 @@ create type cities_list as enum('Ney York', 'Miami', 'Houston') /* --> esto perm
 
 alter table instructor
 add column city cities_list;
+
+-- Autorizaciòn, se utiliza para asignar roles con privilegios o permisos a los usuarios.
+-- Pasos para crear roles con privilegios:
+/*
+1. Crear una base de datos con su respectivo Query tool.
+2. Desde la base de datos y el servidor de postgres, crear los nuevos roles y password y asignar los privilegios o servicios de cada rol.
+3. Con click derecho desde el servidor de postgres, desconectar el servidor.
+4. Desde la opción servers presionar click derecho 
+5. Llenar los siguientes datos
+	- name: 'Nombre del servidor'
+	- Click en la pestaña 'Conexion'
+	- Escribir en el nombre del host 'localhost'
+	- Confirmar que el puerto sea 5432
+	- Colocar la base de datos deseada
+	- Escribir el nombre del rol que se creo
+	- Colocar el password creado
+*/
+create role auxxiliar with login password '123*';
+grant select on instructor to auxxiliar
