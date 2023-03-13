@@ -799,3 +799,126 @@ add column city cities_list;
 */
 create role auxxiliar with login password '123*';
 grant select on instructor to auxxiliar
+
+/* Estructura de una funcion
+create function nombreFuncion(p1)
+returns tipo retorno
+as $$
+declare
+	variable tipo;
+	variable2 tipo,
+begin
+	sentencias;
+	return retorno;
+end;
+$$ language plpgsql;
+*/
+
+-- Hacer una funcion que reciba por parametro el codigo del estudiante y consulte su nombre
+create function estudiante_por_codigo(codest varchar(5))
+returns varchar(20)
+as $$
+declare
+	nombre varchar(20);
+begin
+	nombre=
+		(select s.name
+		from student as s
+		where s.id = codest);
+	return nombre;
+end;
+$$ language plpgsql;
+
+select estudiante_por_codigo('45678'); -- Prueba de la funcion
+drop function estudiante_por_codigo(codest varchar(5))-- Borrar la funcion
+
+-- Hacer una funcion que reciba por parametro el nombre del departamento y consulte su presupuesto
+create function presupuesto_por_departamento(deptname varchar(20))
+returns numeric(12,2)
+as $$
+declare
+	presupuesto numeric(12,2);
+begin
+	presupuesto=
+		(select d.budget
+		from department as d
+		where d.dept_name = deptname);
+	return presupuesto;
+end;
+$$ language plpgsql;
+
+select presupuesto_por_departamento('Biology'); -- Prueba de la funcion
+drop function  presupuesto_por_departamento(dept_name varchar(20))-- Borrar la funcion
+
+/* Hacer una funcion que reciba por parametro el nombre del departamento y
+genere la suma de los salarios de los instructores */
+create function sum_salarios(deptname varchar(20))
+returns float
+as $$
+declare
+	sum_salarios float;
+begin
+	sum_salarios=
+		(select sum(i.salary)
+		from instructor as i 
+		where i.dept_name = deptname
+		);
+	return sum_salarios;
+end;
+$$ language plpgsql;
+
+select sum_salarios('History'); --Probar la funcion
+drop function  sum_salarios(deptname varchar(20)); --Borrar la funcion
+
+/* Hacer una funcion que reciba por parametro el nombre del departamento y
+muestre el numero de instructores por departamento */
+create function num_instructores(deptname varchar(20))
+returns integer
+as $$
+declare
+	num_inst integer;
+begin
+	select count(*) into num_inst
+	from instructor as i 
+	where i.dept_name = deptname;
+	return num_inst;
+end;
+$$ language plpgsql;
+
+select num_instructores('History'); -- Probar la fucion
+drop function  num_instructores(deptname varchar(20)); -- Borrar la funcion
+
+/* Hacer una funcion que reciba por parametro el nombre del departamento 
+y consulte el nombre del instructor y su salario */
+
+-- Replace: para no tener que borrar todo, sino actualizarla
+create or replace function buscar_salarios(dp_name varchar) 
+	returns table(nom_ins varchar, sal_ins numeric(8,2)) as $$
+	begin
+		return query select name, salary from instructor where dept_name = dp_name;
+	end;
+	$$ language plpgsql;
+	
+select * from buscar_salarios('History');
+
+/* Crear una funcion que reciba por parametro el nombre del departamento y el salario de los instructores. 
+Mostar el nombre del instructor, nombre del departamento y salario. Mostrar los salarios superiores al valor especificado en el parametro */
+create or replace function info_instructores(dp_name varchar, salario float) 
+	returns table(nom_ins varchar, nom_dept varchar, sal_ins numeric(8,2)) as $$
+	begin
+		return query select name, dept_name, salary from instructor where dept_name = dp_name and salary > salario;
+	end;
+	$$ language plpgsql;
+	
+select * from info_instructores('History', 60000); --Probar la funcion
+
+/* Crear una funcion que reciba por parametro el semestre en el cual los estudiantes tomaron cursos. 
+Consultar el id, nombre del estudiante y nombre del departamento de la tabla estudiantes. */
+create or replace function info_estudiantes(sem varchar) 
+	returns table(idest varchar, nombre varchar, deptname varchar) as $$
+	begin
+		return query select distinct e.ID, e.name, e.dept_name from student as e, takes as t where e.ID = t.ID and t.semester = sem;
+	end;
+	$$ language plpgsql;
+	
+select * from info_estudiantes('Fall'); --Probar la funcion
