@@ -922,3 +922,33 @@ create or replace function info_estudiantes(sem varchar)
 	$$ language plpgsql;
 	
 select * from info_estudiantes('Fall'); --Probar la funcion
+
+-- FUNCIONES
+
+/*Crear una función que reciba por parámetro el nombre del estudiante. 
+Consultar el id y nombre del estudiante que no ha tomado cursos.*/
+create or replace function est_no_cursos(nombre varchar) 
+	returns table(idest varchar, nombre_ varchar) as $$
+	begin
+		return query select e.ID, e.name
+					from student as e 
+					where e.name = nombre and e.ID not in(select ID
+														  from takes);
+	end;
+	$$ language plpgsql;
+
+select * from est_no_cursos('Zhang'); --Probar la funcion
+
+/*Crear una función que reciba por parámetro el presupuesto del departamento. 
+Consultar el nombre del departamento y presupuesto considerando los presupuestos
+superiores al ingresado por parámetro.*/
+create or replace function presupuesto_superior(bud float) 
+	returns table(deptname varchar, budget_ numeric(12,2)) as $$
+	begin
+		return query select d.dept_name, d.budget
+					from department as d
+					where d.budget > bud;
+	end;
+	$$ language plpgsql;
+
+select * from presupuesto_superior(70000); --Probar la funcion
