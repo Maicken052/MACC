@@ -952,3 +952,40 @@ create or replace function presupuesto_superior(bud float)
 	$$ language plpgsql;
 
 select * from presupuesto_superior(70000); --Probar la funcion
+
+/*Crear un role o usuario denominado asistente que tenga permiso de ingreso con la 
+clave 'asistente123#' 
+y que pueda agregar datos, consultar y modificar los datos de la tabla cursos.
+Insertar 2 tuplas nuevas.
+Consultar el titulo de los cursos que tienen 4 créditos.
+Modificar los cursos con 4 créditos a 5 créditos.*/
+
+create role asistente with login password 'asistente123#';
+grant select, insert, update on course to asistente;
+
+insert into course values('CS-120', 'Ing. de datos', 'Comp. Sci.', 2);
+insert into course values('CS-320', 'Algebral Lineal', 'Comp. Sci.', 3);
+
+select title
+from course
+where credits = 5;
+
+update course
+set credits = 5
+where credits = 4
+
+/*Crear un role o usuario denominado monitor que tenga permiso de ingreso con la 
+clave 'monitor1*' y que pueda consultar y eliminar los datos de 
+las tablas cursos y departamento.
+Consultar el titulo del curso y nombre del departamento de los cursos cuyo 
+Id inicia con la letra C.
+Revocar los permisos de las tablas cursos y departamentos.*/
+
+create role monitor with login password 'monitor1';
+grant select, delete course, department to monitor;
+
+select title, dept_name
+from course
+where course_id like 'C%'
+
+revoke select, delete on course, department from monitor;
