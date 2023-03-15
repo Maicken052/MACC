@@ -170,8 +170,18 @@ where pr.codigo = pir.codigo_productor and pir.codigo_pelicula = p.codigo
 group by pr.nombre
 order by pr.nombre;
 
---TALLER 2
+-- TALLER 2
+-- SUBCONSULTAS
+
 -- El nombre y fecha de nacimiento de los actores mayores de edad, que hayan protagonizado películas después del año 2020 y con edad superior que alguno de los actores mujeres. 
+insert into pelicula values(10006, 'Elvis', 'Warner Bros. Pictures', 2022, 159, 'Musical', 85000000);
+insert into actor values(100061, 'Austin Butler', 'M', '1991/08/17');
+insert into actor values(100062, 'Tom Hanks', 'M', '1956/07/09');
+insert into protagonizar values(10006, 100061);
+insert into protagonizar values(10006, 100062);
+insert into productor values(60, 'Baz Luhrmann');
+insert into producir values(10006, 60);
+
 select distinct nombre, fecha_nacimiento
 from actor as a
 where a.id in (select a.id from pelicula as p, actor as a, protagonizar as pro
@@ -184,8 +194,98 @@ where a.id in (select a.id from pelicula as p, actor as a, protagonizar as pro
 																  where genero = 'F'));
 																  
 -- Los datos de los productores que nunca han producido películas.	
-insert into productor values(61, 'Pepe Grillo');
+insert into productor values(71, 'Quentin Tarantino');
 
 select *
 from productor 
-where codigo not in (select p.codigo from productor as p, producir as pro where p.codigo = pro.codigo_productor)
+where codigo not in (select p.codigo 
+					from productor as p, producir as pro 
+                    where p.codigo = pro.codigo_productor);
+
+-- Todos los datos de los productores que han registrado películas con la máxima duración.
+select *
+from productor
+where codigo in (select p.codigo
+				from productor as p, producir as prod, pelicula as peli
+                where p.codigo = prod.codigo_productor and prod.codigo_pelicula = peli.codigo and peli.duracion in (select max(duracion)
+																													from pelicula))
+                                                                                                                    
+-- Todos los datos de los actores que han protagonizado películas registradas por el productor Warner.
+select *
+from actor as act
+where exists(select act.*
+			from protagonizar as prota, pelicula as peli
+            where act.id = prota.id_actor and prota.codigo_pelicula = peli.codigo and peli.estudio = 'Warner Bros. Pictures')
+            
+-- El título y la duración de las películas protagonizadas por el actor Brad Pitt, cuya duración supera alguna duración de las películas protagonizadas por Bruce Willis.
+insert into pelicula values(10007, 'Pulp Fiction', 'A Band Apart', 	1994, 154, 'Comedia negra', 8000000);
+insert into actor values(100071, 'Bruce Willis', 'M', '1955-03-19');
+insert into protagonizar values(10007, 100071);
+
+insert into pelicula values(10008, 'Once Upon a Time in Hollywood', 'Columbia Pictures', 2019, 160, 'ucronía', 90000000);
+insert into protagonizar values(10008, 100012);
+
+select peli.titulo, peli.duracion
+from pelicula as peli, actor as act, protagonizar as prota
+where act.id = prota.id_actor and prota.codigo_pelicula = peli.codigo and act.nombre = 'Brad Pitt' and peli.duracion > some(select p.duracion
+																															from pelicula as p, actor as a, protagonizar as prot
+																															where a.id = prot.id_actor and prot.codigo_pelicula = p.codigo and a.nombre = 'Bruce Willis')
+-- Promedio de edades de los actores de aquel género de películas donde la edad promedio es superior a 40.
+select peli.genero, avg(actores.age) as edad_promedio
+from protagonizar as prota, pelicula as peli, (select a.*, TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) from actor as a) as actores(id, nombre, genero, fecha_nacimiento, age)
+where actores.id = prota.id_actor and prota.codigo_pelicula = peli.codigo 
+group by peli.genero
+having avg(actores.age)>40;
+                                                                                        
+-- JOIN																								
+																	
+-- Cantidad de actores hombres que protagonizaron películas del productor Warner y que fueron registradas antes del 2020.
+-- Nombre de los actores que no han protagonizado películas en el 2022. Mostrar los datos de forma ascendente.
+-- Datos del (los) trailer de películas protagonizadas por el actor Tom Cruise.
+-- Datos de los productores que no tienen registradas películas.
+-- Todos los datos de los actores que han protagonizado películas registradas por el productor Warner.
+-- Datos de las películas que no han sido protagonizadas por Tom Cruise, ni Brad Pitt.
+
+-- VISTAS
+-- Número de películas registradas por cada productor.
+create view num_peli_por_pord as
+select prod.nombre, count(peli.codigo)
+from productor as prod, producir, pelicula as peli
+where prod.codigo = producir.codigo_productor and producir.codigo_pelicula = peli.codigo
+group by prod.nombre;
+
+-- Promedio de duración de las películas registradas por cada productor.
+create view prom_duracion_peli_por_productor as
+select prod.nombre, avg(peli.duracion)
+from productor as prod, producir, pelicula as peli
+where prod.codigo = producir.codigo_productor and producir.codigo_pelicula = peli.codigo
+group by prod.nombre;
+
+-- Cantidad de películas protagonizadas por cada actor hombre.
+create view pelis_por_actor_h as
+select act.nombre, count(peli.codigo)
+from actor as act, protagonizar as prota, pelicula as peli
+where act.id = prota.id_actor and prota.codigo_pelicula = peli.codigo and act.genero = 'M'
+group by act.nombre;
+
+-- Nombre y edad de los actores que protagonizan películas cuyo trailer tiene una duración de menos de 2 minutos.
+create view actores_de_trailers as
+select act.nombre, TIMESTAMPDIFF(YEAR, act.fecha_nacimiento, CURDATE()) as edad
+from actor as act, trailer as t, protagonizar as prota, pelicula as peli
+where act.id = prota.id_actor and prota.codigo_pelicula = peli.codigo and t.codigo_pelicula = peli.codigo and t.duracion <2.00;
+
+-- RESTRICCIONES
+-- Actualizar la tabla actor para que en la columna género sólo se permita agregar los valores: F, M y NB.
+alter table actor
+add constraint generos_permitidos
+check(genero = 'F' or genero = 'M' or genero = 'NB');
+
+-- Actualizar la tabla película para que la duración sea mínimo 60 minutos.
+alter table pelicula
+add constraint duracion_minima
+check(duracion >= 60);
+
+-- Actualizar la tabla película para que sólo se permita registrar películas después del año 1950.
+alter table pelicula
+add constraint año_despues_del_1950
+check(año > 1950);
