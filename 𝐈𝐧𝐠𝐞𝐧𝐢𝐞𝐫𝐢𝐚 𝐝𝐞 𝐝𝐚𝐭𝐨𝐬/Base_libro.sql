@@ -989,3 +989,108 @@ from course
 where course_id like 'C%'
 
 revoke select, delete on course, department from monitor;
+
+/*Ejercicio 1
+Crear un trigger llamado actualizar_instructor que permita 
+aumentar el salario de los instructores en un 20%.  
+Registrar en una tabla nueva llamada registro_instructor, 
+el nombre del instructor, el salario actual, 
+la fecha de modificación y el nuevo salario.*/
+
+/* Paso 1. Crear la tabla registro instructor */ 
+create table registro_instructor(
+	name varchar(20) not null,
+	salary numeric(8,2),
+	fecha_modificacion date,
+	salario_nuevo numeric (8,2)
+);
+
+-- Paso 2. Consultar las tablas instructor y registro_instructor
+select * from instructor;
+select * from registro_instructor;
+
+-- Paso 3. Crear la funcion actualizar salario
+create or replace function actualizar_salario() returns trigger as $insertar$
+declare
+begin
+	insert into registro_instructor values(old.name, old.salary, current_date, new.salary);
+	return null;
+end;
+$insertar$ language plpgsql;
+
+-- Paso 4. Crear el trigger 
+create trigger actualizar_instructor after update
+on instructor for each row
+execute procedure actualizar_salario();
+
+
+-- Paso 5.probar el trigger 
+update instructor set salary=salary*1.10
+where id='12121';
+
+select *
+from registro_instructor
+
+/* Crear un trigger que permita registrar de la tabla estudiantes el id, nombre del estudiante,
+nombre del departamento y total creditos, cuando se elimine, actualice e inserte en la misma tabla,
+con el proposito de conservar los valores antiguos (old) y mostrar los valores nuevos (new).*/
+
+-- Paso 1. Consultar la tabla student
+select *
+from student;
+
+insert into student values('12349', 'Cruz', 'Comp. Sci.', 19);
+
+-- Paso 2. Crear una tabla llamada registro_estudiantes que tenga las mismas columnas de student
+create table registro_estudiantes(
+ID varchar(5),
+name varchar(20) not null,
+dept_name varchar(20),
+tot_cred numeric(3,0)                                                                                                                                                                                
+);
+
+-- Paso 3. Crear la funcion del trigger
+create or replace function ejercicio1_trigger() returns trigger as $ejercicio1$
+declare
+begin
+insert into registro_estudiantes values(old.id, old.name, old.dept_name, old.tot_cred);
+return null;
+end;
+$ejercicio1$ language plpgsql;
+
+-- Paso 4. Crear el trigger
+create trigger borrar_estudiantes after delete
+on student for each row
+execute procedure ejercicio1_trigger();
+
+create trigger actualizar_estudiantes after update
+on student for each row
+execute procedure ejercicio1_trigger();
+
+create trigger insertar_estudiantes after insert
+on student for each row
+execute procedure ejercicio1_trigger();
+
+create trigger insertar_estudiantes before insert
+on student for each row
+execute procedure ejercicio1_trigger();
+
+drop trigger insertar_estudiantes on student;
+
+-- Paso 5. Generar las consultas delete, update e insert para probar el trigger
+-- Probar delete
+delete from student
+where id = '12349'
+
+-- Probar update
+update student set tot_cred = tot_cred+20
+where id = '19991'
+
+-- Probar insert
+insert into student values('12348', 'Samuel', 'Comp. Sci.', 19);
+
+select *
+from student
+
+select *
+from registro_estudiantes;
