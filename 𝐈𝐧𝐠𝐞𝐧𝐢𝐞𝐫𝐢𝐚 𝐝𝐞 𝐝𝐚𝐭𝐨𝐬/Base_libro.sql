@@ -1100,3 +1100,52 @@ from student
 
 select *
 from registro_estudiantes;
+
+create table movimiento (
+    idmovimiento serial primary key,
+	fecha timestamp not null,
+	codigoproducto int not null,
+	tipomovimiento varchar(1) not null, 
+	cantidad int not null,
+	valor int not null
+);
+
+create table saldos(
+idsaldo serial primary key,
+codigoproducto int not null,
+fecha timestamp not null,
+nuevosaldo int not null
+);
+
+create or replace function actualizar_saldo() returns trigger as $body$
+declare ultimosaldo int = 0;
+declare registros int = 0;
+
+begin 
+	select count(1) into registros from saldos where codigoproducto = new.codigoproducto;
+	if registros>0 then
+		select nuevosaldo into ultimosaldo from saldos where id_saldo = (select max(id_saldo) from saldos where codigoproducto = new.codigoproducto);
+	end if;
+	if new.tipomovimiento = 'E' then
+		ultimosaldo = ultimosaldo + new.cantidad;
+	else
+		ultimosaldo = ultimosaldo - new.cantidad;
+	end if;
+	insert into saldos (codigoproducto, fecha, nuevosaldo) values(new.codigoproducto, current_timestamp, ultimosaldo);
+return new;
+end $body$ language 'plpgsql'
+
+create trigger actualizar_valores before insert
+on movimiento for each row
+execute procedure actualizar_saldo();
+
+insert into movimiento(fecha, codigoproducto, tipomovimiento, cantidad, valor) values (current_timestamp, 6, 'S', 2, 1000);
+insert into movimiento(fecha, codigoproducto, tipomovimiento, cantidad, valor) values ('2022/08/13', 50, 'E', 2, 1000);
+insert into movimiento(fecha, codigoproducto, tipomovimiento, cantidad, valor) values ('2022/08/14', 50, 'E', 2, 2000);
+insert into movimiento(fecha, codigoproducto, tipomovimiento, cantidad, valor) values ('2022/08/14', 50, 'S', 5, 2000);
+
+select *
+from movimiento
+
+select *
+from saldos
