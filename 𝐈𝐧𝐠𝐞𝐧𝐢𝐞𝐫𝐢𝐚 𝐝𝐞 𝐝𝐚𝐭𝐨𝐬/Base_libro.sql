@@ -1058,6 +1058,14 @@ return null;
 end;
 $ejercicio1$ language plpgsql;
 
+create or replace function ejercicio1_trigger_insertar() returns trigger as $ejercicio1_insert$
+declare
+begin
+insert into registro_estudiantes values(new.id, new.name, new.dept_name, new.tot_cred);
+return null;
+end;
+$ejercicio1_insert$ language plpgsql;
+
 -- Paso 4. Crear el trigger
 create trigger borrar_estudiantes after delete
 on student for each row
@@ -1069,25 +1077,23 @@ execute procedure ejercicio1_trigger();
 
 create trigger insertar_estudiantes after insert
 on student for each row
-execute procedure ejercicio1_trigger();
+execute procedure ejercicio1_trigger_insertar();
 
-create trigger insertar_estudiantes before insert
-on student for each row
-execute procedure ejercicio1_trigger();
-
+drop trigger borrar_estudiantes on student;
+drop trigger actualizar_estudiantes on student;
 drop trigger insertar_estudiantes on student;
 
 -- Paso 5. Generar las consultas delete, update e insert para probar el trigger
 -- Probar delete
 delete from student
-where id = '12349'
+where id = '19981'
 
 -- Probar update
 update student set tot_cred = tot_cred+20
 where id = '19991'
 
 -- Probar insert
-insert into student values('12348', 'Samuel', 'Comp. Sci.', 19);
+insert into student values('19981', 'Brandt', 'History', 81);
 
 select *
 from student
