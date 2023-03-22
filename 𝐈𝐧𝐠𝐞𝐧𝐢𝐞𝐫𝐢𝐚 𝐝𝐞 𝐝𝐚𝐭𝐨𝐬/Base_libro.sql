@@ -1149,3 +1149,136 @@ from movimiento
 
 select *
 from saldos
+
+--
+create table autor
+(id integer,
+nombre character varying (30) not null,
+fecha_nacimiento date not null,
+genero char(2) not null,
+primary key(id) 
+);
+
+insert into autor (id, nombre,fecha_nacimiento,genero)
+	values (1, 'Gabriel Garcia Marquez', '6/3/1973','M'),
+		   (2,  'Franz Kafka', '3/7/1983','M'),
+		   (3, 'Jorge Luis Borges','24/8/1982','M'),
+		   (4, 'Isabel Allende', '5/4/1980','F'),
+		   (5, 'Rosa Montero','9/10/1970','F'),
+		   (6, 'Ana Milena Robles','3/7/1990','NB'),
+		   (7, 'Andres Diaz','5/1/1992','NB');
+
+alter table autor
+add column edad integer;
+
+create table info_autor(
+nombre varchar (30) not null,
+	fecha_nacimiento date not null,
+	edad integer
+);
+
+select *
+from autor, info_autor;
+
+create or replace function actualizar_autor() returns trigger as $insertar$
+declare
+begin
+	insert into info_autor values(OLD.nombre, OLD.fecha_nacimiento, NEW.edad);
+	return null;
+end;
+$insertar$ language plpgsql;
+
+create trigger crear_edad after update
+on autor for each row
+execute procedure actualizar_autor();
+
+drop trigger crear_edad on autor
+delete from info_autor
+
+update autor set edad = (current_date-fecha_nacimiento)/365
+where id = 2
+
+select *
+from autor;
+
+select *
+from info_autor;
+
+/*Crear un trigger que se dispare cuando se incremente en 50% el numero total de
+creditos de los estudiantes. 
+Registrar los datos necesarios del nombre del estudiante, el departamento 
+y los creditos actualizados.*/
+
+create table info_student(
+ID varchar(5),
+name varchar(20) not null,
+dept_name varchar(20),
+tot_cred numeric(3,0)
+);
+
+select *
+from student
+
+create or replace function aumentar_50_creditos() returns trigger as $body$
+declare
+begin
+	if new.tot_cred = old.tot_cred*1.50 then 
+		insert into info_student values(old.ID, old.name, old.dept_name, new.tot_cred);
+	end if;
+return null;
+end;
+$body$ language plpgsql;
+
+create trigger aumentar_creditos before update
+on student for each row
+execute procedure aumentar_50_creditos();
+
+drop trigger aumentar_creditos on student
+delete from info_student
+
+update student
+set tot_cred = tot_cred*1.50
+where id = '00128'
+
+select *
+from info_student;
+
+select *
+from student;
+
+/*Crear un trigger que se dispare cuando se elimine una tupla de la tabla cursos
+Registrar todas las columnas de la tabla cursos en una nueva tabla, sin modificar la tabla cursos*/
+
+create table info_course(
+course_id varchar(7),
+title varchar(50),
+dept_name varchar(20),
+credits numeric(2,0)
+);
+
+insert into course values('BIO-999', 'Intro. to Anatomy', 'Biology', 3);
+
+create or replace function borrar_curso()
+returns trigger as $borrar_curso_$
+declare
+begin
+	insert into info_course values(old.course_id, old.title, old.dept_name, old.credits);
+	return null;
+end;
+$borrar_curso_$ language plpgsql;
+
+create trigger borrar_curso_ before delete
+on course for each row
+execute procedure borrar_curso();
+
+delete trigger borrar_curso on course;
+delete from info_course;
+
+delete from course
+where (course_id, title, dept_name, credits) = ('BIO-999', 'Intro. to Anatomy', 'Biology', 3);
+
+select *
+from info_course
+
+select *
+from course
