@@ -1282,3 +1282,169 @@ from info_course
 
 select *
 from course
+
+-- RECURSIVIDAD
+-- Consultas recursivas
+create table universidad(
+programa_id serial primary key,
+programa varchar not null,
+facultad_id int
+);
+
+insert into universidad(programa_id, programa, facultad_id)
+values
+(1, 'Vicerrectoria', null),
+(2, 'Facultad de Ingenieria', 1),
+(3, 'Facultad de Medicina', 1),
+(4, 'Facultad de Humanidades', 1),
+(5, 'Facultad de Ciencias', 1),
+(6, 'Ing. Sistemas', 2),
+(7, 'Ing. Industrial', 2),
+(8, 'Ing. Civil', 2),
+(9, 'Ing. Electronica', 2),
+(10, 'Medicina', 3),
+(11, 'Enfermeria', 3),
+(12, 'Medicina Veterinaria', 3),
+(13, 'Fisioterapia', 3),
+(14, 'Filosofia', 4),
+(15, 'Educacion', 4),
+(16, 'Fisica', 5),
+(17, 'Quimica', 5),
+(18, 'Biologia', 5),
+(19, 'Matematicas', 5),
+(20, 'Estadistica', 5);
+
+select * from universidad;
+
+with recursive jerarquia as(
+select programa_id, programa, facultad_id from universidad
+where programa_id = 3
+union
+select u.programa_id, u.programa, u.facultad_id from universidad u
+inner join jerarquia j on j.programa_id = u.facultad_id)
+select * from jerarquia;
+
+-- Antepasados
+create table miembro
+	(id integer,
+	 nombre character varying(50) not null,	
+	 primary key(id)
+	);
+
+create table antepasado
+	(id_miembro integer,
+	 id_miembro1 integer,	
+	 foreign key (id_miembro) references miembro,
+	 foreign key (id_miembro1) references miembro
+	);
+
+
+
+INSERT INTO miembro VALUES(10000,'SIN FAMILIA');
+INSERT INTO miembro VALUES(10111,'José Fernando Contreras Arias');
+INSERT INTO miembro VALUES(10112,'Lorena Villegas Martínez');
+INSERT INTO miembro VALUES(10113,'Jorge Andrés Avendaño Linares');
+INSERT INTO miembro VALUES(10114,'Juan Carlos López Méndez');
+INSERT INTO miembro VALUES(10115,'Sofia Penagos Alvarez');
+INSERT INTO miembro VALUES(10116,'Sergio Andres Toledo');
+INSERT INTO miembro VALUES(10117,'Ana Suárez Gómez');
+INSERT INTO miembro VALUES(10118,'Lorena Paez Velandia');
+INSERT INTO miembro VALUES(10119,'Ana Maria Fuentes Rojas');
+INSERT INTO miembro VALUES(10120,'Carlos Alberto Gomez Franco');
+INSERT INTO miembro VALUES(10121,'Lina Ballesteros Hoyos');
+INSERT INTO miembro VALUES(10122,'Angelica Diaz Lopez');
+INSERT INTO miembro VALUES(10123,'Juan Camilo Zarate Robledo');
+INSERT INTO miembro VALUES(10124,'Carolina Manrique Lara');
+INSERT INTO miembro VALUES(10125,'Jesus Andres Arbelaez Torres');
+INSERT INTO miembro VALUES(10128,'Edith Zambrazo Orjuela');
+INSERT INTO miembro VALUES(10129,'Adriana Marcela Jimenez Fuentes');
+INSERT INTO miembro VALUES(10130,'Luz Linares Orjuela');
+INSERT INTO miembro VALUES(10131,'Luis Martinez Rodriguez');
+INSERT INTO miembro VALUES(10132,'Milena Romero Alvarez');
+INSERT INTO miembro VALUES(10133,'Lina Marcela Jimenez Rios');
+INSERT INTO miembro VALUES(10134,'Ana Maria Jimenez Diaz');
+INSERT INTO miembro VALUES(10135,'Oscar Mauricio Avila Villa');
+INSERT INTO miembro VALUES(10136,'Diana Jaramillo Velez');
+INSERT INTO miembro VALUES(10137,'Camilo Andres Robledo');
+
+
+INSERT INTO antepasado VALUES(10111,10113);
+INSERT INTO antepasado VALUES(10111,10112);
+INSERT INTO antepasado VALUES(10112,10000);-- Sin Antepasado
+INSERT INTO antepasado VALUES(10113,10115);
+INSERT INTO antepasado VALUES(10114,10115);
+INSERT INTO antepasado VALUES(10114,10112);
+INSERT INTO antepasado VALUES(10115,10112);
+INSERT INTO antepasado VALUES(10116,10117);
+INSERT INTO antepasado VALUES(10117,10119);
+INSERT INTO antepasado VALUES(10118,10117);
+INSERT INTO antepasado VALUES(10118,10119);
+INSERT INTO antepasado VALUES(10119,10000);--Sin Antepasado
+INSERT INTO antepasado VALUES(10120,10117);
+INSERT INTO antepasado VALUES(10120,10119);
+INSERT INTO antepasado VALUES(10121,10000);--Sin Antepasado
+INSERT INTO antepasado VALUES(10122,10123);
+INSERT INTO antepasado VALUES(10123,10125);
+INSERT INTO antepasado VALUES(10124,10121);
+INSERT INTO antepasado VALUES(10124,10123);
+INSERT INTO antepasado VALUES(10125,10121);
+INSERT INTO antepasado VALUES(10128,10130);
+INSERT INTO antepasado VALUES(10129,10128);
+INSERT INTO antepasado VALUES(10130,10000);--Sin Antepasado
+INSERT INTO antepasado VALUES(10131,10129);
+INSERT INTO antepasado VALUES(10131,10130);
+INSERT INTO antepasado VALUES(10132,10129);
+INSERT INTO antepasado VALUES(10132,10130);
+INSERT INTO antepasado VALUES(10133,10134);
+INSERT INTO antepasado VALUES(10133,10137);
+INSERT INTO antepasado VALUES(10134,10135);
+INSERT INTO antepasado VALUES(10135,10137);
+INSERT INTO antepasado VALUES(10136,10134);
+INSERT INTO antepasado VALUES(10136,10137);
+INSERT INTO antepasado VALUES(10137,10000);--Sin Antepasado
+
+
+-- obtener los descendientes de Lina Ballesteros
+with recursive miembros_descendientes AS(
+select id_miembro, id_miembro1
+from antepasado
+where id_miembro1 in(
+		select id
+		from miembro
+		where nombre = 'Lina Ballesteros Hoyos')
+UNION
+	select a.id_miembro, a.id_miembro1
+	from antepasado as a
+	inner join miembros_descendientes as d on d.id_miembro = a.id_miembro1
+) 
+select *
+from miembros_descendientes;
+
+-- Obtener los antepasados de Jose Fernando Contreras Arias
+with recursive miembros_ascendientes AS(
+select id_miembro, id_miembro1
+from antepasado
+where id_miembro in(
+		select id
+		from miembro
+		where nombre = 'José Fernando Contreras Arias')
+UNION
+	select a.id_miembro, a.id_miembro1
+	from antepasado as a
+	inner join miembros_ascendientes as d on d.id_miembro1 = a.id_miembro
+)
+select *
+from miembros_ascendientes;
+
+-- Obtener los antepasados y descendientes de Adriana Marcela Jimenez Fuentes
+with recursive antes_y_despues as (
+select * from antepasado
+where id_miembro in(select id from miembro where nombre = 'Adriana Marcela Jimenez Fuentes') 
+	or
+	  id_miembro1 in(select id from miembro where nombre = 'Adriana Marcela Jimenez Fuentes')
+union
+select a.* 
+from antepasado as a
+inner join antes_y_despues as ad 
+on ad.id_miembro1 = a.id_miembro or ad.id_miembro = a.id_miembro1)
+select * from antes_y_despues;
