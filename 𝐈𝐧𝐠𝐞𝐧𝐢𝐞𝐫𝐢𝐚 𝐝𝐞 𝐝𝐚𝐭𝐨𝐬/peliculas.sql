@@ -241,6 +241,14 @@ having avg(actores.age)>40;
 																	
 -- Cantidad de actores hombres que protagonizaron películas del productor Warner y que fueron registradas antes del 2020.
 -- Nombre de los actores que no han protagonizado películas en el 2022. Mostrar los datos de forma ascendente.
+select distinct act.nombre 
+from actor as act
+inner join protagonizar as prota
+on prota.id_actor = act.id
+inner join pelicula as peli
+on prota.codigo_pelicula = peli.codigo
+where peli.año != 2022 order by act.nombre asc;
+
 -- Datos del (los) trailer de películas protagonizadas por el actor Tom Cruise.
 -- Datos de los productores que no tienen registradas películas.
 -- Todos los datos de los actores que han protagonizado películas registradas por el productor Warner.
