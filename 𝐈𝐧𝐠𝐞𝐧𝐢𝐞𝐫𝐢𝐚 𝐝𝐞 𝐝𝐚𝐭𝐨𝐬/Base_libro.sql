@@ -1448,3 +1448,95 @@ from antepasado as a
 inner join antes_y_despues as ad 
 on ad.id_miembro1 = a.id_miembro or ad.id_miembro = a.id_miembro1)
 select * from antes_y_despues;
+
+--
+create table territorio(
+id integer,
+nombre varchar(20) not null,
+primary key(id)
+);
+
+create table region(
+id_region_1 integer,
+id_region_2 integer,
+foreign key (id_region_1) references territorio,
+foreign key (id_region_2) references territorio
+);
+
+INSERT INTO territorio VALUES(11,'Europa');
+INSERT INTO territorio VALUES(12,'America');
+INSERT INTO territorio VALUES(13,'Asia');
+INSERT INTO territorio VALUES(14,'Africa');
+INSERT INTO territorio VALUES(15,'Colombia');
+INSERT INTO territorio VALUES(16,'Bogota');
+INSERT INTO territorio VALUES(17,'Paris');
+INSERT INTO territorio VALUES(18,'Francia');
+INSERT INTO territorio VALUES(19,'Rio de Janeiro');
+INSERT INTO territorio VALUES(20,'Marruecos');
+INSERT INTO territorio VALUES(21,'Medellin');
+INSERT INTO territorio VALUES(22,'China');
+INSERT INTO territorio VALUES(23,'Shanghai');
+INSERT INTO territorio VALUES(24,'Brasil');
+INSERT INTO territorio VALUES(25,'Kenia');
+INSERT INTO territorio VALUES(26,'Pekin');
+INSERT INTO territorio VALUES(27,'Mombasa');
+INSERT INTO territorio VALUES(28,'Estados Unidos');
+INSERT INTO territorio VALUES(29,'Rabat');
+INSERT INTO territorio VALUES(30,'Miami');
+
+INSERT INTO region VALUES(11,10);
+INSERT INTO region VALUES(12,10);
+INSERT INTO region VALUES(13,10);
+INSERT INTO region VALUES(14,10);
+INSERT INTO region VALUES(15,12);
+INSERT INTO region VALUES(16,15);
+INSERT INTO region VALUES(17,18);
+INSERT INTO region VALUES(18,11);
+INSERT INTO region VALUES(19,24);
+INSERT INTO region VALUES(24,12);
+INSERT INTO region VALUES(20,14);
+INSERT INTO region VALUES(21,15);
+INSERT INTO region VALUES(22,13);
+INSERT INTO region VALUES(23,22);
+INSERT INTO region VALUES(25,14);
+INSERT INTO region VALUES(26,22);
+INSERT INTO region VALUES(27,25);
+INSERT INTO region VALUES(28,12);
+INSERT INTO region VALUES(29,20);
+INSERT INTO region VALUES(30,28);
+
+/*1. Obtener los elementos del territorio del cual depende Colombia*/
+with recursive colombia_relacion AS(
+select id_region_1, id_region_2
+from region
+where id_region_1 in (select id
+					  from territorio
+					  where nombre = 'Colombia')
+	or id_region_1 in 
+UNION	
+	select reg.id_region_1, reg.id_region_2
+	from region as reg
+	inner join colombia_relacion as col 
+	on col.id_region_2 = reg.id_region_1 
+)
+select *
+from colombia_relacion;
+
+/*2. Obtener los elementos que corresponden al Continente Americano*/
+with recursive america_relacion AS(
+select id_region_1, id_region_2
+from region
+where id_region_1 in (select id
+					  from territorio
+					  where nombre = 'America')
+	or id_region_2 in (select id
+					  from territorio
+					  where nombre = 'America')
+UNION	
+	select reg.id_region_1, reg.id_region_2
+	from region as reg
+	inner join america_relacion as ame
+	on ame.id_region_2 = reg.id_region_1 or ame.id_region_1 = reg.id_region_2
+)
+select *
+from america_relacion;
