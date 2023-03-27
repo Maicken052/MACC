@@ -1540,3 +1540,19 @@ UNION
 )
 select *
 from america_relacion;
+
+/*3. Obtener los elementos que corresponden a Bogota*/
+with recursive bogota_relacion AS(
+select id_region_1, id_region_2
+from region
+where id_region_1 in (select id
+					  from territorio
+					  where nombre = 'Bogota')
+UNION	
+	select reg.id_region_1, reg.id_region_2
+	from region as reg
+	inner join bogota_relacion as col 
+	on col.id_region_2 = reg.id_region_1 
+)
+select *
+from bogota_relacion;
