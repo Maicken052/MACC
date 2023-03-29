@@ -1556,3 +1556,75 @@ UNION
 )
 select *
 from bogota_relacion;
+
+--?
+create table grade_points(
+   grade varchar(2) primary key,
+   points numeric(2,1)
+);
+
+insert into grade_points values('A+',4.2);
+insert into grade_points values('A',4.0);
+insert into grade_points values('A-',3.7);
+insert into grade_points values('B+',3.3);
+insert into grade_points values('B',3.0);
+insert into grade_points values('B-',2.7);
+insert into grade_points values('C+',2.3);
+insert into grade_points values('C',2.0);
+insert into grade_points values('C-',1.7);
+insert into grade_points values('F',0.0);
+
+select *
+from grade_points;
+
+create view student_grades(ID, GPA) as
+   select ID, credit_points/case credit_sum when 0 then null else credit_sum end 
+     from(select ID,
+		  sum(case grade when NULL then 0 else credits end) as credit_sum,
+		  sum(case grade when NULL then 0 else credits*points end) as credit_points
+		  from(takes natural join course) natural left outer join grade_points
+		  group by ID)
+		  as credit_student(ID, credit_sum)
+		 
+	union
+	  select ID, NULL
+	  from student
+	  where ID not in (select ID from takes)
+	  
+	  
+select *
+from student_grades;
+
+select *
+from takes;
+
+select ID, rank() over (order by (GPA) desc) as s_rank
+from student_grades;
+
+select ID, (1+(select count(*)
+			  from student_grades B
+			  where B.GPA>A.GPA)) as s_rank
+from student_grades A
+order by s_rank;
+
+create view dept_grades(ID, dept_name, GPA) as
+	select ID, dept_name, credit_points / case credit_sum when 0 then null else credit_sum end
+	from (select ID, dept_name,
+		   sum(case grade when NULL then 0 else credits end) as credit_sum,
+		   sum(case grade when NULL then 0 else credits*points end) as credit_points
+		   from(takes natural join course) natural left outer join grade_points
+		   group by ID,dept_name) 
+		   as credit_student(ID, dept_name, credit_sum)
+	union
+	select ID, dept_name, NULL
+	from student
+	where ID not in (select ID from takes)
+
+select *
+from dept_grades
+
+--Ejercicio 3
+select ID, dept_name,
+  rank() over(partition by dept_name order by GPA desc) as dept_rank
+  from dept_grades
+  order by dept_name, dept_rank;
