@@ -208,14 +208,14 @@ from productor
 where codigo in (select p.codigo
 				from productor as p, producir as prod, pelicula as peli
                 where p.codigo = prod.codigo_productor and prod.codigo_pelicula = peli.codigo and peli.duracion in (select max(duracion)
-																													from pelicula))
+																													from pelicula));
                                                                                                                     
 -- Todos los datos de los actores que han protagonizado películas registradas por el productor Warner.
 select *
 from actor as act
 where exists(select act.*
 			from protagonizar as prota, pelicula as peli
-            where act.id = prota.id_actor and prota.codigo_pelicula = peli.codigo and peli.estudio = 'Warner Bros. Pictures')
+            where act.id = prota.id_actor and prota.codigo_pelicula = peli.codigo and peli.estudio = 'Warner Bros. Pictures');
             
 -- El título y la duración de las películas protagonizadas por el actor Brad Pitt, cuya duración supera alguna duración de las películas protagonizadas por Bruce Willis.
 insert into pelicula values(10007, 'Pulp Fiction', 'A Band Apart', 	1994, 154, 'Comedia negra', 8000000);
@@ -229,7 +229,7 @@ select peli.titulo, peli.duracion
 from pelicula as peli, actor as act, protagonizar as prota
 where act.id = prota.id_actor and prota.codigo_pelicula = peli.codigo and act.nombre = 'Brad Pitt' and peli.duracion > some(select p.duracion
 																															from pelicula as p, actor as a, protagonizar as prot
-																															where a.id = prot.id_actor and prot.codigo_pelicula = p.codigo and a.nombre = 'Bruce Willis')
+																															where a.id = prot.id_actor and prot.codigo_pelicula = p.codigo and a.nombre = 'Bruce Willis');
 -- Promedio de edades de los actores de aquel género de películas donde la edad promedio es superior a 40.
 select peli.genero, avg(actores.age) as edad_promedio
 from protagonizar as prota, pelicula as peli, (select a.*, TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) from actor as a) as actores(id, nombre, genero, fecha_nacimiento, age)
@@ -239,20 +239,60 @@ having avg(actores.age)>40;
                                                                                         
 -- JOIN																								
 																	
--- Cantidad de actores hombres que protagonizaron películas del productor Warner y que fueron registradas antes del 2020.
--- Nombre de los actores que no han protagonizado películas en el 2022. Mostrar los datos de forma ascendente.
-select distinct act.nombre 
-from actor as act
-inner join protagonizar as prota
-on prota.id_actor = act.id
+-- Cantidad de actores hombres que protagonizaron películas del productor Warner y que fueron registradas antes del 2023.
+select count(act.id)
+from protagonizar as prota
 inner join pelicula as peli
 on prota.codigo_pelicula = peli.codigo
-where peli.año != 2022 order by act.nombre asc;
+inner join actor as act
+on prota.id_actor = act.id
+where peli.estudio = 'Warner Bros. Pictures' and peli.año < 2023 and act.genero = 'M';
 
--- Datos del (los) trailer de películas protagonizadas por el actor Tom Cruise.
+-- Nombre de los actores que no han protagonizado películas en el 2022. Mostrar los datos de forma ascendente.
+select distinct act.nombre
+from protagonizar as prota
+inner join pelicula as peli
+on prota.codigo_pelicula = peli.codigo
+inner join actor as act
+on prota.id_actor = act.id
+where peli.año != 2022
+order by act.nombre asc;
+
+-- Datos del (los) trailer de películas protagonizadas por el actor Matthew McConaughey.
+select trailer.*
+from trailer 
+inner join pelicula as peli
+on trailer.codigo_pelicula = peli.codigo
+inner join protagonizar as prota
+on prota.codigo_pelicula = peli.codigo
+inner join actor as act
+on prota.id_actor = act.id
+where act.nombre = 'Matthew McConaughey';
+
 -- Datos de los productores que no tienen registradas películas.
+select productor.*
+from productor 
+left outer join producir
+on productor.codigo = producir.codigo_productor
+where producir.codigo_productor is null;
+
 -- Todos los datos de los actores que han protagonizado películas registradas por el productor Warner.
+select act.*
+from protagonizar as prota
+inner join pelicula as peli
+on prota.codigo_pelicula = peli.codigo
+inner join actor as act
+on prota.id_actor = act.id
+where peli.estudio = 'Warner Bros. Pictures';
+
 -- Datos de las películas que no han sido protagonizadas por Tom Cruise, ni Brad Pitt.
+select distinct peli.*
+from protagonizar as prota
+inner join pelicula as peli
+on prota.codigo_pelicula = peli.codigo
+inner join actor as act
+on prota.id_actor = act.id
+where act.nombre != 'Brad Pitt' and act.nombre != 'Tom Hanks';
 
 -- VISTAS
 -- Número de películas registradas por cada productor.
