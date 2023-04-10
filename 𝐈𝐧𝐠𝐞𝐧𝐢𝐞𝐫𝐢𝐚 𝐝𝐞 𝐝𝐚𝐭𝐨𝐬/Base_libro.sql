@@ -1758,3 +1758,63 @@ select item_name, color, clothes_size, sum(quantity)
 from sales
 group by rollup(item_name, color, clothes_size)
 order by item_name, color, clothes_size;
+
+create table territorio(
+nombre varchar(20) not null,
+genero varchar(1) not null,
+habitantes integer
+);
+
+INSERT INTO territorio VALUES('Colombia', 'M', 1000);
+INSERT INTO territorio VALUES('Colombia', 'F', 3000);
+INSERT INTO territorio VALUES('Bogota', 'M', 5000);
+INSERT INTO territorio VALUES('Bogota', 'F', 7000);
+INSERT INTO territorio VALUES('Paris', 'M', 9000);
+INSERT INTO territorio VALUES('Paris', 'F', 1000);
+INSERT INTO territorio VALUES('Francia', 'M', 3000);
+INSERT INTO territorio VALUES('Francia', 'F', 5000);
+INSERT INTO territorio VALUES('Rio de Janeiro', 'M', 7000);
+INSERT INTO territorio VALUES('Rio de Janeiro', 'F', 9000);
+INSERT INTO territorio VALUES('Marruecos', 'M', 1000);
+INSERT INTO territorio VALUES('Marruecos', 'F', 3000);
+INSERT INTO territorio VALUES('Medellin', 'M', 5000);
+INSERT INTO territorio VALUES('Medellin', 'F', 7000);
+INSERT INTO territorio VALUES('China', 'M', 9000);
+INSERT INTO territorio VALUES('China', 'F', 1000);
+INSERT INTO territorio VALUES('Shanghai', 'M', 3000);
+INSERT INTO territorio VALUES('Shanghai', 'F', 5000);
+INSERT INTO territorio VALUES('Brasil', 'M', 7000);
+INSERT INTO territorio VALUES('Brasil', 'F', 9000);
+INSERT INTO territorio VALUES('Kenia', 'M', 1000);
+INSERT INTO territorio VALUES('Kenia', 'F', 3000);
+INSERT INTO territorio VALUES('Pekin', 'M', 5000);
+INSERT INTO territorio VALUES('Pekin', 'F', 7000);
+INSERT INTO territorio VALUES('Mombasa', 'M', 9000);
+INSERT INTO territorio VALUES('Mombasa', 'F', 1000);
+INSERT INTO territorio VALUES('Estados Unidos', 'M', 3000);
+INSERT INTO territorio VALUES('Estados Unidos', 'F', 5000);
+INSERT INTO territorio VALUES('Rabat', 'M', 7000);
+INSERT INTO territorio VALUES('Rabat', 'F', 9000);
+INSERT INTO territorio VALUES('Miami', 'M', 1000);
+INSERT INTO territorio VALUES('Miami', 'F', 3000);
+
+--
+select nombre, genero, sum(habitantes)
+from territorio
+group by grouping sets(
+(nombre, genero),
+(nombre),
+(genero),
+()
+)
+order by nombre, genero;
+
+select nombre, genero, sum(habitantes)
+from territorio
+group by cube(nombre, genero)
+order by nombre, genero;
+
+select nombre, genero, sum(habitantes)
+from territorio
+group by rollup(nombre, genero)
+order by nombre, genero;
