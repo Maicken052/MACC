@@ -1628,3 +1628,133 @@ select ID, dept_name,
   rank() over(partition by dept_name order by GPA desc) as dept_rank
   from dept_grades
   order by dept_name, dept_rank;
+
+-- CLAUSULAS DE AGRUPACION
+
+create table Empleados(
+	id integer,
+	primer_nombre character varying (50) not null,
+	primer_apellido character varying (50) not null,
+	genero char(1) not null,
+	email character varying (50) not null,
+	salario integer,
+	cod_depto integer,
+	primary key(id)
+);
+	
+	
+INSERT INTO Empleados VALUES(10,'Diana','Linares','F','diana_linares@gmail.com',2000000,2);
+INSERT INTO Empleados VALUES(11,'Andres','Marin','M','andres_marin@gmail.com',5000000,2);
+INSERT INTO Empleados VALUES(12,'Jose','Perez','M','jose_perez@gmail.com',3000000,1);
+INSERT INTO Empleados VALUES(13,'Sandra','Mendieta','F','sandra_mendieta@gmail.com',4000000,1);
+INSERT INTO Empleados VALUES(14,'Diego','Hernandez','M','diego_hernandez@gmail.com',2000000,1);
+INSERT INTO Empleados VALUES(15,'Laura','Moreno','F','laura_moreno@gmail.com',3000000,2);
+INSERT INTO Empleados VALUES(16,'Maria','Alvarez','F','maria_alvarez@gmail.com',6000000,1);
+INSERT INTO Empleados VALUES(17,'Ana','Robledo','F','ana_robledo@gmail.com',2000000,1);
+INSERT INTO Empleados VALUES(18,'Pedro','Mendez','M','pedro_mendez@gmail.com',5000000,2);	
+
+--Grouping sets
+select cod_depto, genero, sum(salario)
+from empleados
+group by 
+   grouping sets(
+   (cod_depto, genero),
+	   (cod_depto),
+	   (genero),
+	   ()
+   );
+
+--Clausula cube
+select cod_depto, sum(salario)
+from empleados
+group by CUBE(cod_depto)
+order by cod_depto;
+
+select cod_depto, sum(salario)
+from empleados
+group by CUBE(cod_depto, genero)
+order by cod_depto, genero;
+
+--Rollup
+select cod_depto, genero, sum(salario)
+from empleados
+group by ROLLUP(cod_depto, genero)
+order by cod_depto, genero;
+
+-- EJERCICIO
+CREATE TABLE sales(
+item_name varchar(10) NOT NULL,
+color varchar(10),
+clothes_size varchar(10),
+quantity integer,
+primary key(item_name , color , clothes_size ),
+CHECK(
+	item_name IN ('skirt', 'dress', 'shirt', 'pants')
+),
+CHECK(
+	color IN ('dark', 'pastel', 'white')
+),
+CHECK(
+	clothes_size IN ('small', 'medium', 'large')
+)
+);
+
+insert into sales values ('skirt', 'dark', 'small', 2);
+insert into sales values ('skirt', 'dark', 'medium', 5);
+insert into sales values ('skirt', 'dark', 'large' ,1);
+insert into sales values ('skirt', 'pastel', 'small', 11);
+insert into sales values ('skirt', 'pastel', 'medium', 9);						  
+insert into sales values ('skirt', 'pastel', 'large', 15);						  
+insert into sales values ('skirt', 'white', 'small', 2);
+insert into sales values ('skirt', 'white', 'medium', 5);	
+insert into sales values ('skirt', 'white', 'large', 3);
+insert into sales values ('dress', 'dark', 'small', 2);
+insert into sales values ('dress', 'dark', 'medium', 6);
+insert into sales values ('dress', 'dark', 'large', 12);
+insert into sales values ('dress', 'pastel', 'small', 4);
+insert into sales values ('dress', 'pastel', 'medium', 3);
+insert into sales values ('dress', 'pastel', 'large', 3);						  
+insert into sales values ('dress', 'white', 'small', 2);
+insert into sales values ('dress', 'white', 'medium', 3);						  
+insert into sales values ('dress', 'white', 'large', 0);					  
+insert into sales values ('shirt', 'dark', 'small', 2);					  
+insert into sales values ('shirt', 'dark', 'medium', 6);
+insert into sales values ('shirt', 'dark', 'large', 6);					  
+insert into sales values ('shirt', 'pastel', 'small', 4);
+insert into sales values ('shirt', 'pastel', 'medium', 1);						  
+insert into sales values ('shirt', 'pastel', 'large', 2);						  
+insert into sales values ('shirt', 'white', 'small', 17);						  
+insert into sales values ('shirt', 'white', 'medium', 1);
+insert into sales values ('shirt', 'white', 'large', 10);					  
+insert into sales values ('pants', 'dark', 'small', 14);				  
+insert into sales values ('pants', 'dark', 'medium', 6);					  
+insert into sales values ('pants', 'dark', 'large', 0);				  
+insert into sales values ('pants', 'pastel', 'small', 1);						  
+insert into sales values ('pants', 'pastel', 'medium', 0);						  
+insert into sales values ('pants', 'pastel', 'large', 1);					  
+insert into sales values ('pants', 'white', 'small', 3);					  
+insert into sales values ('pants', 'white', 'medium', 0);						  
+insert into sales values ('pants', 'white', 'large', 2);
+
+-- Consultar la suma de cantidades con base en las columnas item_name, color, clothes_size
+select item_name, color, clothes_size, sum(quantity)
+from sales
+group by grouping sets(
+(item_name, color, clothes_size),
+(item_name),
+(color),
+(clothes_size),
+()
+);
+
+order by item_name, color, clothes_size;
+
+select item_name, color, clothes_size, sum(quantity)
+from sales
+group by cube(item_name, color, clothes_size)
+order by item_name, color, clothes_size;
+
+select item_name, color, clothes_size, sum(quantity)
+from sales
+group by rollup(item_name, color, clothes_size)
+order by item_name, color, clothes_size;
