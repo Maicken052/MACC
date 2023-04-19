@@ -337,3 +337,104 @@ check(duracion >= 60);
 alter table pelicula
 add constraint año_despues_del_1950
 check(año > 1950);
+
+-- TRIGGERS
+/*Crear un trigger que se dispare cuando se modifique el presupuesto de una película.
+Registrar los datos necesarios para que sea posible saber el presupuesto anterior, la fecha
+de modificación y el presupuesto nuevo.*/
+
+create table historico_presupuesto(
+codigo integer,
+titulo varchar(30) not null,
+estudio varchar(30),
+año integer,
+duracion integer,
+genero varchar(30),
+presupuesto numeric(10,2),
+fecha_mod date,
+nuevo_presupuesto numeric(10,2)
+);
+
+DELIMITER $$
+CREATE TRIGGER actualizar_presupuesto
+AFTER UPDATE ON pelicula
+FOR EACH ROW
+BEGIN 
+	INSERT INTO historico_presupuesto(codigo, titulo, estudio, año, duracion, genero, presupuesto, fecha_mod, nuevo_presupuesto)
+	VALUES (old.codigo, old.titulo, old.estudio, old.año, old.duracion, old.genero, old.presupuesto, current_date(), new.presupuesto);
+END; $$
+
+drop trigger actualizar_presupuesto;
+
+-- Prueba
+begin;
+update pelicula
+set presupuesto = '10000000'
+where codigo = '10001';
+
+select * 
+from pelicula
+
+select *
+from historico_presupuesto
+rollback;
+
+/*Crear un trigger que se dispare cuando se registre un nuevo actor para una película.
+Registrar los datos necesarios para que se pueda mostrar el titulo de la película, el número
+de actores para la película y la fecha en que se realiza el cálculo de la cantidad de actores
+para esa pelicula. */
+
+create table nuevo_actor(
+titulo varchar(30) not null,
+num_actores integer,
+fecha_calc date
+);
+
+-- Función para el titulo
+DELIMITER //
+CREATE FUNCTION peli_titulo (codigo_peli integer) RETURNS
+varchar(30)
+BEGIN
+	DECLARE titulo varchar(30);
+	SET titulo = (select p.titulo
+				  from pelicula as p
+				  where p.codigo = codigo_peli);
+	RETURN titulo;
+END//
+DELIMITER;
+
+-- Función para el número de actores
+DELIMITER //
+CREATE FUNCTION contar_actores(codigo_peli integer) RETURNS
+integer
+BEGIN
+	DECLARE num_actores integer;
+	SET num_actores = (select count(codigo_pelicula)
+						from protagonizar as p
+                        where p.codigo_pelicula = codigo_peli
+						group by codigo_pelicula);
+	RETURN num_actores;
+END//
+DELIMITER;
+
+-- Trigger de nuevo actor
+DELIMITER $$
+CREATE TRIGGER nuevo_actor_trigger
+AFTER INSERT ON protagonizar
+FOR EACH ROW
+BEGIN 
+    INSERT INTO nuevo_actor values(peli_titulo(new.codigo_pelicula), contar_actores(new.codigo_pelicula), current_date());
+END; $$
+
+drop trigger nuevo_actor_trigger;
+
+-- Prueba
+begin;
+insert into protagonizar values(10001, 100052);
+
+select * 
+from protagonizar
+
+select *
+from nuevo_actor
+rollback;
