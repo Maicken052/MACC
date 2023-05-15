@@ -1463,6 +1463,7 @@ foreign key (id_region_1) references territorio,
 foreign key (id_region_2) references territorio
 );
 
+INSERT INTO territorio VALUES(10,'Mundo');
 INSERT INTO territorio VALUES(11,'Europa');
 INSERT INTO territorio VALUES(12,'America');
 INSERT INTO territorio VALUES(13,'Asia');
