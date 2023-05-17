@@ -282,7 +282,18 @@ select *
 from eddie_historial;
 
 -- Obtener los actores dirigidos por Amy Adams y los directores con los que trabajó
-
+with recursive amy_historial as (
+select * from director
+where id_actor in(select id from actor where nombre = 'Amy Adams') 
+	or
+	  director in(select id from actor where nombre = 'Amy Adams')
+union
+select d.* 
+from director as d
+inner join amy_historial as ed
+on ed.director = d.id_actor or ed.id_actor = d.director)
+select * 
+from amy_historial;
 
 -- Obtener los directores de Anne Hathaway.
 with recursive anne_fue_dirigida AS(
