@@ -220,62 +220,62 @@ public:
     }
     
     void exhibicion(){
-        cout<<"☆:::::::::::::::::::::::::::::::::::::::☆𝐆𝐀𝐋𝐄𝐑𝐈𝐀☆:::::::::::::::::::::::::::::::::::::::☆"<<endl<<endl;
-        cout<<"💎𝐍𝐅𝐓 𝟏💎"<<endl;
+        cout<<"☆:::::::::::::::::::::::::::::::::::::::☆GALERIA☆:::::::::::::::::::::::::::::::::::::::☆"<<endl<<endl;
+        cout<<"💎NFT 1💎"<<endl;
         print_nft(nft1);
-        cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT1_precio<<" 𝐁𝐓𝐂!"<<endl<<endl;
-        cout<<"💎𝐍𝐅𝐓 2💎"<<endl;
+        cout<<endl<<endl<<"¡El precio es de: "<<NFT1_precio<<" BTC!"<<endl<<endl;
+        cout<<"💎NFT 2💎"<<endl;
         print_nft(nft2);
-        cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT2_precio<<" 𝐁𝐓𝐂!"<<endl<<endl;
-        cout<<"💎𝐍𝐅𝐓 3💎"<<endl;
+        cout<<endl<<endl<<"¡El precio es de: "<<NFT2_precio<<" BTC!"<<endl<<endl;
+        cout<<"💎NFT 3💎"<<endl;
         print_nft(nft3);
-        cout<<endl<<endl<<"¡𝐄𝐥 𝐩𝐫𝐞𝐜𝐢𝐨 𝐞𝐬 𝐝𝐞: "<<NFT3_precio<<" 𝐁𝐓𝐂!"<<endl;
+        cout<<endl<<endl<<"¡El precio es de: "<<NFT3_precio<<" BTC!"<<endl;
         cout<<"☆:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::☆"<<endl<<endl;
     }
     
     void comprar(Hash<string, string> Tokens_){
         string c;
-        cout<<"¿𝐐𝐮𝐞 𝐧𝐟𝐭 𝐝𝐞𝐬𝐞𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫?";
+        cout<<"¿Que NFT desea comprar?";
         getline(cin, c);
         cout<<endl;
         
         if(c == "1"){
             if(wallet>=NFT1_precio){
                 wallet -=NFT1_precio;
-                cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft1)<<endl;
-                cout<<"𝐁𝐓𝐂 𝐫𝐞𝐬𝐭𝐚𝐧𝐭𝐞 𝐞𝐧 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭: "<<wallet<<endl;
+                cout<< "Felicidades por su compra🎉"<<endl<<"Su token es: "<<Tokens_.find(nft1)<<endl;
+                cout<<"BTC restante en su wallet: "<<wallet<<endl;
             }else{
-                cout<<"₿ 𝐅𝐨𝐧𝐝𝐨𝐬 𝐢𝐧𝐬𝐮𝐟𝐢𝐜𝐢𝐞𝐧𝐭𝐞𝐬 ₿"<<endl;
+                cout<<"₿ Fondos insuficientes ₿"<<endl;
             }
         }else if(c == "2"){
             if(wallet>=NFT2_precio){
                 wallet -=NFT2_precio;
-                cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft2)<<endl;
-                cout<<"𝐁𝐓𝐂 𝐫𝐞𝐬𝐭𝐚𝐧𝐭𝐞 𝐞𝐧 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭: "<<wallet<<endl;
+                cout<< "Felicidades por su compra🎉"<<endl<<"Su token es: "<<Tokens_.find(nft2)<<endl;
+                cout<<"BTC restante en su wallet: "<<wallet<<endl;
             }else{
-                cout<<"₿ 𝐅𝐨𝐧𝐝𝐨𝐬 𝐢𝐧𝐬𝐮𝐟𝐢𝐜𝐢𝐞𝐧𝐭𝐞𝐬 ₿"<<endl;
+                cout<<"₿ Fondos insuficientes ₿"<<endl;
             }
         }else if(c == "3"){
             if(wallet>=NFT3_precio){
                 wallet -=NFT3_precio;
-                cout<< "𝐅𝐞𝐥𝐢𝐜𝐢𝐝𝐚𝐝𝐞𝐬 𝐩𝐨𝐫 𝐬𝐮 𝐜𝐨𝐦𝐩𝐫𝐚🎉"<<endl<<"𝐒𝐮 𝐓𝐨𝐤𝐞𝐧 𝐞𝐬: "<<Tokens_.find(nft3)<<endl;
-                cout<<"𝐁𝐓𝐂 𝐫𝐞𝐬𝐭𝐚𝐧𝐭𝐞 𝐞𝐧 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭: "<<wallet<<endl;
+                cout<< "Felicidades por su compra🎉"<<endl<<"Su token es: "<<Tokens_.find(nft3)<<endl;
+                cout<<"BTC restante en su wallet: "<<wallet<<endl;
             }else{
-                cout<<"₿ 𝐅𝐨𝐧𝐝𝐨𝐬 𝐢𝐧𝐬𝐮𝐟𝐢𝐜𝐢𝐞𝐧𝐭𝐞𝐬 ₿"<<endl;
+                cout<<"₿ Fondos insuficientes ₿"<<endl;
             }
         }else{
-            cout<<"𝐍𝐓𝐅 𝐈𝐧𝐯𝐚𝐥𝐢𝐝𝐨😞"<<endl;
+            cout<<"NFT invalido😞"<<endl;
         }
     }
     
     void redimir(Hash<string, string> Tokens_){
         string t;
-            cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐬𝐮 𝐭𝐨𝐤𝐞𝐧:";
+            cout<<"Ingrese su token:";
             getline(cin, t);
             cout<<endl;
             
             string n = Tokens_.reedem(t);
-            cout<< "𝐄𝐥 𝐧𝐟𝐭 𝐚𝐬𝐨𝐜𝐢𝐚𝐝𝐨 𝐚 𝐝𝐢𝐜𝐡𝐨 𝐭𝐨𝐤𝐞𝐧 𝐞𝐬:"<<endl;
+            cout<< "El nft asociado a dicho token es:"<<endl;
             print_nft(n);
             cout<<endl;
     }
@@ -286,7 +286,7 @@ public:
         Tokens_.push(nft1);
         Tokens_.push(nft2);
         Tokens_.push(nft3);
-        cout<<"𝐏𝐚𝐫𝐚 𝐯𝐞𝐫 𝐥𝐚 𝐠𝐚𝐥𝐞𝐫𝐢𝐚, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟏"<<endl<<"𝐏𝐚𝐫𝐚 𝐜𝐨𝐦𝐩𝐫𝐚𝐫 𝐮𝐧 𝐧𝐟𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟐"<<endl<<"𝐏𝐚𝐫𝐚 𝐫𝐞𝐝𝐢𝐦𝐢𝐫 𝐮𝐧 𝐧𝐟𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟑"<<endl<<"𝐏𝐚𝐫𝐚 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟒"<<endl<<"𝐏𝐚𝐫𝐚 𝐯𝐞𝐫 𝐬𝐮 𝐰𝐚𝐥𝐥𝐞𝐭, 𝐞𝐬𝐜𝐫𝐢𝐛𝐚 𝟓"<<endl<<"𝐄𝐬𝐜𝐫𝐢𝐛𝐚 𝟎 𝐩𝐚𝐫𝐚 𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐫"<<endl<<endl<<"¿𝐐𝐮𝐞 𝐝𝐞𝐬𝐞𝐚 𝐡𝐚𝐜𝐞𝐫?:";
+        cout<<"Para ver la galeria, escriba 1"<<endl<<"Para comprar un NFT, escriba 2"<<endl<<"Para redimir un NFT, escriba 3"<<endl<<"Para recargar su wallet, escriba 4"<<endl<<"Para ver su wallet, escriba 5"<<endl<<"Escriba 0 para terminar"<<endl<<endl<<"¿Que desea hacer?:";
         getline(cin, a);
         cout<<endl;
         
@@ -309,7 +309,7 @@ public:
             while(f){
                 try{
                     f = false;
-                    cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐫𝐞𝐜𝐚𝐫𝐠𝐚𝐫?"<<endl;
+                    cout<<"¿Cuantos BTC quiere recargar?"<<endl;
                     getline(cin, r);
                     r_int = stoi(r);
                     string r_str = to_string(r_int);
@@ -317,21 +317,22 @@ public:
                         throw "error";
                     }
                 }catch(...){
-                    cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐮𝐧 𝐧𝐮𝐦𝐞𝐫𝐨 𝐯𝐚𝐥𝐢𝐝𝐨"<<endl;
+                    cout<<"Ingrese un número valido"<<endl;
                     f = true;
                 }
             }
             wallet+=r_int;
+            cout<<"Su wallet ahora tiene: "<<wallet<<" BTC"<<endl;
             cout<<"-------------------------------------------------------------------"<<endl;
             return 0;
         }else if(a == "5"){
-            cout<<"𝐁𝐓𝐂 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐥𝐞: "<<wallet<<endl;
+            cout<<"BTC disponible: "<<wallet<<endl;
             cout<<"-------------------------------------------------------------------"<<endl;
             return 0;
         }else if(a == "0"){
             return 1;    
         }else{
-            cout<<"𝐀𝐜𝐜𝐢𝐨𝐧 𝐢𝐧𝐯𝐚𝐥𝐢𝐝𝐚😞"<<endl;
+            cout<<"Acción invalida 😞"<<endl;
             cout<<"-------------------------------------------------------------------"<<endl;
             return 0;
         }
@@ -347,7 +348,7 @@ int main(){
     while(F){
         try{
             F = false;
-            cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐢𝐧𝐠𝐫𝐞𝐬a𝐫?"<<endl;
+            cout<<"¿Bienvenido a la tienda, Cuantos BTC quiere ingresar?"<<endl;
             getline(cin, BTC);
             BTC_int = stoi(BTC);
             string BTC_str = to_string(BTC_int);
@@ -355,7 +356,7 @@ int main(){
                 throw "error";
             }
         }catch(...){
-            cout<<"𝐈𝐧𝐠𝐫𝐞𝐬𝐞 𝐮𝐧 𝐧𝐮𝐦𝐞𝐫𝐨 𝐯𝐚𝐥𝐢𝐝𝐨"<<endl;
+            cout<<"Ingrese un número valido"<<endl;
             F = true;
         }
     }
