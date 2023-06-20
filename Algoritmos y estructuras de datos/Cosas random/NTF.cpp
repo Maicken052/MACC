@@ -347,7 +347,7 @@ int main(){
     while(F){
         try{
             F = false;
-            cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐢𝐧𝐠𝐫𝐞𝐬𝐚𝐫?"<<endl;
+            cout<<"¿𝐂𝐮𝐚𝐧𝐭𝐨𝐬 𝐁𝐓𝐂 𝐪𝐮𝐢𝐞𝐫𝐞 𝐢𝐧𝐠𝐫𝐞𝐬a𝐫?"<<endl;
             getline(cin, BTC);
             BTC_int = stoi(BTC);
             string BTC_str = to_string(BTC_int);
