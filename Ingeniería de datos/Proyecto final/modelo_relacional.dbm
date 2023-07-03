@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.3" use-changelog="false" last-position="0,279" last-zoom="0.9" max-obj-count="10"
+	 default-schema="public" default-owner="postgres">
+<database name="new_database" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" layer="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="county" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1280" y="780"/>
+	<column name="ID" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="name">
+		<type name="varchar" length="40"/>
+	</column>
+	<constraint name="county_pk" type="pk-constr" table="public.county">
+		<columns names="ID" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="city" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1260" y="520"/>
+	<column name="name" not-null="true">
+		<type name="varchar" length="20"/>
+	</column>
+	<constraint name="city_pk" type="pk-constr" table="public.city">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="ID_county" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="county_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="store" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="860" y="500"/>
+	<column name="ID" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="50"/>
+	</column>
+	<column name="address">
+		<type name="varchar" length="40"/>
+	</column>
+	<constraint name="store_pk" type="pk-constr" table="public.store">
+		<columns names="ID" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="name_city" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="city_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="vendor" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="860" y="1120"/>
+	<column name="ID" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="name">
+		<type name="varchar" length="50"/>
+	</column>
+	<constraint name="vendor_pk" type="pk-constr" table="public.vendor">
+		<columns names="ID" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="Vendor_uq" type="uq-constr" table="public.vendor">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="category" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="320" y="1160"/>
+	<column name="ID" not-null="true">
+		<type name="integer" length="50"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="50"/>
+	</column>
+	<constraint name="category_pk" type="pk-constr" table="public.category">
+		<columns names="ID" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="product" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="20" y="780"/>
+	<column name="ID" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="volume">
+		<type name="numeric" length="6" precision="2"/>
+	</column>
+	<constraint name="product_pk" type="pk-constr" table="public.product">
+		<columns names="ID" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="ID_category" index="4"/>
+		<object name="ID_vendor" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="category_fk" index="2"/>
+		<object name="vendor_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="zip_code" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1720" y="540"/>
+	<column name="zip_code">
+		<type name="integer" length="0"/>
+	</column>
+
+	<customidxs object-type="column">
+		<object name="name_city" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="city_fk" index="0"/>
+	</customidxs>
+</table>
+
+<table name="sells" layer="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="440" y="480"/>
+	<column name="invoice" not-null="true">
+		<type name="varchar" length="20"/>
+	</column>
+	<column name="date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="bottle_cost" not-null="true">
+		<type name="numeric" length="6" precision="2"/>
+	</column>
+	<column name="bottle_retail" not-null="true">
+		<type name="numeric" length="6" precision="2"/>
+	</column>
+	<column name="bottles_sold" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="sale">
+		<type name="numeric" length="8" precision="2"/>
+	</column>
+	<constraint name="sells_pk" type="pk-constr" table="public.sells">
+		<columns names="invoice" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="ID_product" index="7"/>
+		<object name="ID_store" index="6"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="product_fk" index="2"/>
+		<object name="store_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="county_has_many_city" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#d27110"
+	 src-table="public.county"
+	 dst-table="public.city"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="-5.87081" y="-32.7416"/>
+	</label>
+</relationship>
+
+<relationship name="city_has_many_zip_code" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#4c47ce"
+	 src-table="public.city"
+	 dst-table="public.zip_code"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="7.75762" y="-20.7908"/>
+	</label>
+</relationship>
+
+<relationship name="city_has_many_store" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#f2263b"
+	 src-table="public.city"
+	 dst-table="public.store"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="vendor_has_many_product" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#9b4d1e"
+	 src-table="public.vendor"
+	 dst-table="public.product"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="category_has_many_product" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#6b013c"
+	 src-table="public.category"
+	 dst-table="public.product"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="store_has_many_sells" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#43f9e5"
+	 src-table="public.store"
+	 dst-table="public.sells"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="product_has_many_sells" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#fc4355"
+	 src-table="public.product"
+	 dst-table="public.sells"
+	 src-required="false" dst-required="false"/>
+
+<table name="provides" layer="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="860" y="800"/>
+
+	<customidxs object-type="column">
+		<object name="ID_store" index="1"/>
+		<object name="ID_vendor" index="0"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="store_fk" index="1"/>
+		<object name="vendor_fk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="vendor_has_many_Provides" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#c9e0db"
+	 src-table="public.vendor"
+	 dst-table="public.provides"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="store_has_many_Provides" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#954fb2"
+	 src-table="public.store"
+	 dst-table="public.provides"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
