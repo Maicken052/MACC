@@ -43,13 +43,19 @@ def fibonacci(n:float):
         return 1
     else:
         return fibonacci(n-1) + fibonacci(n-2)
-    
-def fibonacci_search(a:float, b:float, h:float, e:float, n:float, k:float, k_index:float, f:str):
+
+def hallar_n(a:float, b:float, h:float):
+    n = 1
+    while fibonacci(n) < (b-a)/h:
+        n = n + 1
+    return n 
+
+def fibonacci_search(a:float, b:float, h:float, e:float, n:float, k:float, f:str):
     d = b - a  #Se calcula la longitud del intervalo
     fib = fibonacci(n-k-1)/(fibonacci(n-k))  #Se calcula el valor de fibonacci
     l = a + (1 - fib) * d  #Se calcula el punto lambda
     u = a + (fib * d)  #Se calcula el punto mu
-    if k_index == n-2:  #Condición de finalización
+    if k == n-2:  #Condición de finalización
         u = l + e
         fl = eval_function(f, l) 
         fu =eval_function(f, u)
@@ -64,23 +70,21 @@ def fibonacci_search(a:float, b:float, h:float, e:float, n:float, k:float, k_ind
         fl = eval_function(f, l)  #Se evalua la funcion en el punto lambda
         fu = eval_function(f, u)  #Se evalua la funcion en el punto mu
         k = k + 1
-        k_index = k_index + 1
         if fl >= fu:  #Si el valor de la funcion en lambda es mayor que el valor de la funcion en mu, se toma el intervalo [l, b]
-            fibonacci_search(l, b, h, e, n, k, k_index, f)
+            fibonacci_search(l, b, h, e, n, k, f)
         if fu > fl:  #Si el valor de la funcion en mu es menor que el valor de la funcion en lambda, se toma el intervalo [a, u]
-            fibonacci_search(a, u, h, e, n, k, k_index, f)
+            fibonacci_search(a, u, h, e, n, k, f)
 
 #Prueba
 a = float(input("ingrese el limite inferior: "))
 b = float(input("ingrese el limite superior: "))
-h = 0.0001
+h = 0.00001
 e = h/10
-n = 30
+n = hallar_n(a, b, h)
 k = 0
-k_index = 1
 f = function()
 
-if (a < b and h > 0 and k >= 0 and  k_index > 0 and n > 0 and fibonacci(n) > (b-a)/h and cuasiconvexidad(f, a, b)): 
-    fibonacci_search(a, b, h, e, n, k, k_index, f)
+if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
+    fibonacci_search(a, b, h, e, n, k, f)
 else:
-    print("Error: a debe ser menor que b, h,n,k deben ser mayores que 0, se debe cumplir la condición de fibonacci y la función debe ser cuasiconvexa estricta en el intervalo dado")
+    print("Error: a debe ser menor que b, h debe ser mayor que 0 y la función debe ser cuasiconvexa estricta en el intervalo dado")

@@ -57,7 +57,7 @@ def golden_section_search(a:float, b:float, h:float, f:str, i:int):
 #Prueba
 a = float(input("ingrese el limite inferior: "))
 b = float(input("ingrese el limite superior: "))
-h = 0.0000001
+h = 0.00000001
 f = function()
 if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
     golden_section_search(a, b, h, f, 0)
