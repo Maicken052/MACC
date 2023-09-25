@@ -78,7 +78,7 @@ def fibonacci_search(a:float, b:float, h:float, e:float, n:float, k:float, f:str
 #Prueba
 a = float(input("ingrese el limite inferior: "))
 b = float(input("ingrese el limite superior: "))
-h = 0.00001
+h = float(input("ingrese la tolerancia: "))
 e = h/10
 n = hallar_n(a, b, h)
 k = 0
