@@ -6,8 +6,8 @@ def function():
     f = input("Ingrese la función: ")
     return f
 
-def function_derivate(f):
-    derivate = sp.diff(f, x)
+def function_derivate(f, times = 1):
+    derivate = sp.diff(f, x, times)
     return derivate
 
 def eval_function(f, x_num):
@@ -24,24 +24,19 @@ def pseudoconvexidad(f, f_diff, a, b):
             return False
     return True
 
-def biseccion(a, b, h, f, f_diff):
-    if b - a < h:
-        m = ((a+b)/2, eval_function(f, (a+b)/2))
+def newton(a, h, f, f_diff, f_diff_2):
+    if(abs(eval_function(f_diff, a)) < h):
+        m = (a, eval_function(f, a))
         print(f"El minimo se encuentra en: {m}")
         return None
     else:
-        lambda_ = (a+b)/2
-        lambaDiff = eval_function(f_diff, lambda_)
-        if lambaDiff == 0:
-            m = (lambda_, eval_function(f, lambda_))
+        a_k = a - eval_function(f_diff, a)/eval_function(f_diff_2, a)
+        if(abs(a_k - a) < h):
+            m = (a_k, eval_function(f, a_k))
             print(f"El minimo se encuentra en: {m}")
             return None
-        elif(lambaDiff > 0):
-            b = lambda_
-            biseccion(a, b, h, f, f_diff)
-        elif(lambaDiff < 0):
-            a = lambda_
-            biseccion(a, b, h, f, f_diff)
+        else:
+            newton(a_k, h, f, f_diff, f_diff_2)
 
 #Prueba
 a = float(input("ingrese el limite inferior: "))
@@ -50,7 +45,8 @@ h = float(input("ingrese la tolerancia: "))
 x = sp.Symbol("x")
 f = sp.sympify(function())
 f_diff = function_derivate(f)
-if (h > 0 and pseudoconvexidad(f, f_diff, a, b)):
-    biseccion(a, b, h, f, f_diff)
+f_diff_2 = function_derivate(f, 2)
+if(h > 0 and pseudoconvexidad(f, f_diff, a, b)):
+    newton((a+b)/2, h, f, f_diff, f_diff_2)
 else:
     print("Error: h debe ser mayor que 0 y la función debe ser pseudoconvexa estricta en el intervalo dado")

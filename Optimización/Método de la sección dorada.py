@@ -17,7 +17,7 @@ def cuasiconvexidad(f:str, x1:int, x2:int):
         segment = (1-l)*x1+l*x2
         fl = eval_function(f, segment)
         if(fl > m):
-            print(f"para lambda = {l}, f(lambda) = {fl} es mayor que el max(f(x1),f(x2)) = {m}")
+            print(f"para lambda = {l}, f((1-lambda)*x1 + lambda*x2) = {fl} es mayor que el max(f(x1),f(x2)) = {m}")
             return False
         l = l + 0.001
     return True
@@ -47,6 +47,21 @@ h = float(input("ingrese la tolerancia: "))
 x = sp.Symbol("x")
 f = sp.sympify(function())
 if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
-    golden_section_search(a, b, h, f, 0)
+    sol1 = golden_section_search(a, b, h, f, 0)
 else:
     print("Error: a debe ser menor que b, h debe ser mayor que 0 y la función debe ser cuasiconvexa estricta en el intervalo dado")
+
+a = float(input("ingrese el limite inferior: "))
+b = float(input("ingrese el limite superior: "))
+h = float(input("ingrese la tolerancia: "))
+x = sp.Symbol("x")
+f = sp.sympify(function())
+if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
+    sol2 = golden_section_search(a, b, h, f, 0)
+else:
+    print("Error: a debe ser menor que b, h debe ser mayor que 0 y la función debe ser cuasiconvexa estricta en el intervalo dado")
+
+if(sol1[1] < sol2[1]):
+    print(f"El minimo se encuentra en: {sol1}")
+else:
+    print(f"El minimo se encuentra en: {sol2}")

@@ -1,5 +1,6 @@
 import sympy as sp
 from sympy import *
+from math import sqrt
 
 def function():
     f = input("Ingrese la función: ")
@@ -16,7 +17,7 @@ def cuasiconvexidad(f:str, x1:int, x2:int):
         segment = (1-l)*x1+l*x2
         fl = eval_function(f, segment)
         if(fl > m):
-            print(f"para lambda = {l}, f(lambda) = {fl} es mayor que el max(f(x1),f(x2)) = {m}")
+            print(f"para lambda = {l}, f(f((1-lambda)*x1 + lambda*x2)) = {fl} es mayor que el max(f(x1),f(x2)) = {m}")
             return False
         l = l + 0.001
     return True
@@ -70,6 +71,23 @@ n = hallar_n(a, b, h)
 x = sp.Symbol("x")
 f = sp.sympify(function())
 if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
-    fibonacci_search(a, b, h, e, n, 0, f)
+    sol1 = fibonacci_search(a, b, h, e, n, 0, f)
 else:
     print("Error: a debe ser menor que b, h debe ser mayor que 0 y la función debe ser cuasiconvexa estricta en el intervalo dado")
+
+a = float(input("ingrese el limite inferior: "))
+b = float(input("ingrese el limite superior: "))
+h = float(input("ingrese la tolerancia: "))
+e = h/10
+n = hallar_n(a, b, h)
+x = sp.Symbol("x")
+f = sp.sympify(function())
+if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
+    sol2 = fibonacci_search(a, b, h, e, n, 0, f)
+else:
+    print("Error: a debe ser menor que b, h debe ser mayor que 0 y la función debe ser cuasiconvexa estricta en el intervalo dado")
+
+if(sol1[1] < sol2[1]):
+    print(f"El minimo se encuentra en: {sol1}")
+else:
+    print(f"El minimo se encuentra en: {sol2}")
