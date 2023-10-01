@@ -47,21 +47,6 @@ h = float(input("ingrese la tolerancia: "))
 x = sp.Symbol("x")
 f = sp.sympify(function())
 if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
-    sol1 = golden_section_search(a, b, h, f, 0)
+    golden_section_search(a, b, h, f, 0)
 else:
     print("Error: a debe ser menor que b, h debe ser mayor que 0 y la función debe ser cuasiconvexa estricta en el intervalo dado")
-
-a = float(input("ingrese el limite inferior: "))
-b = float(input("ingrese el limite superior: "))
-h = float(input("ingrese la tolerancia: "))
-x = sp.Symbol("x")
-f = sp.sympify(function())
-if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
-    sol2 = golden_section_search(a, b, h, f, 0)
-else:
-    print("Error: a debe ser menor que b, h debe ser mayor que 0 y la función debe ser cuasiconvexa estricta en el intervalo dado")
-
-if(sol1[1] < sol2[1]):
-    print(f"El minimo se encuentra en: {sol1}")
-else:
-    print(f"El minimo se encuentra en: {sol2}")
