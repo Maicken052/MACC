@@ -1,28 +1,14 @@
-from math import *
+import sympy as sp
+from sympy import *
+from math import sqrt
 
 def function():
     f = input("Ingrese la función: ")
     return f
 
-def eval_function(f:str, x:float):
-    abc = "abcdefghijklmnñopqrstuvwxyz"
-    flist = list(f)
-    try:
-        for i in range(len(f)-1):
-            if f[i] == "x":
-                if i == 0:
-                    if f[i+1] not in abc:
-                        flist[i] = str(x)
-                if i == len(f)-1:
-                    if f[i-1] not in abc:
-                        flist[i] = str(x)
-                else:
-                    if f[i-1] not in abc and f[i+1] not in abc:
-                        flist[i] = str(x)
-        f = "".join(flist)
-        return eval(f)
-    except Exception as e:
-        return f"Error al evaluar la función: {e}"
+def eval_function(f, x_num: float):
+    result = f.evalf(subs={x: x_num})
+    return result
 
 def cuasiconvexidad(f:str, x1:int, x2:int):
     l = 0
@@ -31,7 +17,7 @@ def cuasiconvexidad(f:str, x1:int, x2:int):
         segment = (1-l)*x1+l*x2
         fl = eval_function(f, segment)
         if(fl > m):
-            print(f"el punto ({segment},{eval_function(f, segment)}) es mayor que {m}")
+            print(f"para lambda = {l}, f(lambda) = {fl} es mayor que el max(f(x1),f(x2)) = {m}")
             return False
         l = l + 0.001
     return True
@@ -57,8 +43,9 @@ def golden_section_search(a:float, b:float, h:float, f:str, i:int):
 #Prueba
 a = float(input("ingrese el limite inferior: "))
 b = float(input("ingrese el limite superior: "))
-h = h = float(input("ingrese la tolerancia: "))
-f = function()
+h = float(input("ingrese la tolerancia: "))
+x = sp.Symbol("x")
+f = sp.sympify(function())
 if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
     golden_section_search(a, b, h, f, 0)
 else:
