@@ -59,7 +59,12 @@ def nelder_y_mead(f, X1, X2, X3, h):
 
     #Si la varianza es menor que h, entonces el punto Xl es el mínimo
     if var < h:
+        if(Xl[2] < 0.0000000000000000000000000000000000000000001):
+            Xl[2] = 0
         print(f"La solución se encuentra en ({Xl[0]},{Xl[1]}), y el mínimo es {Xl[2]}")
+        return None
+    elif(var-h > 1000000000000000000000000000000000): #Si la varianza aumenta hacia un número muy grande, quiere decir que siempre hay un valor más pequeño, por lo que la función no tendría mínimo
+        print("La función no tiene valor mínimo o no fue posible encontrarlo")
         return None
 
     #Paso 2. Reflejar: Calculamos el centroide y el punto de reflexión
