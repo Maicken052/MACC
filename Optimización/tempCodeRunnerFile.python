@@ -1,5 +1,0 @@
-from scipy.optimize import minimize
-
-result = minimize(lambda x: x[0]**2 - x[0]*x[1] + x[1]**2 - 3*x[1], (0,0), method='nelder-mead')
-solution = result['x']
-print(solution)
