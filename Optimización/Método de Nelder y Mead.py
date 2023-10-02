@@ -2,6 +2,8 @@ import sympy as sp
 import numpy as np
 from sympy import *
 from math import sqrt
+import warnings
+warnings.filterwarnings("error")
 
 def function():
     f = input("Ingrese la función: ")
@@ -17,98 +19,97 @@ def remove_(X, r):
     return X
 
 def nelder_y_mead(f, X1, X2, X3, h):
-    #Paso 1. Ordenar: Ordenamos los vectores de mayor a menor según su tercer coordenada f(xi)
-    X = [X1, X2, X3]
-    f_points = [X1[2], X2[2], X3[2]]
+    try:
+        #Paso 1. Ordenar: Ordenamos los vectores de mayor a menor según su tercer coordenada f(xi)
+        X = [X1, X2, X3]
+        f_points = [X1[2], X2[2], X3[2]]
+        
+        f_xh = max(f_points)
+        f_points.remove(f_xh)
+        for x in X:
+            if x[2] == f_xh:
+                Xh = x
+                X = remove_(X, x)
+                break
     
-    f_xh = max(f_points)
-    f_points.remove(f_xh)
-    for x in X:
-        if x[2] == f_xh:
-            Xh = x
-            X = remove_(X, x)
-            break
-
-    f_xl = min(f_points)
-    f_points.remove(f_xl)
-    for x in X:
-        if x[2] == f_xl:
-            Xl = x
-            X = remove_(X, x)
-            break
-
-    f_xg = f_points[0]
-    if len(X) == 0: #Si los tres puntos son iguales (Máxima recursión alcanzada)
-        print(f"La solución se encuentra en ({Xl[0]},{Xl[1]}), y el mínimo es {Xl[2]}")
-        return None
-    else:
-        Xg = X[0]
-
-    #Calculamos el promedio de las terceras coordenadas f(xi)
-    prom_f = 0
-    f_points = [X1[2], X2[2], X3[2]]
-    for f_i in f_points:      
-        prom_f += f_i
-    prom_f = prom_f/len(f_points)
-
-    #Calculamos la varianza
-    var = 0
-    for f_i in f_points:
-        var += (f_i - prom_f)**2
-    var = var/len(f_points)
-
-    #Si la varianza es menor que h, entonces el punto Xl es el mínimo
-    if var < h:
-        if(Xl[2] < 0.0000000000000000000000000000000000000000001):
-            Xl[2] = 0
-        print(f"La solución se encuentra en ({Xl[0]},{Xl[1]}), y el mínimo es {Xl[2]}")
-        return None
-    elif(var-h > 1000000000000000000000000000000000): #Si la varianza aumenta hacia un número muy grande, quiere decir que siempre hay un valor más pequeño, por lo que la función no tendría mínimo
-        print("La función no tiene valor mínimo o no fue posible encontrarlo")
-        return None
-
-    #Paso 2. Reflejar: Calculamos el centroide y el punto de reflexión
-    xh = Xh[0:2]
-    xl = Xl[0:2]
-    xg = Xg[0:2]
-    xc = (1/(len(f_points)-1))*(xg + xl)
-    xr = (1+alpha)*xc - alpha*xh
-    f_xr = eval_function(f, xr)
-
-    if f_xl <= f_xr < f_xg: #Caso 1
-        Xh = np.array([xr[0], xr[1], f_xr])
-        nelder_y_mead(f, Xh, Xg, Xl, h)
-
-    elif f_xr < f_xl: #Caso 2 (Paso 3. Expandir)
-        xe = (1+(alpha*gamma))*xc - (alpha*gamma)*xh
-        f_xe = eval_function(f, xe)
-        if f_xe < f_xr:
-            Xh = np.array([xe[0], xe[1], f_xe])
-            nelder_y_mead(f, Xh, Xg, Xl, h)
-        elif f_xe >= f_xr:
+        f_xl = min(f_points)
+        f_points.remove(f_xl)
+        for x in X:
+            if x[2] == f_xl:
+                Xl = x
+                X = remove_(X, x)
+                break
+    
+        f_xg = f_points[0]
+        if len(X) == 0: #Si los tres puntos son iguales (Máxima recursión alcanzada)
+            print(f"La solución se encuentra en ({Xl[0]},{Xl[1]}), y el mínimo es {Xl[2]}")
+            return None
+        else:
+            Xg = X[0]
+    
+        #Calculamos el promedio de las terceras coordenadas f(xi)
+        prom_f = 0
+        f_points = [X1[2], X2[2], X3[2]]
+        for f_i in f_points:      
+            prom_f += f_i
+        prom_f = prom_f/len(f_points)
+    
+        #Calculamos la varianza
+        var = 0
+        for f_i in f_points:
+            var += (f_i - prom_f)**2
+        var = var/len(f_points)
+    
+        #Si la varianza es menor que h, entonces el punto Xl es el mínimo
+        if var < h:
+            print(f"La solución se encuentra en ({Xl[0]},{Xl[1]}), y el mínimo es {Xl[2]}")
+            return None
+        
+    
+        #Paso 2. Reflejar: Calculamos el centroide y el punto de reflexión
+        xh = Xh[0:2]
+        xl = Xl[0:2]
+        xg = Xg[0:2]
+        xc = (1/(len(f_points)-1))*(xg + xl)
+        xr = (1+alpha)*xc - alpha*xh
+        f_xr = eval_function(f, xr)
+    
+        if f_xl <= f_xr < f_xg: #Caso 1
             Xh = np.array([xr[0], xr[1], f_xr])
             nelder_y_mead(f, Xh, Xg, Xl, h)
-
-    elif f_xr >= f_xg: #Caso 3 (Paso 4. Contraer)
-        #Contracción externa
-        if f_xg <= f_xr < f_xh:
-            xce = (1+(alpha*beta))*xc - (alpha*beta)*xh
-            f_xce = eval_function(f, xce)
-            if f_xce <= f_xr:
-                Xh = np.array([xce[0], xce[1], f_xce])
+    
+        elif f_xr < f_xl: #Caso 2 (Paso 3. Expandir)
+            xe = (1+(alpha*gamma))*xc - (alpha*gamma)*xh
+            f_xe = eval_function(f, xe)
+            if f_xe < f_xr:
+                Xh = np.array([xe[0], xe[1], f_xe])
                 nelder_y_mead(f, Xh, Xg, Xl, h)
-            elif f_xce > f_xr:
-                paso5(xh, xg, xl, h)
-            
-        #Contracción interna
-        if f_xr >= f_xh:
-            xci = (1-beta)*xc + beta*xh
-            f_xci = eval_function(f, xci)
-            if f_xci < f_xh:
-                Xh = np.array([xci[0], xci[1], f_xci])
+            elif f_xe >= f_xr:
+                Xh = np.array([xr[0], xr[1], f_xr])
                 nelder_y_mead(f, Xh, Xg, Xl, h)
-            elif f_xci >= f_xh:
-                paso5(xh, xg, xl, h)
+    
+        elif f_xr >= f_xg: #Caso 3 (Paso 4. Contraer)
+            #Contracción externa
+            if f_xg <= f_xr < f_xh:
+                xce = (1+(alpha*beta))*xc - (alpha*beta)*xh
+                f_xce = eval_function(f, xce)
+                if f_xce <= f_xr:
+                    Xh = np.array([xce[0], xce[1], f_xce])
+                    nelder_y_mead(f, Xh, Xg, Xl, h)
+                elif f_xce > f_xr:
+                    paso5(xh, xg, xl, h)
+                
+            #Contracción interna
+            if f_xr >= f_xh:
+                xci = (1-beta)*xc + beta*xh
+                f_xci = eval_function(f, xci)
+                if f_xci < f_xh:
+                    Xh = np.array([xci[0], xci[1], f_xci])
+                    nelder_y_mead(f, Xh, Xg, Xl, h)
+                elif f_xci >= f_xh:
+                    paso5(xh, xg, xl, h)
+    except:
+        print("La función no tiene valor mínimo o no fue posible encontrarlo")
 
 def paso5(xh, xg, xl, h):
     #Paso 5. Encoger
