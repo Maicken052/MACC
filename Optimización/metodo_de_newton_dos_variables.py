@@ -18,15 +18,15 @@ def eval_function(f, point):
 def newton(f, x1, gradient, hessian, h):
     gradient_x1 = np.array([eval_function(gradient[0], x1), eval_function(gradient[1], x1)])
     gradient_x1 = gradient_x1.astype(float)
-    if(np.linalg.norm(gradient_x1) < h):
+    if(np.linalg.norm(gradient_x1) < h): #Si la norma del gradiente es menor que la tolerancia
         f_x1 = eval_function(f, x1)
         print(f"La solución se encuentra en ({x1[0]},{x1[1]}) y el mínimo es {f_x1}")
         return None
     else:
         hessian_x1 = np.array([[eval_function(hessian[0][0], x1), eval_function(hessian[0][1], x1)],
                                 [eval_function(hessian[1][0], x1), eval_function(hessian[1][1], x1)]])
+        hessian_x1 = hessian_x1.astype(float)
         try:
-            hessian_x1 = hessian_x1.astype(float)
             inv_hessian_x1 = np.linalg.inv(hessian_x1)
         except:
             print(f"La matriz no es invertible, por tanto no podemos hallar el mínimo")

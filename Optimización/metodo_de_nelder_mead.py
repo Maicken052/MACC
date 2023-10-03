@@ -65,7 +65,6 @@ def nelder_y_mead(f, X1, X2, X3, h):
             print(f"La solución se encuentra en ({Xl[0]},{Xl[1]}), y el mínimo es {Xl[2]}")
             return None
         
-    
         #Paso 2. Reflejar: Calculamos el centroide y el punto de reflexión
         xh = Xh[0:2]
         xl = Xl[0:2]

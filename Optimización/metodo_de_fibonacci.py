@@ -6,11 +6,11 @@ def function():
     f = input("Ingrese la función: ")
     return f
 
-def eval_function(f, x_num: float):
+def eval_function(f, x_num):
     result = f.evalf(subs={x: x_num})
     return result
 
-def cuasiconvexidad(f:str, x1:int, x2:int):
+def cuasiconvexidad(f, x1, x2):
     l = 0
     m = max(eval_function(f, x1), eval_function(f, x2))
     while l <= 1:
@@ -22,7 +22,7 @@ def cuasiconvexidad(f:str, x1:int, x2:int):
         l = l + 0.001
     return True
 
-def fibonacci(n:float):
+def fibonacci(n):
     if n <= 0:
         return 0
     elif n == 1:
@@ -30,21 +30,21 @@ def fibonacci(n:float):
     else:
         return fibonacci(n-1) + fibonacci(n-2)
 
-def hallar_n(a:float, b:float, h:float):
+def hallar_n(a, b, h):
     n = 1
     while fibonacci(n) < (b-a)/h:
         n = n + 1
     return n 
 
-def fibonacci_search(a:float, b:float, h:float, e:float, n:float, k:float, f:str):
-    d = b - a  #Se calcula la longitud del intervalo
+def fibonacci_search(f, a, b, h, e, n, k):
+    d = b - a  
     fib = fibonacci(n-k-1)/(fibonacci(n-k))  #Se calcula el valor de fibonacci
-    l = a + (1 - fib) * d  #Se calcula el punto lambda
-    u = a + (fib * d)  #Se calcula el punto mu
+    l = a + (1 - fib) * d  
+    u = a + (fib * d)  
     if k == n-2:  #Condición de finalización
         u = l + e
         fl = eval_function(f, l) 
-        fu =eval_function(f, u)
+        fu = eval_function(f, u)
         if fl > fu:
             a = l
         if fu > fl:
@@ -53,15 +53,14 @@ def fibonacci_search(a:float, b:float, h:float, e:float, n:float, k:float, f:str
         print(f"el minimo se encuentra en: {m}")
         return None
     else:   
-        fl = eval_function(f, l)  #Se evalua la funcion en el punto lambda
-        fu = eval_function(f, u)  #Se evalua la funcion en el punto mu
+        fl = eval_function(f, l)  
+        fu = eval_function(f, u)  
         k = k + 1
         if fl >= fu:  #Si el valor de la funcion en lambda es mayor que el valor de la funcion en mu, se toma el intervalo [l, b]
-            fibonacci_search(l, b, h, e, n, k, f)
+            fibonacci_search(f, l, b, h, e, n, k)
         if fu > fl:  #Si el valor de la funcion en mu es menor que el valor de la funcion en lambda, se toma el intervalo [a, u]
-            fibonacci_search(a, u, h, e, n, k, f)
+            fibonacci_search(f, a, u, h, e, n, k)
     
-
 #Prueba
 a = float(input("ingrese el limite inferior: "))
 b = float(input("ingrese el limite superior: "))
@@ -71,6 +70,6 @@ n = hallar_n(a, b, h)
 x = sp.Symbol("x")
 f = sp.sympify(function())
 if (a < b and h > 0 and cuasiconvexidad(f, a, b)): 
-    fibonacci_search(a, b, h, e, n, 0, f)
+    fibonacci_search(f, a, b, h, e, n, 0)
 else:
     print("Error: a debe ser menor que b, h debe ser mayor que 0 y la función debe ser cuasiconvexa estricta en el intervalo dado")
