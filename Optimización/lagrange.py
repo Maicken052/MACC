@@ -14,13 +14,14 @@ f = 2*x1**2+2*x1*x2*x2**2-10*x1-10*x2
 g = x1**2+2*x2**2+s1**2-5
 h = 3*x1+x2+s2**2-6
 
-ec1 = Eq(diff(f,x1,1)-m1*diff(g,x1,1)+m2*diff(h,x1,1), 0)
-ec2 = Eq(diff(f,x2,1)-m1*diff(g,x2,1)+m2*diff(h,x2,1), 0)
-ec3 = Eq(diff(f,s1,1)-m1*diff(g,s1,1)+m2*diff(h,s1,1), 0)
-ec4 = Eq(diff(f,s2,1)-m1*diff(g,s2,1)+m2*diff(h,s2,1), 0)
-ec5 = Eq(g, 0)
-ec6 = Eq(h, 0)
+ec1 = diff(f,x1,1)-m1*diff(g,x1,1)-m2*diff(h,x1,1)
+ec2 = diff(f,x2,1)-m1*diff(g,x2,1)-m2*diff(h,x2,1)
+ec3 = diff(f,s1,1)-m1*diff(g,s1,1)-m2*diff(h,s1,1)
+ec4 = diff(f,s2,1)-m1*diff(g,s2,1)-m2*diff(h,s2,1)
+ec5 = -1*g
+ec6 = -1*h
 
-sol = solve((ec1, ec2, ec3, ec4, ec5, ec6), x1, x2, s1, s2, m1, m2)
+sol = solve([ec1, ec2, ec3, ec4, ec5, ec6], x1, x2, s1, s2, m1, m2)
+
 print("la solución es")
 display(sol)
