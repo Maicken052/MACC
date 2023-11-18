@@ -1,27 +1,87 @@
+a)
 import sympy as sp
-from sympy import *
 
-def function_derivate(f, var, times):
-    derivate = sp.diff(f, var, times)
-    return derivate
+x, y, z = sp.var('x, y, z')
+lamda, mu = sp.symbols('lamda, mu')
 
-def eval_function(f, x1_, x2_):
-    result = f.evalf(subs={x1:x1_, x2:x2_})
-    return result
+f = y*sp.exp(x - z)
+h = 9*x*2 + 4*y2 + 36*z*2 - 36  
+g = x*y + y*z - 1 
 
-x1, x2, s1, s2, m1, m2 = sp.symbols("x1 x2 s1 s2 m1 m2")
-f = 2*x1**2+2*x1*x2*x2**2-10*x1-10*x2
-g = x1**2+2*x2**2+s1**2-5
-h = 3*x1+x2+s2**2-6
+L = f - lamda*h - mu*g
+gradL = [sp.diff(L, var) for var in [x, y, z]]
+eqs = gradL + [h] + [g]
 
-ec1 = diff(f,x1,1)-m1*diff(g,x1,1)-m2*diff(h,x1,1)
-ec2 = diff(f,x2,1)-m1*diff(g,x2,1)-m2*diff(h,x2,1)
-ec3 = diff(f,s1,1)-m1*diff(g,s1,1)-m2*diff(h,s1,1)
-ec4 = diff(f,s2,1)-m1*diff(g,s2,1)-m2*diff(h,s2,1)
-ec5 = -1*g
-ec6 = -1*h
+sol = sp.solve(eqs, [x, y, z, lamda, mu], dict=True)
 
-sol = solve([ec1, ec2, ec3, ec4, ec5, ec6], x1, x2, s1, s2, m1, m2)
+print("la solución es:")
+print(sol)
+print("")
+print("y la función evaluada en los puntos extremos da:")
+print([f.subs(p) for p in sol])
 
-print("la solución es")
-display(sol)
+b)
+import sympy as sp
+
+x, y, z = sp.var('x, y, z')
+lamda, mu = sp.symbols('lamda, mu')
+
+f = x + y + z
+h = x*2 - y*2 - z 
+g = x*2 + z*2 - 4 
+
+L = f - lamda*h - mu*g
+gradL = [sp.diff(L, var) for var in [x, y, z]]
+eqs = gradL + [h] + [g]
+
+sol = sp.solve(eqs, [x, y, z, lamda, mu], dict=True)
+
+print("la solución es:")
+print(sol)
+print("")
+print("y la función evaluada en los puntos extremos da:")
+print([f.subs(p) for p in sol])
+
+c)
+import sympy as sp
+
+x, y, z, s1, s2 = sp.var('x, y, z, s1, s2')
+lamda, mu = sp.symbols('lamda, mu')
+
+f = 100*(y - x*2)2 + (1 - x)*2
+h = 3*x + 2*y - 12 - s1**2 
+g = 2*x + y - 8 - s2**2 
+
+L = f - lamda*h - mu*g
+gradL = [sp.diff(L, var) for var in [x, y, s1, s2]]
+eqs = gradL + [h] + [g]
+
+sol = sp.solve(eqs, [x, y, s1, s2, lamda, mu], dict=True)
+
+print("la solución es:")
+print(sol)
+print("")
+print("y la función evaluada en los puntos extremos da:")
+print([f.subs(p) for p in sol])
+
+d)
+import sympy as sp
+
+x, y, z, s1, s2 = sp.var('x, y, z, s1, s2')
+lamda, mu = sp.symbols('lamda, mu')
+
+f = 100*(y - x*2)2 + (1 - x)*2
+h = 3*x + 2*y - 12 + s1**2 
+g = 2*x + y - 8 + s2**2 
+
+L = f - lamda*h - mu*g
+gradL = [sp.diff(L, var) for var in [x, y, s1, s2]]
+eqs = gradL + [h] + [g]
+
+sol = sp.solve(eqs, [x, y, s1, s2, lamda, mu], dict=True)
+
+print("la solución es:")
+print(sol)
+print("")
+print("y la función evaluada en los puntos extremos da:")
+print([f.subs(p) for p in sol])
