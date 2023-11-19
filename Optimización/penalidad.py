@@ -35,11 +35,11 @@ def penalidad(f, x0, tol, mu, penalty):
 
 #prueba
 mu_ = 0.1  #Valor inicial de mu
-initial_point = [0,0] 
+initial_point = [0,0,0] 
 h = 0.000005 
-f = '100*(x2-x1**2)**2 + (1-x1)**2' 
-eqrest = []  #Restricciones de igualdad
-ineqrest = ['3*x1 + 2*x2 - 12', '2*x1 + x2 - 8'] #Restricciones de desigualdad
+f = 'x1+x2+x3' 
+eqrest = ['x1**2+x2**2-x3']  #Restricciones de igualdad
+ineqrest = ['x1**2+x3**2-4'] #Restricciones de desigualdad
 
 x0 = np.array(initial_point)
 dimentions = len(initial_point)+1
