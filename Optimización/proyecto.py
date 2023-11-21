@@ -40,7 +40,7 @@ def funcion_de_penalizacion_nf():
 
     f_pen_nf = f'{mu}*max(0,({nf})-{nf_per})' #Se crea la función de penalidad de el número de fallas
 
-    return sympify(f_pen_nf)
+    return sympify(f_pen_nf), sympify(nf)
 
 #Función de penalidad de U
 def funcion_de_penalizacion_u(x):
@@ -69,10 +69,7 @@ def f(x):
     pen_u = funcion_de_penalizacion_u(x) #Número de penalidades de U (U_i fuera de los límites)
     pen_r = funcion_de_penalizacion_r(x) #Número de penalidades de R (R_i fuera de los límites)
 
-    if pen_u != 0 or pen_r != 0: #Si hay penalidades de U o R, se usa la función con el mu como penalidad
-        return eval_function(f_obj, x) + eval_function(f_pen_nf, x) + pen_u*mu + pen_r*mu
-    else: #Si no hay penalidades de U o R, se usa la función sin el mu (las variables están dentro de los límites). Aun así, se debe cumplir que el número de fallas sea menor al permitido
-        return eval_function(f_obj, x) + eval_function(f_pen_nf, x)
+    return eval_function(f_obj, x) + eval_function(f_pen_nf, x) + pen_u*mu + pen_r*mu
 
 
 n = int(input("Ingrese el número de estructuras: "))
@@ -105,7 +102,7 @@ x = symbols(f"x1:{num_vars}")
 
 #Se crean las funciones objetivo y de penalidad de el número de fallas
 f_obj = funcion_objetivo()
-f_pen_nf = funcion_de_penalizacion_nf()
+f_pen_nf = funcion_de_penalizacion_nf()[0]
 
 # Guarda el tiempo de inicio
 tiempo_inicio = time.time()
@@ -127,5 +124,6 @@ print(f"La solución está dada por:")
 for i in range(n):
     print(f"U{i+1}: {sol.x[i]}")
     print(f"R{i+1}: {sol.x[i+n]}")
-print(f"Y el costo total de los materiales sería de {eval_function(f_obj, sol.x)}")
+print(f"El costo total de los materiales sería de {eval_function(f_obj, sol.x)}")
+print(f"Y número de fallas calculadas sería {eval_function(funcion_de_penalizacion_nf()[1], sol.x)}")
 print(f"El código tomó {tiempo_total_minutos:.2f} minutos en ejecutarse.")
