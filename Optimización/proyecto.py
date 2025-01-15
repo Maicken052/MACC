@@ -127,3 +127,4 @@ for i in range(n):
 print(f"El costo total de los materiales sería de {eval_function(f_obj, sol.x)}")
 print(f"Y número de fallas calculadas sería {eval_function(funcion_de_penalizacion_nf()[1], sol.x)}")
 print(f"El código tomó {tiempo_total_minutos:.2f} minutos en ejecutarse.")
+
