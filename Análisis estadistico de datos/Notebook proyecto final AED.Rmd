@@ -1,0 +1,925 @@
+---
+title: "Proyecto Final (Wine Data)."
+output: html_notebook
+---
+
+## Análisis Estadístico de Datos
+
+### Universidad del Rosario - Escuela de Ingeniería, Ciencia y Tecnología.
+
+#### Robert Daniel Fonseca, Juan Sebastián Alvarado Ramos y Luceth Caterine Argote Radillo.
+
+## Librerías.
+
+```{r}
+if (!require("tidyverse")) install.packages("tidyverse")  
+if (!require("psych")) install.packages("psych")  
+if (!require("GGally")) install.packages("GGally")  
+if (!require("RColorBrewer")) install.packages("RColorBrewer") 
+if (!require("gmodels")) install.packages("gmodels") 
+if (!require("readr")) install.packages("readr") 
+if (!require("corrplot")) install.packages("corrplot")  
+if (!require("ggpubr")) install.packages("ggpubr")  
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("stats")) install.packages("stats")
+if (!require("aplpack")) install.packages("aplpack")
+if (!require('factoextra')) install.packages('factoextra')
+if (!require('reshape2')) install.packages('reshape2')
+if (!require('FactoMineR')) install.packages('FactoMineR')
+if (!require('MVN')) install.packages('MVN')
+if (!require('mvnormtest')) install.packages('mvnormtest')
+if (!require('rstatix')) install.packages('rstatix')
+if (!require('forecast')) install.packages('forecast')
+if (!require('caret')) install.packages('caret')
+if (!require('dendextend')) install.packages('dendextend')
+if (!require('fpc')) install.packages('fpc')
+if (!require('cluster')) install.packages('cluster')
+```
+
+## Datasets.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+wine_white <- read_delim("C:/Users/POWER/Documents/L.A/wine+quality/winequality-white.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE)
+wine_red <- read_delim("C:/Users/POWER/Documents/L.A/wine+quality/winequality-red.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE)
+```
+
+Se unificaron los datasets en uno solo y se cambiaron los nombres de las columnas:
+
+```{r}
+wine_red <- wine_red %>%
+  mutate(type = "red")
+
+wine_white <- wine_white %>%
+  mutate(type = "white")
+
+wine <- bind_rows(wine_red, wine_white)
+
+wine <- wine %>%
+  rename(fixed_acidity = 'fixed acidity',
+         volatile_acidity = 'volatile acidity',
+         citric_acid = 'citric acid',
+         residual_sugar = 'residual sugar',
+         free_sulfur_dioxide = 'free sulfur dioxide',
+         total_sulfur_dioxide = 'total sulfur dioxide')
+```
+
+Se seleccionaron las variables numéricas:
+
+```{r}
+red_wine_num <- dplyr::select(wine_red, -quality, -type)
+white_wine_num <- dplyr::select(wine_white, -quality, -type)
+wine_num <- dplyr::select(wine, -quality, -type)
+```
+
+
+## Análisis Descriptivo.
+```{r}
+describe(wine_num)
+```
+Usamos un describe para ver la información general de wine.
+```{r}
+wine %>%
+  group_by(type) %>%
+  summarise(media_x1 = mean(fixed_acidity),
+            media_x2 = mean(volatile_acidity),
+            media_x3 = mean(citric_acid),
+            media_x4 = mean(residual_sugar),
+            media_x5 = mean(chlorides),
+            media_x6 = mean(free_sulfur_dioxide),
+            media_x7 = mean(total_sulfur_dioxide),
+            media_x8 = mean(density),
+            media_x9 = mean(pH),
+            media_x10 = mean(sulphates),
+            media_x11 = mean(alcohol),
+            desv_x1 = sd(fixed_acidity),
+            desv_x2 = sd(volatile_acidity),
+            desv_x3 = sd(citric_acid),
+            desv_x4 = sd(residual_sugar),
+            desv_x5 = sd(chlorides),
+            desv_x6 = sd(free_sulfur_dioxide),
+            desv_x7 = sd(total_sulfur_dioxide),
+            desv_x8 = sd(density),
+            desv_x9 = sd(pH),
+            desv_x10 = sd(sulphates),
+            desv_x11 = sd(alcohol))
+options(tibble.width = Inf)
+```
+Vemos la media y desviación estandar de cada variable para cada tipo de vino.
+
+### Correlación.
+
+```{r}
+cor_ <- cor(wine_num)
+corrplot(cor_, type="upper", tl.cex = 0.7,col=brewer.pal(n=8, name="PuOr"))
+```
+
+
+### Histogramas.
+
+```{r}
+names <- colnames(wine)
+```
+Obtenemos el nombre de las columnas.
+
+```{r, fig.width=12, fig.height=8, warning=FALSE}
+h1 <- wine %>%
+  ggplot(aes_string(x = names[1], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[1]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[1]),
+       x = names[1],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h2 <- wine %>%
+  ggplot(aes_string(x = names[2], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[2]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[2]),
+       x = names[2],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h3 <- wine %>%
+  ggplot(aes_string(x = names[3], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[3]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[3]),
+       x = names[3],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h4 <- wine %>%
+  ggplot(aes_string(x = names[4], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[4]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[4]),
+       x = names[4],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h5 <- wine %>%
+  ggplot(aes_string(x = names[5], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[5]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[5]),
+       x = names[5],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h6 <- wine %>%
+  ggplot(aes_string(x = names[6], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[6]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[6]),
+       x = names[6],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h7 <- wine %>%
+  ggplot(aes_string(x = names[7], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[7]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[7]),
+       x = names[7],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h8 <- wine %>%
+  ggplot(aes_string(x = names[8], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[8]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[8]),
+       x = names[8],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h9 <- wine %>%
+  ggplot(aes_string(x = names[9], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[9]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[9]),
+       x = names[9],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h10 <- wine %>%
+  ggplot(aes_string(x = names[10], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[10]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[10]),
+       x = names[10],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+h11 <- wine %>%
+  ggplot(aes_string(x = names[11], fill = "type", color = "type")) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) + 
+  geom_vline(aes(xintercept = mean(.data[[names[11]]], na.rm = TRUE)), color = "red", linetype = "dashed") +
+  labs(title = paste("Histogram of", names[11]),
+       x = names[11],
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+ggarrange(h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, ncol = 4, nrow = 3)
+```
+
+## Boxplots.
+
+```{r, fig.width=12, fig.height=8}
+b1 <- wine %>%
+  ggboxplot(x = "type", y = names[1],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[1], "by type")) +
+  theme_minimal()
+
+b2 <- wine %>%
+  ggboxplot(x = "type", y = names[2],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[2], "by type")) +
+  theme_minimal()
+
+b3 <- wine %>%
+  ggboxplot(x = "type", y = names[3],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[3], "by type")) +
+  theme_minimal()
+
+b4 <- wine %>%
+  ggboxplot(x = "type", y = names[4],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[4], "by type")) +
+  theme_minimal()
+
+b5 <- wine %>%
+  ggboxplot(x = "type", y = names[5],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[5], "by type")) +
+  theme_minimal()
+
+b6 <- wine %>%
+  ggboxplot(x = "type", y = names[6],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[6], "by type")) +
+  theme_minimal()
+
+b7 <- wine %>%
+  ggboxplot(x = "type", y = names[7],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[7], "by type")) +
+  theme_minimal()
+
+b8 <- wine %>%
+  ggboxplot(x = "type", y = names[8],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[8], "by type")) +
+  theme_minimal()
+
+b9 <- wine %>%
+  ggboxplot(x = "type", y = names[9],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[9], "by type")) +
+  theme_minimal()
+
+b10 <- wine %>%
+  ggboxplot(x = "type", y = names[10],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[10], "by type")) +
+  theme_minimal()
+
+b11 <- wine %>%
+  ggboxplot(x = "type", y = names[11],
+            color = "type", palette = "jco",
+            width = 0.5) +
+  labs(title = paste(names[11], "by type")) +
+  theme_minimal()
+
+ggarrange(b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, ncol = 4, nrow = 3)
+```
+## Análisis de Normalidad.
+
+### Univariados.
+
+```{r, fig.width=12, fig.height=8}
+white_whine_univariateNormal <- MVN::mvn(data = white_wine_num,
+         univariatePlot = "qqplot")
+white_whine_univariateNormal$univariateNormality
+```
+Primero realizamos las pruebas para el vino blanco.
+
+```{r, fig.width=12, fig.height=8}
+red_whine_univariateNormal <- MVN::mvn(data = red_wine_num,
+         univariatePlot = "qqplot")
+red_whine_univariateNormal$univariateNormality
+```
+Y ahora para el vino tinto.
+
+### Multivariados
+
+```{r}
+MVN::mvn(data = white_wine_num,
+         mvnTest = 'mardia')$multivariateNormality
+mvn(data = white_wine_num,
+    mvnTest = 'hz')$multivariateNormality
+MVN::mvn(white_wine_num,
+         multivariatePlot = "qq")$multivariatePlot
+```
+Primero realizamos las pruebas para el vino blanco.
+
+```{r}
+MVN::mvn(data = red_wine_num,
+         mvnTest = 'mardia')$multivariateNormality
+mvn(data = red_wine_num,
+    mvnTest = 'hz')$multivariateNormality
+MVN::mvn(red_wine_num,
+         multivariatePlot = "qq")$multivariatePlot
+```
+Y ahora para el vino tinto.
+
+### Transformación (Box-Cox).
+
+```{r, warning=FALSE}
+white_wine_boxcox <- as.data.frame(lapply(white_wine_num, function(x) {
+  lambda <- BoxCox.lambda(x)
+  BoxCox(x, lambda)
+}))
+```
+
+```{r, warning=FALSE}
+red_wine_boxcox <- as.data.frame(lapply(red_wine_num, function(x) {
+  lambda <- BoxCox.lambda(x)
+  BoxCox(x, lambda)
+}))
+```
+Se aplica la transformación BoxCox en ambos datasets para mejorar la asimetría.
+
+### Tratamiento de datos atípicos.
+
+```{r, message=FALSE, warning=FALSE}
+outliers <- white_wine_boxcox %>%
+  mahalanobis_distance() %>%
+  filter(is.outlier == TRUE)
+
+white_wine_num_t <- anti_join(white_wine_boxcox, outliers)
+```
+
+```{r, message=FALSE, warning=FALSE}
+outliers <- red_wine_boxcox %>%
+  mahalanobis_distance() %>%
+  filter(is.outlier == TRUE)
+
+red_wine_num_t <- anti_join(red_wine_boxcox, outliers)
+```
+Y se eliminan los outliers de la transformación.
+
+### Pruebas posteriores.
+
+```{r}
+MVN::mvn(data = white_wine_num_t,
+         mvnTest = 'mardia')$multivariateNormality
+mvn(data = white_wine_num_t,
+    mvnTest = 'hz')$multivariateNormality
+MVN::mvn(white_wine_num_t,
+         multivariatePlot = "qq")$multivariatePlot
+```
+Se aplican otra vez las pruebas para el vino blanco.
+
+```{r}
+MVN::mvn(data = red_wine_num_t,
+         mvnTest = 'mardia')$multivariateNormality
+mvn(data = red_wine_num_t,
+    mvnTest = 'hz')$multivariateNormality
+MVN::mvn(red_wine_num_t,
+         multivariatePlot = "qq")$multivariatePlot
+```
+Y después para el vino tinto.
+
+## Análisis de Componentes Principales.
+### Pruebas previas
+#### Test de Bartlett
+```{r}
+Test.Bartlett <- cortest.bartlett(cor_, n=nrow(wine_num))
+Test.Bartlett$p.value
+```
+Se realiza el test de Bartlett para ver si la correlación es significativa.
+
+#### KMO
+```{r}
+KMO(wine_num)
+```
+También el KMO para ver que tan viable es hacer un PCA.
+
+### PCA
+```{r}
+componentestotal <- prcomp(wine_num, center=TRUE, scale.=TRUE)
+```
+se usa el paquete prcomp para realizar el PCA
+
+### Elección del número de componentes
+#### Elbow.
+```{r}
+fviz_eig(componentestotal, geom="line", ylim=c(0,50),
+         main = "Gráfico de sedimentación- Varianza explicada",
+         addlabels = TRUE, xlab = "Número de componentes",
+         ylab="Porcentaje de varianza explicado")
+```
+Se ve que el gráfico de Elbow sugiere 5 componentes.
+
+#### Pareto.
+```{r}
+lambdas <- as.data.frame(summary(componentestotal)[1])^2
+
+tabla <- tibble(k = c(1:11), var_acum = unlist(cumsum(lambdas/11*100)))
+
+tabla %>% ggplot(aes(x= k, y = var_acum))+
+  geom_line() +
+  geom_point() +
+  geom_hline(yintercept = 80, color ="red") +
+  geom_text(aes(label = after_stat(round(y,1))),
+            nudge_x = 0.25, nudge_y = 3.25)+
+  ggtitle("Grafico de pareto")+
+  xlab("# de componentes")+
+  ylab("variabilidad acumulada")+
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+El gráfico de Pareto también aproximadamente.
+
+#### Valores Propios.
+```{r}
+auto_R <- eigen(cor_)
+tabla <- tibble(k = c(1:11), lambda_i = auto_R$values)
+
+tabla %>% ggplot(aes(x= k, y = lambda_i))+
+  geom_line() +
+  geom_point() +
+  geom_hline(yintercept = 1) +
+  geom_text(aes(label = after_stat(round(y,1))),
+            nudge_x = 0.25, nudge_y = 3.25)+
+  ggtitle("Gráfico de valores propios")+
+  xlab("# de componentes")+
+  ylab("valor propio")+
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+El de valores propios sugiere 4.
+
+Se eligieron 5 componentes dado que 2 de los 3 gráficos sugieren ese número.
+
+### Cargas Factoriales.
+```{r}
+cargas <- as.data.frame(componentestotal$rotation)
+cargas
+```
+
+```{r}
+fviz_contrib(componentestotal,choice="var", axes=1)
+```
+La variable con mayor carga factorial para la primera componente es total_sulfur_dioxide.
+
+```{r}
+fviz_contrib(componentestotal,choice="var", axes=2)
+```
+La variable con mayor carga factorial para la segunda componente es density
+
+```{r}
+fviz_contrib(componentestotal,choice="var", axes=3)
+```
+La variable con mayor carga factorial para la tercera componente es citric_acid.
+```{r}
+fviz_contrib(componentestotal,choice="var", axes=4)
+```
+La variable con mayor carga factorial para la cuarta componente es sulphates.
+
+```{r}
+fviz_contrib(componentestotal,choice="var", axes=5)
+```
+La variable con mayor carga factorial para la quinta componente es chlorides.
+
+
+### Rotación Ortogonal.
+```{r, message=FALSE, warning=FALSE}
+componentes <- principal(wine_num, nfactors=5, rotate="varimax")
+
+componente1 <- componentes$loadings[,1]
+componente2 <- componentes$loadings[,2]
+componente3 <- componentes$loadings[,3]
+componente4 <- componentes$loadings[,4]
+componente5 <- componentes$loadings[,5]
+
+cargasdfr <- as.data.frame(cbind(componente1, componente2, componente3, componente4, componente5))
+cargasdfr$medicion <- rownames(cargasdfr)
+cargasheatr <- reshape2::melt(cargasdfr)
+
+colnames(cargasheatr) <- c("variable","componente","carga")
+cargasheatr %>%
+  ggplot(aes(x=componente,y=variable,fill=carga,
+             label=sprintf("%0.2f", round(carga, digits=2))))+
+  geom_tile()+
+  scale_fill_distiller(palette="RdBu")+
+  geom_text()
+```
+Acá podemos observar las variables con mayor carga en cada componente, e identificar cual es el factor latente de cada una.
+
+```{r}
+componentes$communality 
+```
+Podemos ver que todas las variables están bien representadas.
+
+```{r}
+#Graficar puntos sobre planos factoriales
+PCA_wine <- componentes$scores
+wine_with_PCA <- cbind(wine,PCA_wine)
+wine_with_PCA <- wine_with_PCA %>% 
+  mutate(type = as.factor(type))
+
+wine_with_PCA %>% 
+  ggplot(aes(x=RC1,y=RC2,color=type))+
+  geom_point()+
+  ggtitle("Puntuaciones factoriales - solucion rotada")
+```
+No se ve una muy buena separación.
+
+## Regresión Logística.
+```{r}
+set.seed(0214)
+wine$type <- ifelse(wine$type == "red", 1, 0)
+wine_num_est <- wine_num %>% scale()
+wine_num_logreg <- as.data.frame(cbind(wine_num_est, type = wine$type))
+```
+Preparamos el dataset estandarizando y añadiendo la columna type.
+
+### Primer modelo y revisión de supuestos
+```{r}
+#Creación del modelo
+reg_log <- glm(type~., data = wine_num_logreg, family = binomial)
+
+#VIF
+car::vif(reg_log)
+
+#Cooks distance
+cooksD <- cooks.distance(reg_log)
+
+# Plot Cook's Distance with a horizontal line at 1 to see which observations
+#exceed this thresdhold
+n <- nrow(wine_num_logreg)
+plot(cooksD, main = "Cooks Distance for Influential Obs")
+abline(h = 1, lty = 2, col = "steelblue") # add cutoff line
+
+#identify influential points
+influential_obs <- as.numeric(names(cooksD)[(cooksD > 1)])
+
+#define new data frame with influential points and a column removed
+wine_num_logreg <- wine_num_logreg[-influential_obs, ]
+wine_num_logreg <- wine_num_logreg %>% select(-density)
+```
+Vemos que hay una entrada del dataset que debe ser eliminado porque puede afectar negativamente el modelo, además se eliminará density porque tiene un VIF mayor a 10
+
+### Partición de la base de datos.
+```{r}
+trainIndex <- wine_num_logreg$type %>%
+createDataPartition(p = 0.8, list = FALSE)
+
+train <- wine_num_logreg[trainIndex,]
+test <- wine_num_logreg[-trainIndex,]
+```
+
+### Creación del modelo
+```{r}
+reg_log <- glm(type~., data = train, family = binomial)
+```
+### Coeficientes
+```{r}
+coeficientes <- reg_log$coefficients
+coeficientes
+```
+### Odd_ratios
+```{r}
+cambio_odd <- exp(coeficientes)
+cambio_odd
+```
+### Odd_base de la clase positiva
+```{r}
+base <- table(wine$type)
+prop.table(base)
+```
+
+```{r}
+odd_base <- prop.table(base)[2]/prop.table(base)[1]
+odd_base
+```
+
+### Probabilidad final
+```{r}
+odd_final <- odd_base*cambio_odd
+
+prob_fin_1p <- odd_final/(1+odd_final)
+prob_fin_1p
+```
+### Predicciones
+```{r}
+probas <- reg_log %>%
+  predict(test, type = "response")
+
+pred_class <- if_else(probas > 0.5, 1, 0)
+```
+
+### APER
+```{r}
+1 - mean(pred_class == test$type)
+```
+### Matriz de confusión
+```{r}
+table(pred_class, test$type)
+```
+### Cook's distance
+```{r}
+plot(reg_log, which = 4, id.n = 3)
+```
+### VIF
+```{r}
+car::vif(reg_log)
+```
+El modelo no posee problemas significativos en los supuestos, además de tener un buen APER.
+
+### K-fold cross validation
+```{r, warning='FALSE'}
+k <- 10
+folds <- sample(1:k, nrow(wine_num_logreg), replace = TRUE)
+
+# Crear un vector para almacenar precisión en cada fold
+accuracy <- numeric(k)
+
+for (i in 1:k) {
+  # Dividir datos en entrenamiento y prueba
+  train_data <- wine_num_logreg[folds != i, ]
+  test_data <- wine_num_logreg[folds == i, ]
+  
+  # Ajustar modelo
+  modelo <- glm(type ~ ., data = train_data, family = "binomial")
+  
+  # Predecir en conjunto de prueba
+  pred <- predict(modelo, newdata = test_data, type = "response")
+  pred_class <- ifelse(pred > 0.5, 1, 0)
+  
+  # Calcular precisión
+  accuracy[i] <- mean(pred_class == test_data$type)
+}
+
+# Promedio de precisión (Accuracy)
+mean_APER <- 1 - mean(accuracy)
+print(paste("APER promedio:", round(mean_APER, 4)))
+```
+
+## Clustering
+### Revisión de variabilidad
+```{r}
+CV <- function(var){(sd(var)/mean(var))*100}
+apply(wine_num,2, CV)
+```
+no se ve muy buen porcentaje de variación, únicamente en residual_sugar.
+
+### Elección de número de clusters
+
+```{r}
+fviz_nbclust(wine_num_est, kmeans, method = "wss", k.max = 15) +
+  labs(title = "Metodo de codo")+
+  xlab("Numero de clusteres (k)")+
+  ylab("Suma total de cuadrados within")
+```
+El grafico de codo nos diria que el número de clusters optimo se encuentra entre los 4 y los 6.
+
+```{r}
+fviz_nbclust(wine_num_est, kmeans, method = "silhouette")+
+  labs(title = "Metodo de la silueta")+
+  xlab("Numero de clusters (k)")+
+  ylab("Altura promedio de la silueta (asw)")
+```
+Esta medida indica que 4 clusters sería lo óptimo. 
+```{r , results='hide'}
+gap_stat <- clusGap(wine_num_est, FUN = kmeans, K.max = 6, B = 100)
+```
+
+```{r}
+plot(gap_stat, main = "Gap Statistic para determinar el número óptimo de clusters")
+```
+```{r}
+print(gap_stat)
+```
+Este método sugiere 4 clusters.
+
+### K-means
+```{r}
+wine_cluster <- kmeans(wine_num_est,
+                        centers=4,nstart=10,iter.max=20)
+```
+
+```{r}
+wine_cluster$size
+```
+### Análisis descriptivo
+Primero se mirarán los centroides de cada cluster.
+```{r}
+centrosg <- as.data.frame(wine_cluster$centers)
+centrosg$grupo <- as.factor(rownames(centrosg))
+centrosheat <- reshape2::melt(centrosg)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+colnames(centrosheat) <- c("grupo","variable","centroide")
+
+centrosheat %>% 
+  ggplot(aes(x=grupo,y=variable,fill=centroide, label=sprintf("%0.2f", round(centroide, digits=2))))+
+  geom_tile()+
+  scale_fill_distiller(palette="RdBu")+
+  geom_text()
+```
+Ahora se procede a revisar los boxplots.
+```{r}
+wine_num$cluster <- wine_cluster$cluster
+```
+
+```{r}
+boxplot(fixed_acidity~cluster, data=wine_num)
+```
+```{r}
+boxplot(volatile_acidity~cluster, data=wine_num)
+```
+
+```{r}
+boxplot(citric_acid~cluster, data=wine_num)
+```
+
+```{r}
+boxplot(residual_sugar~cluster, data=wine_num)
+```
+
+```{r}
+boxplot(chlorides~cluster, data=wine_num)
+```
+
+```{r}
+boxplot(free_sulfur_dioxide~cluster, data=wine_num)
+```
+
+```{r}
+boxplot(total_sulfur_dioxide~cluster, data=wine_num)
+```
+```{r}
+boxplot(pH~cluster, data=wine_num)
+```
+
+```{r}
+boxplot(sulphates~cluster, data=wine_num)
+```
+
+```{r}
+boxplot(alcohol~cluster, data=wine_num)
+```
+
+```{r}
+boxplot(alcohol~cluster, data=wine_num)
+```
+
+```{r, results='hide'}
+kclusters <- clusterboot(wine_num_est, B=100, 
+                         clustermethod=kmeansCBI, k=4, seed=5)
+```
+
+
+```{r}
+kclusters$bootmean
+```
+vemos que el primer grupo es malo según el método, mientras que los otros son buenos.
+
+## Regresión Logística sobre los clusters como variable predictora.
+
+```{r}
+clusters <- as.data.frame(wine_cluster$cluster)
+clusters <- clusters[-influential_obs, ]
+
+wine_num_logreg$cluster <- clusters
+```
+
+### Partición de la base de datos.
+```{r}
+trainIndex <- wine_num_logreg$type %>%
+  createDataPartition(p = 0.8, list = FALSE)
+
+train <- wine_num_logreg[trainIndex,]
+test <- wine_num_logreg[-trainIndex,]
+```
+
+### Creación del modelo
+```{r, warning=FALSE}
+reg_log <- glm(type~., data = train, family = binomial)
+```
+
+### Coeficientes
+```{r}
+coeficientes <- reg_log$coefficients
+coeficientes
+```
+### Odd_ratios
+```{r}
+cambio_odd <- exp(coeficientes)
+cambio_odd
+```
+### Odd_base de la clase positiva
+```{r}
+base <- table(wine$type)
+prop.table(base)
+```
+
+```{r}
+odd_base <- prop.table(base)[2]/prop.table(base)[1]
+odd_base
+```
+### Probabilidad final
+```{r}
+odd_final <- odd_base*cambio_odd
+
+prob_fin_1p <- odd_final/(1+odd_final)
+prob_fin_1p
+```
+### Predicciones
+```{r}
+probas <- reg_log %>%
+  predict(test, type = "response")
+
+pred_class <- if_else(probas > 0.5, 1, 0)
+```
+
+### APER
+```{r}
+1 - mean(pred_class == test$type)
+```
+### Matriz de confusión
+```{r}
+table(pred_class, test$type)
+```
+
+### Cook's distance
+```{r}
+plot(reg_log, which = 4, id.n = 3)
+```
+
+### VIF
+```{r}
+car::vif(reg_log)
+```
+Podemos ver que el APER es muy similar, además que el modelo cumple con los supuestos.
+
+### K-fold cross validation
+```{r, warning='FALSE'}
+k <- 10
+folds <- sample(1:k, nrow(wine_num_logreg), replace = TRUE)
+
+# Crear un vector para almacenar precisión en cada fold
+accuracy <- numeric(k)
+
+for (i in 1:k) {
+  # Dividir datos en entrenamiento y prueba
+  train_data <- wine_num_logreg[folds != i, ]
+  test_data <- wine_num_logreg[folds == i, ]
+  
+  # Ajustar modelo
+  modelo <- glm(type ~ ., data = train_data, family = "binomial")
+  
+  # Predecir en conjunto de prueba
+  pred <- predict(modelo, newdata = test_data, type = "response")
+  pred_class <- ifelse(pred > 0.5, 1, 0)
+  
+  # Calcular precisión
+  accuracy[i] <- mean(pred_class == test_data$type)
+}
+
+# Promedio de precisión (Accuracy)
+mean_APER <- 1 - mean(accuracy)
+print(paste("APER promedio:", round(mean_APER, 4)))
+```
+El APER es muy similar al anterior.
+
